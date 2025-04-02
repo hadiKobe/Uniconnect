@@ -2,7 +2,9 @@ import { query } from "@/lib/db";
 
 export async function GET() {
    const sqlQuery = `
-      SELECT posts.id,posts.content, users.first_name, users.last_name, users.major
+      SELECT posts.id, posts.content, users.first_name, users.last_name, users.major, 
+        (SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS commentsCount,
+        (SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id) AS likesCount
       FROM posts
       JOIN users ON posts.user_id = users.id
       WHERE posts.is_deleted = 0
@@ -10,10 +12,10 @@ export async function GET() {
     `;
   try {
     const posts = await query(sqlQuery,[]);
-
     return Response.json(posts);
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+

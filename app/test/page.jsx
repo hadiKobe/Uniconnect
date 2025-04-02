@@ -7,7 +7,7 @@ export default function Home() {
   const [posts, setPosts] = useState([]);
 
   const fetchPosts = async()=>{
-    fetch('/api/posts/getAll')
+    fetch('/api/posts/getPost')
       .then(res => res.json())
       .then(data => setPosts(data))
       .catch(err => console.error(err));
