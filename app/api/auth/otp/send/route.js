@@ -16,7 +16,7 @@ export async function POST(req) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Create a signed JWT token containing the OTP and email
-    // The token will expire in 5 minutes
+    // The token will expire in 2 minutes
     const otpToken = jwt.sign({ email, otp }, process.env.JWT_SECRET, {
       expiresIn: "2m",
     });
