@@ -18,7 +18,7 @@ export async function POST(req) {
     // Create a signed JWT token containing the OTP and email
     // The token will expire in 5 minutes
     const otpToken = jwt.sign({ email, otp }, process.env.JWT_SECRET, {
-      expiresIn: "5m",
+      expiresIn: "2m",
     });
 
     // Create a Nodemailer transporter using Gmail SMTP
