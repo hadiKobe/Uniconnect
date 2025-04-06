@@ -4,7 +4,7 @@ const Header = ({name,major,photoURL}) => {
    return (
       <div className="flex items-center space-x-3 mb-4">
          <Image
-            src="/images/profile.jpg"
+            src={photoURL || "/images/profile.jpg"}
             alt="Profile"
             width={48}
             height={48}

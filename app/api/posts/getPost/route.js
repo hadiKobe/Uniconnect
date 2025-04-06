@@ -9,6 +9,7 @@ export async function GET(request) {
     category: searchParams.get("category"),
     major: searchParams.get("major")
   };
+  console.log(filters);
 
   // conditions
   const conditions = ['posts.is_deleted = 0'];
@@ -47,7 +48,6 @@ export async function GET(request) {
       WHERE ${conditions.join(' AND ')}
       ORDER BY posts.created_at DESC
     `;
-    console.log(sqlQuery, params, conditions);
   try {
     const posts = await query(sqlQuery,params);
     return Response.json(posts);

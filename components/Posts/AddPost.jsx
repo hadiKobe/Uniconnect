@@ -1,3 +1,4 @@
+'use client'
 import { useState } from "react";
 
 export default function AddPost({ onPostAdded }) {
@@ -5,12 +6,11 @@ export default function AddPost({ onPostAdded }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const randomNumber = Math.floor(Math.random() * 5) + 1;
 
-    const res = await fetch("/api/posts/addPost", {
+    const res = await fetch("/api/posts/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, userId: randomNumber }),
+      body: JSON.stringify({ content, category: "General" }),
     });
 
     if (res.ok) {
