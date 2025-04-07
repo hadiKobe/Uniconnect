@@ -1,17 +1,22 @@
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import General from "../../components/Feed/General";
+import { redirect } from "next/navigation";
+import GeneralClient from "@/components/Feed/General";
+import Navbar from "@/components/navbar/navbar"; // fixed typo
 
 const GeneralFeed = async () => {
-   const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-   if (!session) {
-      redirect("/login");
-   }
+  if (!session) {
+    redirect("/SignIn");
+  }
 
-   return <General />;
-   
+  return (
+    <>
+      <Navbar/>
+      <GeneralClient session={session} />
+    </>
+  );
 };
 
 export default GeneralFeed;
