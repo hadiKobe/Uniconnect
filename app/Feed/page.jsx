@@ -14,7 +14,7 @@ const GeneralFeed = async () => {
   return (
     <>
       <Navbar/>
-      <GeneralClient session={session} />
+      <GeneralClient />
     </>
   );
 };
