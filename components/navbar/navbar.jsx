@@ -64,15 +64,6 @@ export default function Navbar() {
           <span className="hidden md:inline-block">LIU UNITY</span>
         </Link>
 
-        {/* Desktop nav links */}
-        <nav className="mx-6 hidden items-center space-x-4 md:flex lg:space-x-6">
-          <Link href="#" className="text-sm font-medium transition-colors hover:text-primary">
-            <Home className="h-5 w-5" />
-          </Link>
-          <Link href="#" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-            <Users className="h-5 w-5" />
-          </Link>
-        </nav>
 
         {/* Search bar */}
         <div className="ml-auto flex flex-1 items-center justify-end gap-4">
@@ -91,17 +82,9 @@ export default function Navbar() {
 
 
           {/* Messages button (desktop only) */}
-          <Button variant="ghost" size="icon" aria-label="Messages" className="hidden md:flex">
-            <MessageSquare className="h-5 w-5" />
-            <span className="sr-only">Messages</span>
-          </Button>
+         
 
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" aria-label="Notifications">
-            <Bell className="h-5 w-5" />
-            <span className="sr-only">Notifications</span>
-          </Button>
-
+       
           {/* Avatar */}
           <Avatar className="h-8 w-8">
             <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
