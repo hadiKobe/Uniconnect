@@ -14,7 +14,9 @@ import {
   Settings,
   Users,
   GraduationCap,
+  ShoppingBag, // ✅ Add this
 } from "lucide-react";
+
 
 export function LeftSide() {
   const { data: session, status } = useSession();
@@ -61,8 +63,14 @@ export function LeftSide() {
             </Link>
           </li>
           <li>
-            <Link href="/market" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <Users className="h-4 w-4" /> Friends Market
+          <Link href="/market" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+            <ShoppingBag className="h-4 w-4" /> Market
+          </Link>
+        </li>
+
+          <li>
+            <Link href="/friends" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+              <Users className="h-4 w-4" /> friends
             </Link>
           </li>
           <li>

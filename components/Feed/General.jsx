@@ -1,13 +1,22 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Post from "@/components/Posts/Post";
-import AddPost from "@/components/Posts/AddPost";
+
 import { Button } from "../ui/button";
 import { List, GraduationCap, User, Plus } from "lucide-react";
+import { AddPost } from "../Posts/AddPost";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 const GeneralClient = () => {
   const [posts, setPosts] = useState([]);
-  const [showAddPost, setShowAddPost] = useState(false); // 👈 toggle state
+  const [showAddPost, setShowAddPost] = useState(false); 
   const addPostRef = useRef(null);
   const path = "/api/posts/getPost";
 
@@ -48,20 +57,32 @@ const GeneralClient = () => {
           MyFeed
         </Button>
 
-        <Button onClick={handleNewPostClick} variant="default" size="sm" className="rounded-full text-sm font-medium">
-          <Plus className="w-4 h-4 mr-1" />
-          New Post
-        </Button>
+        <Dialog>
+  <DialogTrigger asChild>
+    <Button
+      variant="default"
+      size="sm"
+      className="rounded-full text-sm font-medium flex items-center gap-2"
+    >
+      <Plus className="w-4 h-4" />
+      New Post
+    </Button>
+  </DialogTrigger>
+
+  <DialogContent className="max-w-2xl w-full">
+    <DialogHeader>
+      <DialogTitle>Create a New Post</DialogTitle>
+    </DialogHeader>
+    <AddPost />
+  </DialogContent>
+</Dialog>
+
       </div>
 
-      {/* Conditionally Render Add Post */}
-      {showAddPost && (
-        <div ref={addPostRef} className="mb-6">
-          <AddPost />
-        </div>
-      )}
+      
+     
 
-      {/* Posts */}
+     
       {posts.map((post) => (
         <Post
           key={post.id}
