@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession,signOut } from "next-auth/react";
+
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,7 +16,8 @@ import {
   Settings,
   Users,
   GraduationCap,
-  ShoppingBag, // ✅ Add this
+  ShoppingBag, 
+  LogOut,
 } from "lucide-react";
 
 
@@ -88,12 +91,19 @@ export function LeftSide() {
         </ul>
       </nav>
 
-      {/* Footer */}
-      <div className="border-t p-4">
-        <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-          <Settings className="h-4 w-4" /> Settings
-        </Button>
-      </div>
+          <div className="border-t p-4">
+      <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+        <Settings className="h-4 w-4" /> Settings
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full justify-start gap-2 mt-2"
+        onClick={() => signOut()}
+      >
+        <LogOut className="h-4 w-4" /> Log Out
+      </Button>
+    </div>
     </div>
   );
 }

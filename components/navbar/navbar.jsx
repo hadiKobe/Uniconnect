@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -86,7 +87,7 @@ export default function Navbar() {
 
        
           {/* Avatar */}
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 block md:hidden">
             <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>

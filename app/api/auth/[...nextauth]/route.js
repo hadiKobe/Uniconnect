@@ -15,7 +15,7 @@ export const authOptions = {
         const { email, password } = credentials;
 
         try {
-          console.log("🔍 Checking user:", email);
+   
 
           const [rows] = await db.execute(
             "SELECT * FROM users WHERE email = ? LIMIT 1",
@@ -23,7 +23,7 @@ export const authOptions = {
           );
 
           if (!rows || rows.length === 0) {
-            console.log("❌ No user found");
+ 
             throw new Error("User not found");
           }
 
@@ -31,11 +31,11 @@ export const authOptions = {
           const isValid = await bcrypt.compare(password, user.password);
 
           if (!isValid) {
-            console.log("❌ Invalid password");
+     
             throw new Error("Invalid credentials");
           }
 
-          console.log("✅ Login success");
+  
 
           return {
             id: user.id.toString(),
