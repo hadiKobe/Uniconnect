@@ -28,7 +28,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 
-export function AddPost() {
+export function AddPost({onPostAdded}) {
   const [postType, setPostType] = useState("general");
   const [mediaFiles, setMediaFiles] = useState([]);
   const [mediaPreviews, setMediaPreviews] = useState([]);
@@ -117,7 +117,7 @@ export function AddPost() {
         mediaPreviews.forEach((url) => URL.revokeObjectURL(url));
         setMediaPreviews([]);
         setMediaFiles([]);
-  
+        onPostAdded();
         // Optional: clear form fields manually here if needed
       } else {
         const error = await res.json();

@@ -27,7 +27,7 @@ export async function GET(request) {
       case 'friends':
         conditions.push(
           `posts.user_id IN 
-          (SELECT CASE WHEN user_id1 = ? THEN user_id2 ELSE user_id1 END FROM connections WHERE user_id1 = ? OR user_id2 = ?)`
+          (SELECT CASE WHEN user_id_1 = ? THEN user_id_2 ELSE user_id_1 END FROM connections WHERE user_id_1 = ? OR user_id_2 = ?)`
         );
         params.push(filters.user_id, filters.user_id, filters.user_id);
         break;
