@@ -49,15 +49,28 @@ export async function GET(request) {
         return Response.json({ error: "Invalid filter" }, { status: 400 });
     }
 
-  const sqlQuery = `
+  /*const sqlQuery = `
       SELECT posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category, 
         (SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS commentsCount,
-        (SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id) AS likesCount
-      FROM posts
-      JOIN users ON posts.user_id = users.id
+        (SELECT COUNT(*) FROM reactions WHERE reactions.post_id = posts.id AND value = 1) AS likesCount,
+        (SELECT COUNT(*) FROM reactions WHERE reactions.post_id = posts.id AND value = 0) AS dislikesCount
+      FROM posts JOIN users ON posts.user_id = users.id
       WHERE ${conditions.join(' AND ')}
       ORDER BY posts.created_at DESC
-    `;
+    `;*/
+
+  // better than subqeuries
+  const sqlQuery = `
+    SELECT posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category,
+      COUNT(DISTINCT comments.id) AS commentsCount,
+      COUNT(CASE WHEN reactions.value = 1 THEN 1 END) AS likesCount,
+      COUNT(CASE WHEN reactions.value = 0 THEN 1 END) AS dislikesCount
+    FROM posts JOIN users ON posts.user_id = users.id
+      LEFT JOIN comments ON comments.post_id = posts.id
+      LEFT JOIN reactions ON reactions.post_id = posts.id
+    WHERE ${conditions.join(' AND ')}
+    GROUP BY posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category
+    ORDER BY posts.created_at DESC;`;
 
   try {
     const posts = await query(sqlQuery, params);

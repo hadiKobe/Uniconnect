@@ -21,7 +21,7 @@ const GeneralClient = () => {
   const addPostRef = useRef(null);
   const path = "/api/posts/getPost";
 
-  const fetchPosts = async (filter='') => {
+  const fetchPosts = async (filter = '') => {
     let filteredPath = `${path}?filter=${filter}`;
     fetch(filteredPath)
       .then((res) => res.json())
@@ -31,7 +31,7 @@ const GeneralClient = () => {
 
   useEffect(() => {
     fetchPosts(filter);
-   }, [filter]);
+  }, [filter]);
 
   const handleNewPostClick = () => {
     setShowAddPost(true); // 👈 Show the AddPost component
@@ -44,17 +44,17 @@ const GeneralClient = () => {
     <div className="w-full p-4">
       {/* Filters + New Post */}
       <div className="flex flex-wrap justify-center items-center gap-1 md:gap-2 mb-4">
-        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium"  onClick={() => setFilter('')}  >
+        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => setFilter('')}  >
           <List className="cursor-pointer w-4 h-4 mr-1" />
           All
         </Button>
 
-        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium"  onClick={() => setFilter('major')}  >
+        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => setFilter('major')}  >
           <GraduationCap className="cursor-pointer w-4 h-4 mr-1" />
           MyMajor
         </Button>
 
-        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium"  onClick={() => setFilter('friends')} >
+        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => setFilter('friends')} >
           <User className="cursor-pointer w-4 h-4 mr-1" />
           MyFeed
         </Button>
@@ -88,6 +88,7 @@ const GeneralClient = () => {
           major={post.major}
           content={post.content}
           likeCount={post.likesCount}
+          dislikeCount={post.dislikesCount}
           commentCount={post.commentsCount}
           createdAt={post.created_at}
         />
