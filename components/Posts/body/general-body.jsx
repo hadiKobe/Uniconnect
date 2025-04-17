@@ -1,6 +1,7 @@
 import Image from "next/image"
 
-const Body = ({content}) => {
+const Body = ({bodyInfo}) => {
+   const { content } = bodyInfo;
    return (
       <div className="mb-4">
          <p className="mb-3 leading-relaxed">

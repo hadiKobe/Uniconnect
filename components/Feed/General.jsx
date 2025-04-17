@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Post from "@/components/Posts/Post";
+import GeneralPost from "@/components/Posts/General";
 
 import { Button } from "../ui/button";
 import { List, GraduationCap, User, Plus } from "lucide-react";
@@ -81,17 +81,9 @@ const GeneralClient = () => {
 
       </div>
       {posts.map((post) => (
-        <Post
+        <GeneralPost
           key={post.id}
-          postId={post.id}
-          name={`${post.first_name} ${post.last_name}`}
-          major={post.major}
-          content={post.content}
-          likeCount={post.likesCount}
-          dislikeCount={post.dislikesCount}
-          commentCount={post.commentsCount}
-          userReaction={post.currentUserReaction}
-          createdAt={post.created_at}
+          post={post}
         />
       ))}
     </div>

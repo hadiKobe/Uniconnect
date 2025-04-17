@@ -3,7 +3,8 @@ import { MessageCircle } from "lucide-react";
 import { HandThumbUpIcon as HandThumbUpSolid, HandThumbDownIcon as HandThumbDownSolid } from "@heroicons/react/24/solid";
 import { HandThumbUpIcon as HandThumbUpOutline, HandThumbDownIcon as HandThumbDownOutline } from "@heroicons/react/24/outline";
 
-const Bottom = ({ postId, likeCount, dislikeCount, commentCount, userReaction }) => {
+const Bottom = ({ bottomInfo }) => {
+   const {postId, likeCount, dislikeCount, commentCount, userReaction} = bottomInfo;
    const [liked, setLiked] = useState(false);
    const [disliked, setDisliked] = useState(false);
 

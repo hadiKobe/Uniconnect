@@ -7,7 +7,10 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 
-const Header = ({ name, major, photoURL }) => {
+const Header = ({ headerInfo, photoURL }) => {
+  const { first_name, last_name, major } = headerInfo;
+  const name = `${first_name} ${last_name}`;
+
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center space-x-3">

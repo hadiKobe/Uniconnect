@@ -1,4 +1,5 @@
 import { query } from "@/lib/db";
+import { createPostInstance } from "@/lib/models";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -61,7 +62,7 @@ export async function GET(request) {
 
   // better than subqeuries
   const sqlQuery = `
-    SELECT posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category,
+    SELECT posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category, posts.created_at,
       COUNT(DISTINCT comments.id) AS commentsCount,
       COUNT(CASE WHEN reactions.value = 1 THEN 1 END) AS likesCount,
       COUNT(CASE WHEN reactions.value = 0 THEN 1 END) AS dislikesCount,
@@ -79,7 +80,12 @@ export async function GET(request) {
 `;
 
   try {
-    const posts = await query(sqlQuery, params);
+    const result = await query(sqlQuery, params);
+    //console.log(result);
+    const posts = result.map((post) => {
+      return createPostInstance(post);
+    });
+    //console.log(posts);
     return Response.json(posts);
   } catch (error) {
     console.error(error);
