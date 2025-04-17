@@ -1,6 +1,6 @@
-import Header from "./structure/Header"
-import Body from "./structure/Body"
-import Bottom from "./structure/Bottom"
+import Header from "./general/Header"
+import Body from "./general/Body"
+import Bottom from "./general/Bottom"
 
 const Post = ({ postId, name, major, content, likeCount, dislikeCount, userReaction, commentCount }) => {
   return (
