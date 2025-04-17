@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import GeneralPost from "@/components/Posts/General";
+import Post from "@/components/Posts/Post";
 
 import { Button } from "../ui/button";
 import { List, GraduationCap, User, Plus } from "lucide-react";
@@ -81,7 +81,7 @@ const GeneralClient = () => {
 
       </div>
       {posts.map((post) => (
-        <GeneralPost
+        <Post
           key={post.id}
           post={post}
         />

@@ -1,6 +1,5 @@
-import Image from "next/image"
 
-const Body = ({bodyInfo}) => {
+const GeneralBody = ({bodyInfo}) => {
    const { content } = bodyInfo;
    return (
       <div className="mb-4">
@@ -20,4 +19,4 @@ const Body = ({bodyInfo}) => {
    )
 }
 
-export default Body
+export default GeneralBody
