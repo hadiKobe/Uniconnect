@@ -1,9 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { MessageCircle } from "lucide-react";
+import { HandThumbUpIcon as HandThumbUpSolid, HandThumbDownIcon as HandThumbDownSolid } from "@heroicons/react/24/solid";
+import { HandThumbUpIcon as HandThumbUpOutline, HandThumbDownIcon as HandThumbDownOutline } from "@heroicons/react/24/outline";
 
-
-const Bottom = ({ postId, likeCount, dislikeCount, commentCount }) => {
+const Bottom = ({ postId, likeCount, dislikeCount, commentCount, userReaction }) => {
    const [liked, setLiked] = useState(false);
    const [disliked, setDisliked] = useState(false);
+
+   useEffect(() => {
+      if (userReaction === 1) {
+         setLiked(true);
+         setDisliked(false);
+      } else if (userReaction === 0) {
+         setDisliked(true);
+         setLiked(false);
+      }
+   }, [userReaction]);
 
    const handleInteraction = async (e, type) => {
       e.preventDefault();
@@ -22,7 +34,8 @@ const Bottom = ({ postId, likeCount, dislikeCount, commentCount }) => {
          headers: { "Content-Type": "application/json" }
       });
 
-      const res = liked || disliked ? await del() : await add();
+      const reactions = { like: liked, dislike: disliked };
+      const res = reactions[type] ? await del() : await add();
 
       if (res.ok) {
          console.log(`${type} added successfully`);
@@ -34,23 +47,26 @@ const Bottom = ({ postId, likeCount, dislikeCount, commentCount }) => {
             setDisliked(!disliked);
             setLiked(false);
          }
-
       }
    }
 
    return (
       <div className="flex justify-start space-x-8 border-t pt-3 border-gray-200">
-         <button className="cursor-pointer flex items-center space-x-2 hover:text-blue-500" onClick={(e) => handleInteraction(e, 'like')}>
-            <span id='likeSpan'>{liked ? 'Liked' : 'Like'}</span>
-            <span >{likeCount}</span>
+
+         <button className="cursor-pointer flex items-center space-x-2 " onClick={(e) => handleInteraction(e, 'like')}>
+            {liked ? (<HandThumbUpSolid className="w-5 h-5 text-blue-600" />) : (<HandThumbUpOutline className="w-5 h-5 hover:text-blue-500" />)}
+            <span className="text-xs">{likeCount}</span>
          </button>
-         <button className="cursor-pointer flex items-center space-x-2 hover:text-blue-500" onClick={(e) => handleInteraction(e, 'dislike')} >
-            <span id='likeSpan'>{disliked ? 'Disliked' : 'Dislike'}</span>
-            <span >{dislikeCount}</span>
+
+         <button className="cursor-pointer flex items-center space-x-2 " onClick={(e) => handleInteraction(e, 'dislike')} >
+            {disliked ? (<HandThumbDownSolid className="w-5 h-5 text-red-600" />) : (<HandThumbDownOutline className="w-5 h-5  hover:text-red-500" />)}
+            <span className="text-xs">{dislikeCount}</span>
          </button>
+
          <button className="cursor-pointer flex items-center space-x-2 hover:text-blue-500">
-            <span>Comment</span>
-            <span>{commentCount}</span>
+            <MessageCircle size={18} />
+            {/* <span>Comment</span> */}
+            <span className="text-xs">{commentCount}</span>
          </button>
       </div>
    )

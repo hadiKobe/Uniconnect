@@ -21,7 +21,7 @@ export async function GET(request) {
 
   // conditions
   const conditions = ['posts.is_deleted = 0'];
-  const params = [];
+  const params = [filters.user_id];
   if (filter)
     switch (filter) {
       case 'friends':
@@ -64,13 +64,19 @@ export async function GET(request) {
     SELECT posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category,
       COUNT(DISTINCT comments.id) AS commentsCount,
       COUNT(CASE WHEN reactions.value = 1 THEN 1 END) AS likesCount,
-      COUNT(CASE WHEN reactions.value = 0 THEN 1 END) AS dislikesCount
-    FROM posts JOIN users ON posts.user_id = users.id
+      COUNT(CASE WHEN reactions.value = 0 THEN 1 END) AS dislikesCount,
+      user_reactions.value AS currentUserReaction
+
+    FROM posts JOIN users ON posts.user_id = users.id 
       LEFT JOIN comments ON comments.post_id = posts.id
       LEFT JOIN reactions ON reactions.post_id = posts.id
+      LEFT JOIN reactions AS user_reactions ON user_reactions.post_id = posts.id AND user_reactions.user_id = ?
+
     WHERE ${conditions.join(' AND ')}
-    GROUP BY posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category
-    ORDER BY posts.created_at DESC;`;
+
+    GROUP BY posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category, user_reactions.value
+    ORDER BY posts.created_at DESC;
+`;
 
   try {
     const posts = await query(sqlQuery, params);

@@ -64,7 +64,7 @@ const GeneralClient = () => {
             <Button
               variant="default"
               size="sm"
-              className="rounded-full text-sm font-medium flex items-center gap-2"
+              className="rounded-full text-sm font-medium flex items-center gap-2 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               New Post
@@ -90,6 +90,7 @@ const GeneralClient = () => {
           likeCount={post.likesCount}
           dislikeCount={post.dislikesCount}
           commentCount={post.commentsCount}
+          userReaction={post.currentUserReaction}
           createdAt={post.created_at}
         />
       ))}
