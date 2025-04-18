@@ -5,7 +5,6 @@ export async function DELETE(request,{params}) {
    const sqlQuery = `UPDATE comments SET is_deleted = 1 WHERE id = ?`;
    try {
       const result = await query(sqlQuery,[commentID]);
-      console.log(result);
 
       return Response.json({ message: "Comment deleted successfully!" });
    } catch (error) {

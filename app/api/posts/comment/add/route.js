@@ -10,11 +10,11 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { postId, content } = body;
+    const { post_id, content } = body;
     const userId = session.user.id; // ✅ Secure source
 
     const sqlQuery = `INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)`;
-    await query(sqlQuery, [userId, postId, content]);
+    await query(sqlQuery, [userId, post_id, content]);
 
     return Response.json({ message: "Comment added successfully!" });
   } catch (error) {

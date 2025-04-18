@@ -80,9 +80,9 @@ const GeneralClient = () => {
         </Dialog>
 
       </div>
-      {posts.map((post) => (
+      {posts.map((post,index) => (
         <Post
-          key={post.id}
+          key={index}
           post={post}
         />
       ))}
