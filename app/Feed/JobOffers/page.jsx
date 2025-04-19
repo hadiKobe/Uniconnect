@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import FeedClient from "@/components/Feed/FeedClient";
 
 
-const GeneralFeed = async () => {
+const JobOffersFeed = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -14,11 +14,11 @@ const GeneralFeed = async () => {
   return (
     <div className="h-screen">
       <div className="ml-0 md:ml-64 flex-1 overflow-y-auto p-4">
-        <FeedClient section="home"/>
+        <FeedClient section="job"/>
       </div>
     </div>
 
   );
 };
 
-export default GeneralFeed;
+export default JobOffersFeed;

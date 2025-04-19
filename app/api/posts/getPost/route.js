@@ -10,24 +10,22 @@ export async function GET(request) {
   //   return Response.json({ error: "Unauthorized" }, { status: 401 });
   // }
 
-  // filters : friends, major, job, market,tutor
-
   const { searchParams } = new URL(request.url);
+  // filters : friends, major
   const filter = searchParams.get("filter") || "";
+  // sections : general, job, market, tutor
+  const section = searchParams.get("section") || "";
 
-  
-  const filters = {
-    user_id: 14,
-    major: 'Psychology',
-    category: ['job', 'market', 'tutor']
-  };
-  
-
+  const sections = ['job', 'market', 'tutor'];
   // const filters = {
   //   user_id: session.user.id,
-  //   major: session.user.major,
-  //   category: ['job', 'market', 'tutor']
+  //   major: session.user.major
   // };
+
+  const filters = {
+    user_id: 14,
+    major: 'Psychology'
+  };
 
   // conditions
   const conditions = ['posts.is_deleted = 0'];
@@ -47,17 +45,19 @@ export async function GET(request) {
         params.push(filters.major);
         break;
 
-      case filters.category[0]:
-      case filters.category[1]:
-      case filters.category[2]:
-        conditions.push('posts.category = ?');
-        params.push(filter);
-        break;
-
       default:
         // Optional: return an error for unknown filters
         return Response.json({ error: "Invalid filter" }, { status: 400 });
     }
+
+  if (section && section !== 'home') {
+    if (!sections.includes(section)) {
+      return Response.json({ error: "Invalid section" }, { status: 400 });
+    }
+
+    conditions.push('posts.category = ?');
+    params.push(section);
+  }
 
   /*const sqlQuery = `
       SELECT posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category, 
@@ -160,7 +160,7 @@ export async function GET(request) {
       const comments = createInteractionInstance(post.comments);
       const likes = createInteractionInstance(post.likedBy);
 
-      return createPostInstance({...post,comments,likes,});
+      return createPostInstance({ ...post, comments, likes, });
     });
     // console.log(posts);
     return Response.json(posts);

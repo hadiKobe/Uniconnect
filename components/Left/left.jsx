@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 
 
-export function LeftSide() {
+export default function LeftSide() {
   const { data: session, status } = useSession();
 
   const userName =
@@ -51,22 +51,22 @@ export function LeftSide() {
       <nav className="flex-1 overflow-y-auto p-1">
         <ul className="space-y-1">
           <li>
-            <Link href="/home" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+            <Link href="/Feed" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <Home className="h-4 w-4" /> Home
             </Link>
           </li>
           <li>
-            <Link href="/tutors" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+            <Link href="/Feed/Tutoring" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <GraduationCap className="h-4 w-4" /> Tutor Section
             </Link>
           </li>
           <li>
-            <Link href="/jobs" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+            <Link href="/Feed/JobOffers" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <FileText className="h-4 w-4" /> Job Section
             </Link>
           </li>
           <li>
-          <Link href="/market" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+          <Link href="/Feed/MarketPlace" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
             <ShoppingBag className="h-4 w-4" /> Market
           </Link>
         </li>
