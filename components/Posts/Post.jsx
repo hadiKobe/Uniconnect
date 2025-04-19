@@ -13,6 +13,7 @@ const Post = ({ post }) => {
     first_name: post.user_first_name,
     last_name: post.user_last_name,
     major: post.major,
+    post_type: post.category,
     created_at: post.created_at,
   };
   const body = {
@@ -46,19 +47,19 @@ const Post = ({ post }) => {
     location: post.location,
   };
 
-  let Body;
+  let SpecificBody;
   switch (post.category) {
     case "tutor":
-      Body = <TutorBody tutorInfo={tutor} />;
+      SpecificBody = <TutorBody tutorInfo={tutor} />;
       break;
     case "market":
-      Body = <MarketBody marketInfo={market} />;
+      SpecificBody = <MarketBody marketInfo={market} />;
       break;
     case "job":
-      Body = <JobBody jobInfo={job} />;
+      SpecificBody = <JobBody jobInfo={job} />;
       break;
     default:
-      Body = "";
+      SpecificBody = "";
   }
 
   const addComment = () => {
@@ -68,8 +69,8 @@ const Post = ({ post }) => {
   return (
     <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-lg mx-auto my-4">
       <Header headerInfo={header} />
-      {Body}
       <GeneralBody bodyInfo={body} />
+      {SpecificBody}
       <Footer bottomInfo={bottom} />
       <CommentSection commentsInfo={commentSection}/>
     </div>
