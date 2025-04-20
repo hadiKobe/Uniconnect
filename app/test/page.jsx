@@ -1,3 +1,4 @@
+
 import { FriendsPage } from "@/components/Friends/friends";
 import { LeftSide } from "@/components/Left/left";
 import Navbar from "@/components/navbar/navbar";
@@ -23,3 +24,4 @@ export default function Home() {
     </>
   );
 }
+

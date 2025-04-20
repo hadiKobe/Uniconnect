@@ -14,15 +14,15 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-const GeneralClient = () => {
+const FeedClient = ({section}) => {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState(''); // State to manage filter
   const [showAddPost, setShowAddPost] = useState(false);
   const addPostRef = useRef(null);
-  const path = "/api/posts/getPost";
+  const path = `/api/posts/getPost?section=${section}`; // Adjusted path to include section
 
   const fetchPosts = async (filter = '') => {
-    let filteredPath = `${path}?filter=${filter}`;
+    let filteredPath = filter ? `${path}&filter=${filter}` : path;
     fetch(filteredPath)
       .then((res) => res.json())
       .then((data) => setPosts(data))
@@ -43,7 +43,7 @@ const GeneralClient = () => {
   return (
     <div className="w-full p-4">
       {/* Filters + New Post */}
-      <div className="flex flex-wrap justify-center items-center gap-1 md:gap-2 mb-4">
+      <div className="flex flex-wrap justify-center items-center gap-1 md:gap-2 mb-4 sticky top-0 z-49">
         <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => setFilter('')}  >
           <List className="cursor-pointer w-4 h-4 mr-1" />
           All
@@ -54,7 +54,7 @@ const GeneralClient = () => {
           MyMajor
         </Button>
 
-        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => setFilter('friends')} >
+        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => {setFilter('friends')}} >
           <User className="cursor-pointer w-4 h-4 mr-1" />
           MyFeed
         </Button>
@@ -80,9 +80,9 @@ const GeneralClient = () => {
         </Dialog>
 
       </div>
-      {posts.map((post) => (
+      {posts.map((post,index) => (
         <Post
-          key={post.id}
+          key={index}
           post={post}
         />
       ))}
@@ -90,4 +90,4 @@ const GeneralClient = () => {
   );
 };
 
-export default GeneralClient;
+export default FeedClient;
