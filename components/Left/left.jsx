@@ -19,15 +19,39 @@ import {
   ShoppingBag, 
   LogOut,
 } from "lucide-react";
-
+import { useState, useEffect } from "react"
 
 export default function LeftSide() {
   const { data: session, status } = useSession();
+  
+
 
   const userName =
     session?.user?.name || `${session?.user?.first_name ?? "User"}`;
   const userMajor = session?.user?.major || "Unknown Major";
+  const [requestCount, setRequestCount] = useState(0);
 
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const res = await fetch("/api/Friends/Requests/count");
+  
+        if (!res.ok) {
+          console.error("Error fetching request count:", res.statusText);
+          return;
+        }
+  
+        const data = await res.json();
+        setRequestCount(data.count || 0);
+      } catch (err) {
+        console.error("Failed to load request count", err);
+      }
+    };
+  
+    fetchCount();
+  }, []);
+  
+  if (status === "loading") return null; // or a loader, skeleton, etc.
   return (
     <div className="w-64 border-r bg-background flex flex-col h-full">
       {/* Profile Section */}
@@ -72,8 +96,12 @@ export default function LeftSide() {
         </li>
 
           <li>
-            <Link href="/friends" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+            <Link href="/Friends" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <Users className="h-4 w-4" /> friends
+              {requestCount > 0 && (
+                <Badge className="ml-auto  shrink-0 bg-primary text-xs">{requestCount}</Badge>
+              )}
+
             </Link>
           </li>
           <li>
