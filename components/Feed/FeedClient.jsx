@@ -23,7 +23,6 @@ const FeedClient = ({section}) => {
 
   const fetchPosts = async (filter = '') => {
     let filteredPath = filter ? `${path}&filter=${filter}` : path;
-    console.log(`Fetching posts from: ${filteredPath}`);
     fetch(filteredPath)
       .then((res) => res.json())
       .then((data) => setPosts(data))

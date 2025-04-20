@@ -8,6 +8,7 @@ export default function Footer({ bottomInfo }) {
    const { postId, likeCount, dislikeCount, commentCount, userReaction } = bottomInfo;
    const [liked, setLiked] = useState(false)
    const [disliked, setDisliked] = useState(false)
+
    useEffect(() => {
       if (userReaction === 1) {
          setLiked(true);
@@ -51,9 +52,15 @@ export default function Footer({ bottomInfo }) {
          }
       }
    }
+
    const handleComment = (e) => {
       e.preventDefault();
-      alert("Comment clicked")
+      const path = `/api/posts/comment/add`;
+      const add = async () => fetch(path, {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ postId, content })
+      });
    }
 
    return (
@@ -85,11 +92,8 @@ export default function Footer({ bottomInfo }) {
                </Button>
             </div>
 
-            <div className="flex items-center">
-               <Button variant="ghost" size="sm" className="flex items-center gap-1 px-2" onClick={handleComment} disabled={commentCount === 0}>
-                  <MessageCircle className="h-4 w-4" />
-               </Button>
-            </div>
+            
+            
          </div>
       </div>
    )

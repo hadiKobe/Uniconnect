@@ -2,9 +2,9 @@
 import { MapPin, BookOpen, DollarSign } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 
-export default function TutorBody({ tutorData }) {
+export default function TutorBody({ tutorInfo }) {
   // Default values if not provided
-  const { location = "Online", subject = "Mathematics", rate = "$25/hour" } = tutorData || {}
+  const { location = "OnNo Where", subject = "Anything", rate = "0" } = tutorInfo || {}
 
   return (
     <div className="bg-secondary/20 rounded-lg p-4 border border-secondary/30">
@@ -37,7 +37,7 @@ export default function TutorBody({ tutorData }) {
           </div>
           <div className="flex items-center">
             <Badge variant="secondary" className="font-medium text-foreground">
-              {rate}
+              ${rate}
             </Badge>
           </div>
         </div>

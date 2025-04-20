@@ -32,38 +32,47 @@ const Post = ({ post }) => {
     comments: post.comments,
   }
 
-  const tutor = {
-    subject: post.subject,
-    rate: post.rate,
-    location: post.location
-  };
-  const market = {
-    price: post.price,
-    location: post.location,
-  };
-  const job = {
-    job_type: post.job_type,
-    salary: post.salary,
-    location: post.location,
-  };
+  let categoryDetails = {};
+  switch (post.category) {
+    case "tutor":
+      categoryDetails = {
+        subject: post.subject,
+        rate: post.rate,
+        location: post.location
+      };
+      break;
 
+    case "market":
+      categoryDetails = {
+        price: post.price,
+        location: post.location,
+      };
+      break;
+
+    case "job":
+      categoryDetails = {
+        job_type: post.job_type,
+        salary: post.salary,
+        location: post.location,
+      };
+      break;
+
+    default:
+      categoryDetails = {};
+  }
   let SpecificBody;
   switch (post.category) {
     case "tutor":
-      SpecificBody = <TutorBody tutorInfo={tutor} />;
+      SpecificBody = <TutorBody tutorInfo={categoryDetails} />;
       break;
     case "market":
-      SpecificBody = <MarketBody marketInfo={market} />;
+      SpecificBody = <MarketBody marketInfo={categoryDetails} />;
       break;
     case "job":
-      SpecificBody = <JobBody jobInfo={job} />;
+      SpecificBody = <JobBody jobInfo={categoryDetails} />;
       break;
     default:
       SpecificBody = "";
-  }
-
-  const addComment = () => {
-    alert("Add comment");
   }
 
   return (
@@ -72,7 +81,7 @@ const Post = ({ post }) => {
       <GeneralBody bodyInfo={body} />
       {SpecificBody}
       <Footer bottomInfo={bottom} />
-      <CommentSection commentsInfo={commentSection}/>
+      <CommentSection commentsInfo={commentSection} />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { DollarSign, MapPin } from 'lucide-react'
 
 export default function MarketBody({ marketInfo }) {
   // Default values if not provided
-  const { price = "$50", location = "On Campus" } = marketInfo || {}
+  const { price = "$0", location = "No Where" } = marketInfo || {}
 
   return (
     <div className="flex flex-col space-y-2 my-3">

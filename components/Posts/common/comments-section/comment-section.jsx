@@ -8,7 +8,7 @@ import CommentItem from "./comment-item"
 import { useSession } from "next-auth/react"
 
 export default function CommentSection({ commentsInfo }) {
-  const { user_id: author_id, comments ,post_id} = commentsInfo;
+  const { user_id: author_id, comments, post_id } = commentsInfo;
   const [isExpanded, setIsExpanded] = useState(false)
   const [newComment, setNewComment] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -44,11 +44,11 @@ export default function CommentSection({ commentsInfo }) {
     const path = `/api/posts/comment/add`;
     const res = fetch(path, {
       method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ post_id, content: newComment })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ post_id, content: newComment })
     });
 
-    if (res.ok) 
+    if (res.ok)
       console.log(`${type} added successfully`);
 
   }
@@ -94,7 +94,6 @@ export default function CommentSection({ commentsInfo }) {
             onChange={(e) => setNewComment(e.target.value)}
           />
           <Button type="submit" size="sm" disabled={isSubmitting} className="self-end">
-
             Send
           </Button>
         </form>

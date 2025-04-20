@@ -3,7 +3,7 @@ import { MapPin, Briefcase, DollarSign } from 'lucide-react'
 
 export default function JobBody({ jobInfo }) {
   // Default values if not provided
-  const { location = "Remote", job_type = "Full-time", salary = "Competitive" } = jobInfo || {}
+  const { location = "No Where", job_type = "No Type", salary = "$0" } = jobInfo || {}
 
   return (
     <div className="border-l-4 border-green-500 pl-4 py-2 mb-3">
