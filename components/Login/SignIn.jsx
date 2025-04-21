@@ -17,7 +17,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
-// 🔹 Define validation rules using Zod (Updated for Email)
+
 const schema = z.object({
   email: z.string().email("Invalid email format").min(1, "Email is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -38,7 +38,7 @@ const SignIn = () => {
   const onSubmit = async (data) => {
     const result = await signIn("credentials", {
       redirect: false,
-      email: data.email, // ✅ Use email instead of username
+      email: data.email, 
       password: data.password,
     });
 
@@ -47,7 +47,7 @@ const SignIn = () => {
       return;
     }
 
-    router.push("/");
+    router.push("/Feed");
   };
 
   return (
@@ -73,7 +73,7 @@ const SignIn = () => {
             )}
           />
 
-          {/* Password Field */}
+ 
           <FormField
             control={control}
             name="password"
