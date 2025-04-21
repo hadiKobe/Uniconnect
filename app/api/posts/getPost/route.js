@@ -33,11 +33,8 @@ export async function GET(request) {
   if (filter)
     switch (filter) {
       case 'friends':
-        conditions.push(
-          `posts.user_id IN 
-          (SELECT CASE WHEN user_id_1 = ? THEN user_id_2 ELSE user_id_1 END FROM connections WHERE user_id_1 = ? OR user_id_2 = ?)`
-        );
-        params.push(filters.user_id, filters.user_id, filters.user_id);
+        conditions.push(`posts.user_id IN (SELECT friend_id FROM connections WHERE user_id = ?)`);
+        params.push(filters.user_id);
         break;
 
       case 'major':
@@ -59,7 +56,7 @@ export async function GET(request) {
     params.push(section);
   }
 
-  /*const sqlQuery = `
+  /*   const sqlQuery = `
       SELECT posts.id, posts.content, users.first_name, users.last_name, users.major, posts.category, 
         (SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS commentsCount,
         (SELECT COUNT(*) FROM reactions WHERE reactions.post_id = posts.id AND value = 1) AS likesCount,
@@ -88,7 +85,7 @@ export async function GET(request) {
   // `;
 
   const sqlQuery = `
-    SELECT posts.id,posts.content, posts.created_at,
+    SELECT posts.id,posts.content, posts.created_at, posts.category,
       users.id AS user_id, users.first_name, users.last_name, users.major,
       COUNT(CASE WHEN reactions.value = 0 THEN 1 END) AS dislikesCount,
 
@@ -125,8 +122,6 @@ export async function GET(request) {
         )FROM comments JOIN users cu ON comments.user_id = cu.id
         WHERE comments.post_id = posts.id AND is_deleted = 0
       ) AS comments,
-
-        posts.category,
 
       CASE
         WHEN posts.category = 'tutor' THEN (

@@ -14,7 +14,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-const FeedClient = ({section}) => {
+const FeedClient = ({ section }) => {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState(''); // State to manage filter
   const [showAddPost, setShowAddPost] = useState(false);
@@ -33,12 +33,17 @@ const FeedClient = ({section}) => {
     fetchPosts(filter);
   }, [filter]);
 
-  const handleNewPostClick = () => {
-    setShowAddPost(true); // 👈 Show the AddPost component
-    setTimeout(() => {
-      addPostRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100); // Slight delay ensures rendering before scroll
+  const handlePostAdded = () => {
+    fetchPosts();      // ✅ refresh posts
+    setShowAddPost(false);    // ✅ close dialog
   };
+
+  // const handleNewPostClick = () => {
+  //   setShowAddPost(true); // 👈 Show the AddPost component
+  //   setTimeout(() => {
+  //     addPostRef.current?.scrollIntoView({ behavior: "smooth" });
+  //   }, 100); // Slight delay ensures rendering before scroll
+  // };
 
   return (
     <div className="w-full p-4">
@@ -54,12 +59,12 @@ const FeedClient = ({section}) => {
           MyMajor
         </Button>
 
-        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => {setFilter('friends')}} >
+        <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => { setFilter('friends') }} >
           <User className="cursor-pointer w-4 h-4 mr-1" />
           MyFeed
         </Button>
 
-        <Dialog>
+        <Dialog open={showAddPost} onOpenChange={setShowAddPost}>
           <DialogTrigger asChild>
             <Button
               variant="default"
@@ -75,12 +80,12 @@ const FeedClient = ({section}) => {
             <DialogHeader>
               <DialogTitle>Create a New Post</DialogTitle>
             </DialogHeader>
-            <AddPost onPostAdded={fetchPosts} />
+            <AddPost onPostAdded={handlePostAdded} />
           </DialogContent>
         </Dialog>
 
       </div>
-      {posts.map((post,index) => (
+      {posts.map((post, index) => (
         <Post
           key={index}
           post={post}
