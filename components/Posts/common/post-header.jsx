@@ -109,20 +109,38 @@ export default function Header({ headerInfo }) {
                </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-               <DropdownMenuItem onClick={onReport}>Report</DropdownMenuItem>
+
+               <DropdownMenuItem
+                  onClick={() => {
+                     document.activeElement?.blur();        // ✅ close dropdown safely
+                     setTimeout(() => setIsReportOpen(true), 50); // ✅ slight delay = Radix-safe
+                  }}
+               >
+                  Report
+               </DropdownMenuItem>
+
 
                {isAuthor && (
                   <>
                      <DropdownMenuSeparator />
-                     <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
+                     <DropdownMenuItem
+                        onClick={onDelete}
+                        className="text-destructive focus:text-destructive"
+                     >
                         Delete post
                      </DropdownMenuItem>
                   </>
                )}
             </DropdownMenuContent>
          </DropdownMenu>
-         
-         <Report isOpen={isReportOpen} onClose={(open) => setIsReportOpen(open)} postId={post_id} />
+
+         <Report
+            postId={post_id}
+            isOpen={isReportOpen}
+            onClose={(val) => setIsReportOpen(val)}
+         />
+
+
       </div>
    )
 }
