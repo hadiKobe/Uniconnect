@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useSession } from "next-auth/react"
+import { useState } from "react"
+import Report from "@/components/Posts/Report"
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -12,10 +14,6 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-const onReport = () => {
-   alert("Reported");
-}
 
 // Function to get badge variant based on post type
 const getPostTypeBadgeVariant = (type) => {
@@ -55,14 +53,20 @@ const postTypeEmoji = {
 export default function Header({ headerInfo }) {
    const { post_id, user_id, first_name, last_name, major, created_at, post_type = "general" } = headerInfo;
    const publishedAt = new Date(created_at);
+   const timeAgo = formatDistanceToNow(publishedAt, { addSuffix: true })
 
    const { data: session } = useSession()
    const currentUserId = parseInt(session?.user?.id)
    const isAuthor = currentUserId === user_id
-   const timeAgo = formatDistanceToNow(publishedAt, { addSuffix: true })
-   
+
    const badgeVariant = getPostTypeBadgeVariant(post_type)
    const badgeStyles = getBadgeStyles(badgeVariant)
+
+   const [isReportOpen, setIsReportOpen] = useState(false);
+   const onReport = () => {
+      document.activeElement?.blur(); // ✅ Remove focus from the dropdown trigger
+      setIsReportOpen(true);
+   }
 
    const onDelete = () => {
       const path = `/api/posts/delete/${post_id}`;
@@ -86,7 +90,7 @@ export default function Header({ headerInfo }) {
                <div className="flex items-center gap-2">
                   <h3 className="font-medium">{`${first_name} ${last_name}`}</h3>
                   <Badge className={`text-xs font-medium ${badgeStyles}`} variant="outline">
-                     {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General" }
+                     {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General"}
                   </Badge>
                </div>
                <div className="flex items-center text-sm text-muted-foreground">
@@ -117,6 +121,8 @@ export default function Header({ headerInfo }) {
                )}
             </DropdownMenuContent>
          </DropdownMenu>
+         
+         <Report isOpen={isReportOpen} onClose={(open) => setIsReportOpen(open)} postId={post_id} />
       </div>
    )
 }
