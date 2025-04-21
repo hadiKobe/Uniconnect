@@ -25,7 +25,6 @@ export default function LeftSide() {
   const { data: session, status } = useSession();
   
 
-
   const userName =
     session?.user?.name || `${session?.user?.first_name ?? "User"}`;
   const userMajor = session?.user?.major || "Unknown Major";

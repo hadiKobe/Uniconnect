@@ -7,7 +7,7 @@ import { SuggestedFriendsSection } from "./suggested"
 import { useSession } from "next-auth/react"
 import { SentRequestsSection } from "./sent"
 
-export function FriendsPage() {
+export function FriendsContent() {
   const { data: session } = useSession()
   const userID = session?.user?.id
 
