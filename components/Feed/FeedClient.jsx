@@ -38,12 +38,7 @@ const FeedClient = ({ section }) => {
     setShowAddPost(false);    // ✅ close dialog
   };
 
-  // const handleNewPostClick = () => {
-  //   setShowAddPost(true); // 👈 Show the AddPost component
-  //   setTimeout(() => {
-  //     addPostRef.current?.scrollIntoView({ behavior: "smooth" });
-  //   }, 100); // Slight delay ensures rendering before scroll
-  // };
+
 
   return (
     <div className="w-full p-4">
