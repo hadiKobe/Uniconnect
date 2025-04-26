@@ -4,9 +4,9 @@ import TutorBody from "./body/tutor-body"
 import MarketBody from "./body/market-body"
 import JobBody from "./body/job-body"
 import Footer from "./common/post-footer"
-import CommentSection from "./common/comments-section/comment-section"
 
 const Post = ({ post }) => {
+
   const header = {
     post_id: post.id,
     user_id: post.user_id,
@@ -20,18 +20,14 @@ const Post = ({ post }) => {
     content: post.content,
   };
   const bottom = {
-    postId: post.id,
-    likeCount: post.likes.length,
-    dislikeCount: post.dislikesCount,
-    userReaction: post.currentUserReaction,
-    commentCount: post.comments.length,
-  };
-  const commentSection = {
     post_id: post.id,
     user_id: post.user_id,
-    comments: post.comments,
-  }
-
+    likesCount: post.likesCount,
+    dislikesCount: post.dislikesCount,
+    userReaction: post.currentUserReaction,
+    commentsCount: post.commentsCount,
+  };
+  
   let categoryDetails = {};
   switch (post.category) {
     case "tutor":
@@ -81,7 +77,6 @@ const Post = ({ post }) => {
       <GeneralBody bodyInfo={body} />
       {SpecificBody}
       <Footer bottomInfo={bottom} />
-      <CommentSection commentsInfo={commentSection} />
     </div>
   );
 };

@@ -23,7 +23,7 @@ const FeedClient = ({ section }) => {
 
   const fetchPosts = async (filter = '') => {
     let filteredPath = filter ? `${path}&filter=${filter}` : path;
-    fetch(filteredPath)
+    await fetch(filteredPath)
       .then((res) => res.json())
       .then((data) => setPosts(data))
       .catch((err) => console.error(err));

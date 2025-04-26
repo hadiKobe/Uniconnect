@@ -28,7 +28,7 @@ export default function CommentSection({ commentsInfo }) {
     try {
       // Call the onAddComment callback with the new comment
       if (onAddComment) {
-        await onAddComment()
+        onAddComment()
       }
 
       // Clear the input field after successful submission
@@ -47,7 +47,6 @@ export default function CommentSection({ commentsInfo }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ post_id, content: newComment })
     });
-
     if (res.ok)
       console.log(`${type} added successfully`);
 
