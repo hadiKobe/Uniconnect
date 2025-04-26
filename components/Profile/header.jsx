@@ -4,9 +4,11 @@ import { Mail, MapPin, Calendar, GraduationCap, Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
+import { useSession } from "next-auth/react"
 export function ProfileHeader({ student }) {
-  const friends = 10;
+
+  const { data: session } = useSession()
+  const userID = session?.user?.id
 
   return (
     <Card>
@@ -35,7 +37,9 @@ export function ProfileHeader({ student }) {
                   </h1>
                   <p className="text-muted-foreground">{student.major || "Student"}</p>
                 </div>
+                {userID == student.id && ( // ✅ Only show Edit if same user
                 <Button>Edit Profile</Button>
+              )}
               </div>
             </div>
 
@@ -72,11 +76,7 @@ export function ProfileHeader({ student }) {
             </div>
 
             <div className="flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-1">
-                <Users className="h-4 w-4" />
-                <span className="font-medium">{friends}</span>
-                <span className="text-muted-foreground">Friends</span>
-              </div>
+
               <span className="text-muted-foreground">
                 Joined {student.joined_at?.split("T")[0] || "Unknown"}
               </span>

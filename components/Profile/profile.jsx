@@ -3,12 +3,16 @@
 import { useState, useEffect } from "react";
 import { ProfileHeader } from "@/components/Profile/header";
 import Posts from "./posts";
+import { FriendsCard } from "./friends";
+import { useGetFriends } from "@/app/hooks/Friends/getFriends";
+import { GraduationProgressCard } from "./progress";
+import { useSession } from "next-auth/react"
 
 const Profile = ({ userID }) => {
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  console.log("Received userID:", userID);
+  const { friends, loading: friendsLoading } = useGetFriends(userID);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,14 +30,27 @@ const Profile = ({ userID }) => {
     if (userID) fetchData();
   }, [userID]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading profile info...</p>;
   if (!student) return <p>No student data found.</p>;
 
   return (
-    <div className="space-y-6">
-      <ProfileHeader student={student} />
-      <Posts userId={userID} />
-    </div>
+    <div className="container max-w-4xl mx-auto py-6 px-4 md:px-6">
+      <div className="grid gap-6">
+        <ProfileHeader student={student} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <GraduationProgressCard
+            progress={student.graduation_progress}
+            graduationYear={student.expected_graduation_date}
+          />
+          {friendsLoading ? (
+            <p>Loading friends...</p>
+          ) : (
+            <FriendsCard friends={friends} />
+          )}
+        </div>
+        <Posts userId={userID} />
+      </div>
+    </div> // ✅ Closing outer <div> was missing
   );
 };
 
