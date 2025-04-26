@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Bell, Home, Menu, MessageSquare, Search, User, Users } from "lucide-react"
 
@@ -11,16 +12,46 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export default function Navbar() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   // Handle search form submission
   const handleSearch = (e) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      console.log("Searching for:", searchQuery)
       // Navigate or filter logic here
+      router.push(`/Search?term=${searchQuery}`);
     }
   }
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (searchQuery.trim() === "")
+        return setSuggestions([]);
+
+      setLoading(true);
+      const path = `/api/search/user/suggestions?term=${searchQuery}`;
+      try {
+
+        await fetch(path)
+          .then(res => res.json())
+          .then(data => setSuggestions(data))
+          .catch(err => console.error(err));
+
+      } catch (error) {
+        console.error('Failed to Fetch suggestions:', error);
+      }
+      setLoading(false);
+    };
+
+    const debounce = setTimeout(() => {
+      fetchSuggestions();
+    },500);
+
+    return () => clearTimeout(debounce);
+  }, [searchQuery]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
@@ -83,9 +114,9 @@ export default function Navbar() {
 
 
           {/* Messages button (desktop only) */}
-         
 
-       
+
+
           {/* Avatar */}
           <Avatar className="h-8 w-8 block md:hidden">
             <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />

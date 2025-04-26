@@ -9,7 +9,7 @@ export async function GET(request) {
    const userId = 14; // For testing purposes, replace with actual user ID from session
 
    const { searchParams } = new URL(request.url);
-   const q = searchParams.get('query');
+   const q = searchParams.get('term');
    if (!q) {
       return Response.json({ users: [] });
    }
