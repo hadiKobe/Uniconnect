@@ -20,7 +20,7 @@ export async function GET(request) {
          (SELECT COUNT(*) FROM connections AS c1 JOIN connections AS c2 ON c1.friend_id = c2.friend_id
          WHERE c1.user_id = ? AND c2.user_id = users.id) AS mutualFriendsCount
       FROM users
-      WHERE (users.first_name LIKE ? OR users.last_name LIKE ?)
+      WHERE (users.first_name LIKE ? OR users.last_name LIKE ?) AND users.id != ?
 
       ORDER BY 
       CASE 
@@ -30,9 +30,9 @@ export async function GET(request) {
       END,
       mutualFriendsCount DESC
 
-      LIMIT 5;
+      LIMIT 10;
    `;
-   const params = [userId, `${q}%`, `${q}%`, `${q}%`, `${q}%`];
+   const params = [userId, `${q}%`, `${q}%`, userId,`${q}%`, `${q}%`];
    
 
    // const sqlQuery = `
@@ -47,9 +47,9 @@ export async function GET(request) {
 
    try {
       const results = await query(sqlQuery, params);
-      return Response.json({ users: results });
+      console.log("Results:", results); // Debugging line to check the results
+      return Response.json( {users : results} );
    } catch (error) {
       return Response.json({ error: "Internal Server Error" }, { status: 500 });
-
    }
 }

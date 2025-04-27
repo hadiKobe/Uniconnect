@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import DropdownMenu from "./dropdown-suggestion"
 import { Bell, Home, Menu, MessageSquare, Search, User, Users } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -13,6 +14,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
+  // suggestion = {id, name, profile_picture, mutualFriendsCount}
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -32,12 +34,12 @@ export default function Navbar() {
         return setSuggestions([]);
 
       setLoading(true);
-      const path = `/api/search/user/suggestions?term=${searchQuery}`;
+      const path = `/api/search/user/suggestion?term=${searchQuery}`;
       try {
 
         await fetch(path)
           .then(res => res.json())
-          .then(data => setSuggestions(data))
+          .then(data => setSuggestions(data.users))
           .catch(err => console.error(err));
 
       } catch (error) {
@@ -48,7 +50,7 @@ export default function Navbar() {
 
     const debounce = setTimeout(() => {
       fetchSuggestions();
-    },500);
+    }, 1000);
 
     return () => clearTimeout(debounce);
   }, [searchQuery]);
@@ -109,6 +111,15 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+              {searchQuery && (
+                <DropdownMenu
+                  suggestions={suggestions}
+                  loading={loading}
+                  onClose={() => setSearchQuery("")}
+                  searchQuery={searchQuery}
+                />
+              )}
+
             </form>
           </div>
 

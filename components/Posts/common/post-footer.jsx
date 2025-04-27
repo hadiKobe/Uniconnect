@@ -14,7 +14,6 @@ export default function Footer({ bottomInfo }) {
    const [comments, setComments] = useState([]);
    const [loadingComments, setLoadingComments] = useState(false);
 
-
    useEffect(() => {
       if (userReaction === 1) {
          setLiked(true);
@@ -74,10 +73,6 @@ export default function Footer({ bottomInfo }) {
       setShowComments(prev => !prev);
 
    };
-
-   useEffect(() => {
-      console.log(comments);
-   }, [comments]);
 
    return (
       <div className="flex flex-col w-full">

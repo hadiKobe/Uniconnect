@@ -10,16 +10,16 @@ export async function POST(request) {
       }
 
       const body = await request.json();
-      const { postId, reaction } = body;
+      const { post_id, reaction } = body;
       const userId = session.user.id;
 
 
       // used for testing in postman only
-      // const { userId, postId, reaction } = body;
+      // const { userId, post_id, reaction } = body;
 
       // Check if a reaction already exists
       const checkQuery = `SELECT id,value FROM reactions WHERE user_id = ? AND post_id = ?`;
-      const existing = await query(checkQuery, [userId, postId]);
+      const existing = await query(checkQuery, [userId, post_id]);
 
       let result;
 
@@ -30,11 +30,11 @@ export async function POST(request) {
 
          // If exists, update the value to 1
          const updateQuery = `UPDATE reactions SET value = ? WHERE user_id = ? AND post_id = ?`;
-         result = await query(updateQuery, [reaction, userId, postId]);
+         result = await query(updateQuery, [reaction, userId, post_id]);
       } else {
          // If not, insert a new reaction
          const insertQuery = `INSERT INTO reactions (user_id, post_id, value) VALUES (?, ?, ?)`;
-         result = await query(insertQuery, [userId, postId, reaction]);
+         result = await query(insertQuery, [userId, post_id, reaction]);
       }
 
       return Response.json({ message: `${reaction ? 'Like' : 'Dislike'} saved successfully!` });
