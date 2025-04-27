@@ -5,7 +5,7 @@ import LeftSide from "@/components/Left/left"
 
 export default function FeedLayout({ children }) {
   return (
-    <>
+    <div>
       {/* Sticky Top Navbar */}
       <div className="sticky top-0 z-500 w-full bg-white">
         <Navbar />
@@ -16,10 +16,8 @@ export default function FeedLayout({ children }) {
         <LeftSide />
       </div>
 
-      {/* Main content with margin to avoid overlap */}
-      <main>
-        {children}
-      </main>
-    </>
+      {children}
+
+    </div>
   )
 }

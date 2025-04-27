@@ -10,8 +10,7 @@ import {
   DialogTrigger,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-  DialogClose,
+  DialogTitle
 } from "@/components/ui/dialog";
 
 const FeedClient = ({ section }) => {
@@ -38,15 +37,9 @@ const FeedClient = ({ section }) => {
     setShowAddPost(false);    // ✅ close dialog
   };
 
-  // const handleNewPostClick = () => {
-  //   setShowAddPost(true); // 👈 Show the AddPost component
-  //   setTimeout(() => {
-  //     addPostRef.current?.scrollIntoView({ behavior: "smooth" });
-  //   }, 100); // Slight delay ensures rendering before scroll
-  // };
-
   return (
-    <div className="w-full p-4">
+    <div className="w-full max-w-4xl p-4">
+
       {/* Filters + New Post */}
       <div className="flex flex-wrap justify-center items-center gap-1 md:gap-2 mb-4 sticky top-0 z-49">
         <Button variant="ghost" size="sm" className="cursor-pointer rounded-full text-sm font-medium" onClick={() => setFilter('')}  >
@@ -85,12 +78,14 @@ const FeedClient = ({ section }) => {
         </Dialog>
 
       </div>
+
       {posts.map((post, index) => (
         <Post
           key={index}
           post={post}
         />
       ))}
+      
     </div>
   );
 };

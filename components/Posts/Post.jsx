@@ -72,7 +72,7 @@ const Post = ({ post }) => {
   }
 
   return (
-    <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-lg mx-auto my-4">
+    <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-2xl mx-auto my-4">
       <Header headerInfo={header} />
       <GeneralBody bodyInfo={body} />
       {SpecificBody}
