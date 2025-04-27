@@ -20,9 +20,11 @@ import {
   LogOut,
 } from "lucide-react";
 import { useState, useEffect } from "react"
+import { useUnreadNotifications } from "@/hooks/notifications/UseCountUnRead";
 
 export default function LeftSide() {
   const { data: session, status } = useSession();
+  const { count } = useUnreadNotifications(); // Fetch unread notifications count
   
 
   const userName =
@@ -112,7 +114,9 @@ export default function LeftSide() {
           <li>
             <Link href="/notifications" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <Bell className="h-4 w-4" /> Notifications
-              <Badge className="ml-auto bg-primary text-xs">12</Badge>
+              {count > 0 && (
+                <Badge className="ml-auto  shrink-0 bg-primary text-xs">{count}</Badge>
+              )}
             </Link>
           </li>
         </ul>

@@ -11,11 +11,23 @@ export async function GET(request) {
 
     const userId = session.user.id;
 
+
     const sqlQuery = `
-      SELECT * FROM notifications
-      WHERE to_user_id = ?
-      ORDER BY created_at DESC
+      SELECT 
+        notifications.id,
+        notifications.message,
+        notifications.link,
+        notifications.type,
+        notifications.is_read,
+        notifications.created_at,
+        CONCAT(users.first_name, ' ', users.last_name) AS name,
+        users.profile_picture
+      FROM notifications
+      JOIN users ON users.id = notifications.from_user_id
+      WHERE notifications.to_user_id = ?
+      ORDER BY notifications.created_at DESC
     `;
+
     const notifications = await query(sqlQuery, [userId]);
 
     if (notifications.length === 0) {
@@ -23,7 +35,7 @@ export async function GET(request) {
     }
 
     return Response.json({ notifications });
-    
+
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Failed to fetch notifications." }, { status: 500 });
