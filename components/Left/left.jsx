@@ -22,7 +22,6 @@ import {
 import { useState, useEffect } from "react"
 import { useUnreadNotifications } from "@/hooks/notifications/UseCountUnRead";
 
-import {link} from "next/link"
 export default function LeftSide() {
   const { data: session, status } = useSession();
   const { count } = useUnreadNotifications(); // Fetch unread notifications count
