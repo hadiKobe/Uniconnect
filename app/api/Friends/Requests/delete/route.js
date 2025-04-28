@@ -9,17 +9,40 @@ export async function DELETE(request) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { requestId } = await request.json(); // ✅ destructure correctly
+    const userId = session.user.id;
 
-    const sqlQuery = `
-      DELETE FROM friend_requests 
-      WHERE id = ?
-    `;
-    await query(sqlQuery, [requestId]);
+    // ✅ Get data from the BODY instead of URL
+    const { friendId, requestId } = await request.json();
 
-    return Response.json({ message: "Friend request deleted successfully." });
+    if (!friendId && !requestId) {
+      return Response.json({ error: "Missing friendId or requestId" }, { status: 400 });
+    }
+
+    if (requestId) {
+      // ✅ Cancel directly by request ID
+      const deleteRequest = `
+        DELETE FROM friend_requests
+        WHERE id = ?
+      `;
+      await query(deleteRequest, [requestId]);
+      return Response.json({ message: "Friend request canceled successfully." });
+    }
+
+    if (friendId) {
+      // ✅ Cancel friend request between two users
+      const deleteFriendRequest = `
+        DELETE FROM friend_requests
+        WHERE 
+          (sender_id = ? AND receiver_id = ?)
+          OR
+          (sender_id = ? AND receiver_id = ?)
+      `;
+      await query(deleteFriendRequest, [userId, friendId, friendId, userId]);
+      return Response.json({ message: "Friend request canceled successfully." });
+    }
+
   } catch (error) {
-    console.error("Error deleting friend request:", error);
-    return Response.json({ error: "Failed to delete request." }, { status: 500 });
+    console.error("Error canceling friend request:", error);
+    return Response.json({ error: "Failed to cancel friend request." }, { status: 500 });
   }
 }

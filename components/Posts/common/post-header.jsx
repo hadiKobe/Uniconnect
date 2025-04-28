@@ -14,7 +14,7 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
+ import Link from "next/link"
 // Function to get badge variant based on post type
 const getPostTypeBadgeVariant = (type) => {
    switch (type?.toLowerCase()) {
@@ -88,7 +88,9 @@ export default function Header({ headerInfo }) {
             </Avatar>
             <div>
                <div className="flex items-center gap-2">
+                  <Link href={`/Profile/${user_id}`} prefetch={false} className="text-sm font-medium truncate hover:underline">
                   <h3 className="font-medium">{`${first_name} ${last_name}`}</h3>
+                  </Link>
                   <Badge className={`text-xs font-medium ${badgeStyles}`} variant="outline">
                      {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General"}
                   </Badge>

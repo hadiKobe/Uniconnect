@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import Link from "next/link";
 export function FriendItem({ friend, actions }) {
   const getInitials = () => {
     const first = friend.first_name?.charAt(0) || "";
     const last = friend.last_name?.charAt(0) || "";
-    return (first + last).toUpperCase();
+    return (first + last);
   };
 
   return (
@@ -15,9 +15,12 @@ export function FriendItem({ friend, actions }) {
           <AvatarFallback>{getInitials()}</AvatarFallback>
         </Avatar>
         <div>
+        <Link href={`/Profile/${friend.id}`} prefetch={false} className="text-sm font-medium truncate hover:underline">
+
           <p className="font-medium">
             {friend.first_name} {friend.last_name}
           </p>
+          </Link>
         </div>
       </div>
       {actions}

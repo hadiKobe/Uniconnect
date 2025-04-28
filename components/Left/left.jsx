@@ -20,10 +20,11 @@ import {
   LogOut,
 } from "lucide-react";
 import { useState, useEffect } from "react"
-
+import {link} from "next/link"
 export default function LeftSide() {
   const { data: session, status } = useSession();
-  
+  const userId = session?.user?.id;
+
 
   const userName =
     session?.user?.name || `${session?.user?.first_name ?? "User"}`;
@@ -62,7 +63,9 @@ export default function LeftSide() {
               <AvatarFallback>{userName?.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="text-center">
+            <Link href={`/Profile/${userId}`} prefetch={false} className="text-sm font-medium truncate hover:underline">
               <h3 className="font-medium">{userName}</h3>
+              </Link>
               <p className="text-xs text-muted-foreground">{userMajor}</p>
               <Badge variant="outline" className="mt-1 text-xs">Student</Badge>
             </div>
