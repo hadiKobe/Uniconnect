@@ -20,7 +20,7 @@ if (!session) {
 
 
   const filters = {
-    user_id: params?.userId,
+    user_id: (await params)?.userId,
     // user_id: session.user.id,
     
     major: session.user.major

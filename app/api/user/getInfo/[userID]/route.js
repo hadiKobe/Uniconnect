@@ -9,7 +9,7 @@ export async function GET(_request, { params }) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userID = params?.userID;
+    const userID = (await params)?.userID;
 
     if (!userID) {
       return Response.json({ error: "Missing user ID" }, { status: 400 });
