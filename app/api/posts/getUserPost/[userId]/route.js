@@ -27,7 +27,7 @@ if (!session) {
   };
 
   // conditions
-  const conditions = ['posts.is_deleted = 0'];
+  const conditions = ['posts.is_deleted = 0', 'posts.user_id = ?'];
   const sqlparams = [filters.user_id];
   if (filter)
     switch (filter) {
@@ -53,7 +53,9 @@ if (!session) {
 
     conditions.push('posts.category = ?');
     sqlparams.push(section);
+
   }
+  sqlparams.push(filters.user_id);
 
 
 

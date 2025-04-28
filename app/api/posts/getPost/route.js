@@ -5,10 +5,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(request) {
-  // const session = await getServerSession(authOptions);
-  // if (!session) {
-  //   return Response.json({ error: "Unauthorized" }, { status: 401 });
-  // }
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { searchParams } = new URL(request.url);
   // filters : friends, major
@@ -17,15 +17,15 @@ export async function GET(request) {
   const section = searchParams.get("section") || "";
 
   const sections = ['job', 'market', 'tutor'];
-  // const filters = {
-  //   user_id: session.user.id,
-  //   major: session.user.major
-  // };
-
   const filters = {
-    user_id: 14,
-    major: 'Psychology'
+    user_id: session.user.id,
+    major: session.user.major
   };
+
+  // const filters = {
+  //   user_id: 14,
+  //   major: 'Psychology'
+  // };
 
   // conditions
   const conditions = ['posts.is_deleted = 0'];
@@ -157,10 +157,11 @@ export async function GET(request) {
     GROUP BY posts.id, posts.content, posts.category, posts.created_at, users.id, users.first_name, users.last_name, users.major
     ORDER BY posts.created_at DESC;
 `;
+//console.log(sqlQuery, params);
 
   try {
     const result = await query(sqlQuery, params);
-    // console.log(result);
+     //console.log(result);
     const posts = result.map((post) => {
       return createPostInstance(post);
     });

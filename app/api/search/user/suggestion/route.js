@@ -1,12 +1,13 @@
 import { query } from "@/lib/db";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 export async function GET(request) {
-   // const session = await getServerSession(authOptions);
-   // if (!session) {
-   //   return Response.json({ error: "Unauthorized" }, { status: 401 });
-   // }
-   // const userId = session.user.id;
-   const userId = 14; // For testing purposes, replace with actual user ID from session
+   const session = await getServerSession(authOptions);
+   if (!session) {
+     return Response.json({ error: "Unauthorized" }, { status: 401 });
+   }
+   const userId = session.user.id;
+   //const userId = 14; // For testing purposes, replace with actual user ID from session
 
    const { searchParams } = new URL(request.url);
    const q = searchParams.get('term');

@@ -29,14 +29,14 @@ export async function POST(request) {
          result = await query(updateQuery, [reaction, userId, post_id]);
       } else {
          const insertQuery = `INSERT INTO reactions (user_id, post_id, value) VALUES (?, ?, ?)`;
-         result = await query(insertQuery, [userId, postId, reaction]);
+         result = await query(insertQuery, [userId, post_id, reaction]);
       }
 
       // Only after successful insert/update
       if (result && result.affectedRows > 0 && reaction === 1) {
          // 1. Find the post owner
          const postQuery = `SELECT user_id FROM posts WHERE id = ?`;
-         const postResult = await query(postQuery, [postId]);
+         const postResult = await query(postQuery, [post_id]);
 
          if (postResult.length > 0) {
             const postOwnerId = postResult[0].user_id;
@@ -47,7 +47,7 @@ export async function POST(request) {
                   userId,                     // From user (liker)
                   postOwnerId,                 // To user (post owner)
                   "liked your post",           // Message
-                  `/post/${postId}`,            // Link to the post
+                  `/post/${post_id}`,            // Link to the post
                   "like"                        // Type
                );
             }
