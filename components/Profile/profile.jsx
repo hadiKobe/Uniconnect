@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { ProfileHeader } from "@/components/Profile/header";
 import Posts from "./posts";
 import { FriendsCard } from "./friends";
-import { useGetFriends } from "@/app/hooks/Friends/getFriends";
+import { useGetFriends } from "@/hooks/Friends/getFriends";
 import { GraduationProgressCard } from "./progress";
 import { useSession } from "next-auth/react"
 

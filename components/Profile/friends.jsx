@@ -4,10 +4,10 @@ import { Users, UserPlus, MessageSquare , X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSendFriendRequest } from "@/app/hooks/Friends/addFriend";
-import { useBulkFriendCheck } from "@/app/hooks/Friends/bulkCheckFriends";
+import { useSendFriendRequest } from "@/hooks/Friends/addFriend";
+import { useBulkFriendCheck } from "@/hooks/Friends/bulkCheckFriends";
 import { useSession } from "next-auth/react";
-import { useCancelFriendRequest } from "@/app/hooks/Friends/request/cancel";
+import { useCancelFriendRequest } from "@/hooks/Friends/request/cancel";
 import {  useState } from "react";
 import Link from "next/link";
 

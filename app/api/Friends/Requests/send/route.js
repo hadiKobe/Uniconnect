@@ -34,9 +34,13 @@ export async function POST(request) {
     // Check if a declined request exists
     const checkDeclined = `
       SELECT id FROM friend_requests 
-      WHERE sender_id = ? AND receiver_id = ? AND status = 'declined'
+      WHERE (
+        (sender_id = ? AND receiver_id = ?) 
+        OR (sender_id = ? AND receiver_id = ?)
+      ) AND status = 'declined'
     `;
-    const declined = await query(checkDeclined, [userId, friendId]);
+    const declined = await query(checkDeclined, [userId, friendId, friendId, userId]);
+
     if (declined.length > 0) {
       // If declined exists, update it to pending
       const updateQuery = `

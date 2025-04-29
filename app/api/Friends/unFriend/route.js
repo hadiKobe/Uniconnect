@@ -12,15 +12,24 @@ export async function DELETE(request) {
     const userId = session.user.id;
     const { friendId } = await request.json();
 
-    const sqlQuery = `
+    // ✅ Step 1: Remove friendship from connections
+    const deleteConnectionQuery = `
       DELETE FROM connections 
       WHERE (user_id = ? AND friend_id = ?)
          OR (user_id = ? AND friend_id = ?)
     `;
+    await query(deleteConnectionQuery, [userId, friendId, friendId, userId]);
 
-    await query(sqlQuery, [userId, friendId, friendId, userId]);
+    // ✅ Step 2: Remove any friend request between the users (pending/declined/accepted)
+    const deleteRequestQuery = `
+      DELETE FROM friend_requests 
+      WHERE (sender_id = ? AND receiver_id = ?) 
+         OR (sender_id = ? AND receiver_id = ?)
+    `;
+    await query(deleteRequestQuery, [userId, friendId, friendId, userId]);
 
-    return Response.json({ message: "Friend removed successfully." });
+    return Response.json({ message: "Friend and related requests removed successfully." });
+
   } catch (error) {
     console.error("Error removing friend:", error);
     return Response.json({ error: "Failed to remove friend." }, { status: 500 });

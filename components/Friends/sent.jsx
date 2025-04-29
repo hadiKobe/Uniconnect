@@ -1,23 +1,46 @@
-"use client"
+"use client";
 
-import { Check, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FriendItem } from "@/components/Friends/friendItem"
+import { useState } from "react";
+import { X , XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FriendItem } from "@/components/Friends/friendItem";
+import { useCancelFriendRequest } from "@/hooks/Friends/request/cancel";
+import { Badge } from "@/components/ui/badge";
 
-export function SentRequestsSection({ requests, onDelete }) {
+export function SentRequestsSection({ requests }) {
+  const { cancelFriendRequest } = useCancelFriendRequest();
+  const [statuses, setStatuses] = useState({});
+  const [loadingId, setLoadingId] = useState(null);
+
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const onDelete = async (id) => {
+    try {
+      setLoadingId(id);
+      await cancelFriendRequest({ requestId: id }); // 👈 pass object not just id
+      await sleep(1000);
+      setStatuses((prev) => ({
+        ...prev,
+        [id]: "cancelled",
+      }));
+    } catch (err) {
+      alert(err.message || "Failed to cancel friend request.");
+    } finally {
+      setLoadingId(null);
+    }
+  };
+  
 
   return (
     <Card>
-        <CardHeader className="relative">
+      <CardHeader className="relative">
         <div className="flex items-center gap-2">
-            <CardTitle>Sent Requests</CardTitle>
-            
+          <CardTitle>Sent Requests</CardTitle>
         </div>
-
-
         <CardDescription>Friend Requests sent by you</CardDescription>
       </CardHeader>
+
       <CardContent>
         {requests.length > 0 ? (
           <div className="grid gap-4">
@@ -26,13 +49,32 @@ export function SentRequestsSection({ requests, onDelete }) {
                 key={friend.request_id}
                 friend={friend}
                 actions={
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => onDelete(friend.request_id)}>
-                      <X className="h-4 w-4 mr-1" />
-                      
-                    </Button>
-                    
+                
+                  statuses[friend.request_id] === "cancelled" ? (
+                    <div className="h-8 w-8 flex items-center justify-center">
+                    <XCircle className="h-4 w-4 text-red-500" />
                   </div>
+                  
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={loadingId === friend.request_id}
+                      onClick={() => onDelete(friend.request_id)}
+                      className="relative"
+                    >
+                      {loadingId === friend.request_id && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-black" />
+                        </div>
+                      )}
+                      <span className={loadingId === friend.request_id ? "invisible" : "flex items-center"}>
+                        <X className="h-4 w-4 mr-1" />
+                      </span>
+                    </Button>
+                  )
+                  
+                  
                 }
               />
             ))}
@@ -44,5 +86,5 @@ export function SentRequestsSection({ requests, onDelete }) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

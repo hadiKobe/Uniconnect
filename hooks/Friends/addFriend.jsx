@@ -7,7 +7,7 @@ import { useState } from "react";
 export function useSendFriendRequest() {
   const [loading, setLoading] = useState(false);
 
-  const sendFriendRequest = async (friendId) => {   // ✅ rename here
+  const sendFriendRequest = async (friendId) => {   
     setLoading(true);
     try {
       const response = await fetch(`/api/Friends/Requests/send`, {
