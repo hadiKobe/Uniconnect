@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-
+import { uploadMedia } from "@/lib/supaBase/storage";
 export function AddPost({onPostAdded}) {
   const [postType, setPostType] = useState("general");
   const [mediaFiles, setMediaFiles] = useState([]);
@@ -94,31 +94,47 @@ export function AddPost({onPostAdded}) {
         return;
     }
   
-    // ✅ Prepare form data for formidable (supports file upload)
-    const formData = new FormData();
-    formData.append("description", description);
-    formData.append("category", category);
-    formData.append("details", JSON.stringify(details));
-  
-    mediaFiles.forEach((file) => {
-      formData.append("media", file); // multiple files under the same key
-    });
-  
     try {
+      const uploadedMediaUrls = [];
+
+      for (const file of mediaFiles) {
+        const uploadResult = await uploadMedia(file, 'posts');
+
+        if (!uploadResult || !uploadResult.publicUrl) {
+          throw new Error("Failed to upload media.");
+        }
+
+        uploadedMediaUrls.push(uploadResult.publicUrl);
+      }
+
+      
+
+  
+      // ✅ Step 2: Prepare final form data (with Supabase URLs)
+      const payload = {
+        description,
+        category,
+        details,
+        mediaUrls: uploadedMediaUrls,  // Now sending URLs, not files
+      };
+  
+      // ✅ Step 3: Send to your API
       const res = await fetch("/api/posts/add", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
   
       if (res.ok) {
         alert("Post submitted successfully!");
   
-        // ✅ Clean up previews and state
+        // Clean up previews and state
         mediaPreviews.forEach((url) => URL.revokeObjectURL(url));
         setMediaPreviews([]);
         setMediaFiles([]);
         onPostAdded();
-        // Optional: clear form fields manually here if needed
       } else {
         const error = await res.json();
         alert("Error: " + (error?.error || "Something went wrong."));
@@ -128,7 +144,6 @@ export function AddPost({onPostAdded}) {
       alert("Failed to submit post.");
     }
   };
-  
 
   return (
     <Card className="w-full max-w-3xl mx-auto border-0 shadow-none">
