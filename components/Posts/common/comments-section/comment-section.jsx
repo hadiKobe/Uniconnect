@@ -29,24 +29,22 @@ export default function CommentSection({ commentsInfo }) {
     if (!newComment.trim()) return;
 
     const added = await fetchAddComment(post_id, newComment);
-    console.log(added[0]);
     if (added) {
       setCommentsArray((prev) => [...prev, added[0]]); // ✅ no need to manually build it
       setNewComment("");
       setIsExpanded(true);
-      console.log(commentsArray);
     }
   };
 
 
-  const handleDeleteComment = (commentId) => {
-    setCommentsArray((prev) => prev.filter((c) => c.id !== commentId));
-  };
+  const handleDeleteComment = (commentId) => setCommentsArray((prev) => prev.filter((c) => c.id !== commentId));
+  ;
 
   useEffect(() => {
     if (success) toast.success("Comment added successfully");
-    else if (error) toast.error(error || "Comment was not added.");
+    if (error) toast.error(error || "Comment was not added.");
   }, [success, error]);
+
 
   return (
     <div className="pt-2 w-full">
@@ -71,7 +69,7 @@ export default function CommentSection({ commentsInfo }) {
 
       {isExpanded && commentsArray.length > 0 && (
         <div className="border-l-2 border-muted pl-4 ml-2 mt-2">
-          {commentsArray.map((comment,index) => (
+          {commentsArray.map((comment, index) => (
             <CommentItem
               key={index}
               comment={comment}

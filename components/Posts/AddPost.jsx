@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
 import {
@@ -30,11 +30,14 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { uploadMedia } from "@/lib/supaBase/storage";
+import useAddPost from "@/hooks/Posts/addPost";
+
 export function AddPost({ onPostAdded }) {
   const [postType, setPostType] = useState("general");
   const [mediaFiles, setMediaFiles] = useState([]);
   const [mediaPreviews, setMediaPreviews] = useState([]);
   const fileInputRef = useRef(null);
+  const { loading, error, success, fetchAddPost } = useAddPost();
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -58,8 +61,6 @@ export function AddPost({ onPostAdded }) {
     fileInputRef.current?.click();
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -71,27 +72,23 @@ export function AddPost({ onPostAdded }) {
       case "general":
         description = document.getElementById("general-description").value;
         break;
-
       case "tutor":
         description = document.getElementById("tutor-description").value;
         details.subject = document.getElementById("tutor-subject")?.textContent || "";
         details.rate = document.getElementById("tutor-rate")?.value || "";
         details.location = document.getElementById("tutor-location")?.value || "";
         break;
-
       case "market":
         description = document.getElementById("market-description").value;
         details.price = document.getElementById("market-price")?.value || "";
         details.location = document.getElementById("market-location")?.value || "";
         break;
-
       case "job":
         description = document.getElementById("job-description").value;
         details.salary = document.getElementById("job-salary")?.value || "";
         details.location = document.getElementById("job-location")?.value || "";
         details.type = document.getElementById("job-type")?.textContent || "";
         break;
-
       default:
         return;
     }
@@ -100,51 +97,39 @@ export function AddPost({ onPostAdded }) {
       const uploadedMediaUrls = [];
 
       for (const file of mediaFiles) {
-        const uploadResult = await uploadMedia(file, 'posts');
+        const uploadResult = await uploadMedia(file, "posts");
 
-        if (!uploadResult || !uploadResult.publicUrl) {
+        if (!uploadResult?.publicUrl) {
           throw new Error("Failed to upload media.");
         }
 
         uploadedMediaUrls.push(uploadResult.publicUrl);
       }
 
-
-
-
-      // ✅ Step 2: Prepare final form data (with Supabase URLs)
       const payload = {
         description,
         category,
         details,
-        mediaUrls: uploadedMediaUrls,  // Now sending URLs, not files
+        mediaUrls: uploadedMediaUrls,
       };
 
-      // ✅ Step 3: Send to your API
-      const res = await fetch("/api/posts/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const added = await fetchAddPost(payload); // ✅ this now returns true or false
 
-      if (res.ok) {
-        toast.success("Post Added successfully");
-        // Clean up previews and state
-        mediaPreviews.forEach((url) => URL.revokeObjectURL(url));
-        setMediaPreviews([]);
+      if (added) {
+        toast.success("Post added successfully");
+        onPostAdded(); // ✅ refresh posts and/or close modal
         setMediaFiles([]);
-        onPostAdded();
+        setMediaPreviews([]);
       } else {
-        const error = await res.json();
-        toast.error("Something went wrong while adding post", error.message);
+        toast.error("Something went wrong while adding post");
       }
     } catch (err) {
       console.error("Submission failed:", err);
-      alert("Failed to submit post.");
+      toast.error("Post was not added.");
     }
   };
+
+
 
   return (
     <Card className="w-full max-w-3xl mx-auto border-0 shadow-none">
