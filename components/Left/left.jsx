@@ -27,8 +27,6 @@ export default function LeftSide() {
   const { count } = useUnreadNotifications(); // Fetch unread notifications count
   
   const userId = session?.user?.id;
-  console.log(userId);
-
 
   const userName =
     session?.user?.name || `${session?.user?.first_name ?? "User"}`;

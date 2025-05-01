@@ -1,5 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
+import { toast } from "sonner";
+
 import {
   X,
   ImageIcon,
@@ -28,7 +30,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { uploadMedia } from "@/lib/supaBase/storage";
-export function AddPost({onPostAdded}) {
+export function AddPost({ onPostAdded }) {
   const [postType, setPostType] = useState("general");
   const [mediaFiles, setMediaFiles] = useState([]);
   const [mediaPreviews, setMediaPreviews] = useState([]);
@@ -60,40 +62,40 @@ export function AddPost({onPostAdded}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     let description = "";
     const category = postType;
     const details = {};
-  
+
     switch (postType) {
       case "general":
         description = document.getElementById("general-description").value;
         break;
-  
+
       case "tutor":
         description = document.getElementById("tutor-description").value;
         details.subject = document.getElementById("tutor-subject")?.textContent || "";
         details.rate = document.getElementById("tutor-rate")?.value || "";
         details.location = document.getElementById("tutor-location")?.value || "";
         break;
-  
+
       case "market":
         description = document.getElementById("market-description").value;
         details.price = document.getElementById("market-price")?.value || "";
         details.location = document.getElementById("market-location")?.value || "";
         break;
-  
+
       case "job":
         description = document.getElementById("job-description").value;
         details.salary = document.getElementById("job-salary")?.value || "";
         details.location = document.getElementById("job-location")?.value || "";
         details.type = document.getElementById("job-type")?.textContent || "";
         break;
-  
+
       default:
         return;
     }
-  
+
     try {
       const uploadedMediaUrls = [];
 
@@ -107,9 +109,9 @@ export function AddPost({onPostAdded}) {
         uploadedMediaUrls.push(uploadResult.publicUrl);
       }
 
-      
 
-  
+
+
       // ✅ Step 2: Prepare final form data (with Supabase URLs)
       const payload = {
         description,
@@ -117,7 +119,7 @@ export function AddPost({onPostAdded}) {
         details,
         mediaUrls: uploadedMediaUrls,  // Now sending URLs, not files
       };
-  
+
       // ✅ Step 3: Send to your API
       const res = await fetch("/api/posts/add", {
         method: "POST",
@@ -126,10 +128,9 @@ export function AddPost({onPostAdded}) {
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (res.ok) {
-        alert("Post submitted successfully!");
-  
+        toast.success("Post Added successfully");
         // Clean up previews and state
         mediaPreviews.forEach((url) => URL.revokeObjectURL(url));
         setMediaPreviews([]);
@@ -137,7 +138,7 @@ export function AddPost({onPostAdded}) {
         onPostAdded();
       } else {
         const error = await res.json();
-        alert("Error: " + (error?.error || "Something went wrong."));
+        toast.error("Something went wrong while adding post", error.message);
       }
     } catch (err) {
       console.error("Submission failed:", err);
@@ -147,7 +148,7 @@ export function AddPost({onPostAdded}) {
 
   return (
     <Card className="w-full max-w-3xl mx-auto border-0 shadow-none">
-      
+
       <CardContent className="p-4">
         <Tabs defaultValue="general" onValueChange={(value) => setPostType(value)}>
           <TabsList className="grid grid-cols-4 mb-4">

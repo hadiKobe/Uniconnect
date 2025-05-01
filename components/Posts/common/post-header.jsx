@@ -14,7 +14,8 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
- import Link from "next/link"
+import Link from "next/link"
+
 // Function to get badge variant based on post type
 const getPostTypeBadgeVariant = (type) => {
    switch (type?.toLowerCase()) {
@@ -86,15 +87,14 @@ export default function Header({ headerInfo }) {
                <AvatarImage src={null || "/placeholder.svg"} alt={first_name} />
                <AvatarFallback>{first_name.charAt(0)}</AvatarFallback>
             </Avatar>
+
             <div>
                <div className="flex items-center gap-2">
                   <Link href={`/Profile/${user_id}`} prefetch={false} className="text-sm font-medium truncate hover:underline">
-                  <h3 className="font-medium">{`${first_name} ${last_name}`}</h3>
+                     <h3 className="font-medium">{`${first_name} ${last_name}`}</h3>
                   </Link>
-                  <Badge className={`text-xs font-medium ${badgeStyles}`} variant="outline">
-                     {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General"}
-                  </Badge>
                </div>
+
                <div className="flex items-center text-sm text-muted-foreground">
                   <span>{major}</span>
                   <span className="mx-1">•</span>
@@ -103,46 +103,49 @@ export default function Header({ headerInfo }) {
             </div>
          </div>
 
-         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-               <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">Open menu</span>
-               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+         <div className="flex items-center gap-2">
+            <Badge className={`text-xs font-medium ${badgeStyles}`} variant="outline">
+               {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General"}
+            </Badge>
 
-               <DropdownMenuItem
-                  onClick={() => {
-                     document.activeElement?.blur();        // ✅ close dropdown safely
-                     setTimeout(() => setIsReportOpen(true), 50); // ✅ slight delay = Radix-safe
-                  }}
-               >
-                  Report
-               </DropdownMenuItem>
+            <DropdownMenu>
+               <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                     <MoreHorizontal className="h-4 w-4" />
+                     <span className="sr-only">Open menu</span>
+                  </Button>
+               </DropdownMenuTrigger>
+               <DropdownMenuContent align="end">
 
+                  <DropdownMenuItem
+                     onClick={() => {
+                        document.activeElement?.blur();        // ✅ close dropdown safely
+                        setTimeout(() => setIsReportOpen(true), 50); // ✅ slight delay = Radix-safe
+                     }}
+                  >
+                     Report
+                  </DropdownMenuItem>
 
-               {isAuthor && (
-                  <>
-                     <DropdownMenuSeparator />
-                     <DropdownMenuItem
-                        onClick={onDelete}
-                        className="text-destructive focus:text-destructive"
-                     >
-                        Delete post
-                     </DropdownMenuItem>
-                  </>
-               )}
-            </DropdownMenuContent>
-         </DropdownMenu>
+                  {isAuthor && (
+                     <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                           onClick={onDelete}
+                           className="text-destructive focus:text-destructive"
+                        >
+                           Delete post
+                        </DropdownMenuItem>
+                     </>
+                  )}
+               </DropdownMenuContent>
+            </DropdownMenu>
+         </div>
 
          <Report
             postId={post_id}
             isOpen={isReportOpen}
             onClose={(val) => setIsReportOpen(val)}
          />
-
-
       </div>
    )
 }

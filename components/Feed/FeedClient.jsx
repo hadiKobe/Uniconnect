@@ -1,6 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Post from "@/components/Posts/Post";
+import { useGetPosts } from "@/hooks/Posts/getPosts";
+import LoadingPage from "@/components/Loading/LoadingPage";
 
 import { Button } from "../ui/button";
 import { List, GraduationCap, User, Plus } from "lucide-react";
@@ -14,27 +16,15 @@ import {
 } from "@/components/ui/dialog";
 
 const FeedClient = ({ section }) => {
-  const [posts, setPosts] = useState([]);
-  const [filter, setFilter] = useState(''); // State to manage filter
+  const [filter, setFilter] = useState('');
   const [showAddPost, setShowAddPost] = useState(false);
-  const addPostRef = useRef(null);
-  const path = `/api/posts/getPost?section=${section}`; // Adjusted path to include section
 
-  const fetchPosts = async (filter = '') => {
-    let filteredPath = filter ? `${path}&filter=${filter}` : path;
-    await fetch(filteredPath)
-      .then((res) => res.json())
-      .then((data) => setPosts(data))
-      .catch((err) => console.error(err));
-  };
-
-  useEffect(() => {
-    fetchPosts(filter);
-  }, [filter]);
+  const { posts, loading, error } = useGetPosts(filter, section);
 
   const handlePostAdded = () => {
-    fetchPosts();      // ✅ refresh posts
-    setShowAddPost(false);    // ✅ close dialog
+    // Changing filter state will auto-trigger refetch via hook
+    setFilter((prev) => prev + ' '); // trigger small change to re-run hook
+    setShowAddPost(false);
   };
 
   return (
@@ -76,16 +66,14 @@ const FeedClient = ({ section }) => {
             <AddPost onPostAdded={handlePostAdded} />
           </DialogContent>
         </Dialog>
-
       </div>
 
-      {posts.map((post, index) => (
-        <Post
-          key={index}
-          post={post}
-        />
-      ))}
-      
+
+      {loading ? <LoadingPage /> :
+        error ? <p className="text-red-500">Error: {error}</p>
+          : posts.length === 0 ? <p className="text-muted-foreground">No posts found. Be The First To Post</p>
+            : posts.map((post) => (<Post key={post.id} post={post} />))
+      }
     </div>
   );
 };
