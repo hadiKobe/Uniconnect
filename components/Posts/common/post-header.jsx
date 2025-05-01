@@ -1,12 +1,14 @@
 "use client"
 import { formatDistanceToNow } from "date-fns"
+import { toast } from "sonner";
 import { MoreHorizontal } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useSession } from "next-auth/react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Report from "@/components/Posts/Report"
+import useDeletePost from "@/hooks/Posts/deletePost";
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -52,7 +54,7 @@ const postTypeEmoji = {
 }
 
 export default function Header({ headerInfo }) {
-   const { post_id, user_id, first_name, last_name, major, created_at, post_type = "general" } = headerInfo;
+   const { post_id, user_id, first_name, last_name, major, created_at, post_type = "general", onDelete } = headerInfo;
    const publishedAt = new Date(created_at);
    const timeAgo = formatDistanceToNow(publishedAt, { addSuffix: true })
 
@@ -64,21 +66,22 @@ export default function Header({ headerInfo }) {
    const badgeStyles = getBadgeStyles(badgeVariant)
 
    const [isReportOpen, setIsReportOpen] = useState(false);
-   const onReport = () => {
-      document.activeElement?.blur(); // ✅ Remove focus from the dropdown trigger
-      setIsReportOpen(true);
+
+   const { loading, error, success, fetchDeletePost } = useDeletePost()
+
+   const handleDeletePost = async () => {
+      fetchDeletePost(post_id);
    }
 
-   const onDelete = () => {
-      const path = `/api/posts/delete/${post_id}`;
-      const res = fetch(path, {
-         method: "DELETE",
-         headers: { "Content-Type": "application/json" }
-      });
-
-      if (res.ok)
-         console.log(`Post deleted successfully`);
-   }
+   useEffect(() => {
+      if (success) {
+         onDelete(post_id); // Call the onDelete function passed as a prop
+         toast.success("Post Deleted successfully");
+      }
+      else if (error) {
+         toast.error(error || "Post was not deleted.");
+      }
+   }, [success, error]);
 
    return (
       <div className="flex items-center justify-between">
@@ -117,20 +120,23 @@ export default function Header({ headerInfo }) {
                </DropdownMenuTrigger>
                <DropdownMenuContent align="end">
 
-                  <DropdownMenuItem
-                     onClick={() => {
-                        document.activeElement?.blur();        // ✅ close dropdown safely
-                        setTimeout(() => setIsReportOpen(true), 50); // ✅ slight delay = Radix-safe
-                     }}
-                  >
-                     Report
-                  </DropdownMenuItem>
+                  {!isAuthor && (
+                     <>
+                        <DropdownMenuItem
+                           onClick={() => {
+                              document.activeElement?.blur();        // ✅ close dropdown safely
+                              setTimeout(() => setIsReportOpen(true), 50); // ✅ slight delay = Radix-safe
+                           }}
+                        >
+                           Report
+                        </DropdownMenuItem>
+                     </>
+                  )}
 
                   {isAuthor && (
                      <>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem
-                           onClick={onDelete}
+                           onClick={handleDeletePost}
                            className="text-destructive focus:text-destructive"
                         >
                            Delete post

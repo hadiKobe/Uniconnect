@@ -5,7 +5,7 @@ import MarketBody from "./body/market-body"
 import JobBody from "./body/job-body"
 import Footer from "./common/post-footer"
 
-const Post = ({ post }) => {
+const Post = ({ post, onDelete }) => {
 
   const header = {
     post_id: post.id,
@@ -15,6 +15,7 @@ const Post = ({ post }) => {
     major: post.major,
     post_type: post.category,
     created_at: post.created_at,
+    onDelete,
   };
   const body = {
     content: post.content,

@@ -19,12 +19,15 @@ const FeedClient = ({ section }) => {
   const [filter, setFilter] = useState('');
   const [showAddPost, setShowAddPost] = useState(false);
 
-  const { posts, loading, error } = useGetPosts(filter, section);
+  const { posts, onDeletePost, loading, error } = useGetPosts(filter, section);
 
   const handlePostAdded = () => {
     // Changing filter state will auto-trigger refetch via hook
     setFilter((prev) => prev + ' '); // trigger small change to re-run hook
     setShowAddPost(false);
+  };
+  const handlePostDeleted = async (post_id) => {
+    onDeletePost(post_id);
   };
 
   return (
@@ -72,7 +75,7 @@ const FeedClient = ({ section }) => {
       {loading ? <LoadingPage /> :
         error ? <p className="text-red-500">Error: {error}</p>
           : posts.length === 0 ? <p className="text-muted-foreground">No posts found. Be The First To Post</p>
-            : posts.map((post) => (<Post key={post.id} post={post} />))
+            : posts.map((post) => (<Post key={post.id} post={post} onDelete={handlePostDeleted} />))
       }
     </div>
   );

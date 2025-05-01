@@ -1,6 +1,5 @@
 "use client"
 
-import { set } from "date-fns";
 import { useState, useEffect } from "react"
 
 export function useGetPosts(filter = '', section = 'home') {
@@ -34,9 +33,13 @@ export function useGetPosts(filter = '', section = 'home') {
       } finally { setLoading(false); }
    }
 
+   const onDeletePost = (post_id) => {
+      setPosts((prev) => prev.filter((post) => post.id !== post_id));
+   }
+
    useEffect(() => {
       fetchPosts();
    }, [filter, section]);
 
-   return { posts, loading, error };
+   return { posts, onDeletePost, loading, error };
 }

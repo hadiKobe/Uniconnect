@@ -20,6 +20,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import useAddReport from "@/hooks/Posts/addReport";
 
 const REPORT_REASONS = [
   "Inappropriate content",
@@ -30,10 +31,12 @@ const REPORT_REASONS = [
   "Other",
 ];
 
-export default function Report({ postId, isOpen = false, onClose = () => {} }) {
+export default function Report({ postId, isOpen = false, onClose = () => { } }) {
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { loading, error, success, fetchAddReport } = useAddReport();
+
 
   useEffect(() => {
     if (!isOpen) {
@@ -54,23 +57,19 @@ export default function Report({ postId, isOpen = false, onClose = () => {} }) {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/posts/report/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postId, reason, details }),
-      });
-
-      if (!res.ok) throw new Error("Failed to submit report");
-
-      toast.success("Report submitted successfully");
+      fetchAddReport(postId, reason, details);
       onClose(false); // ✅ Closes the dialog properly
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong while reporting");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (success) toast.success("Report added successfully");
+    else if (error) toast.error(error || "Report was not added.");
+  }, [success, error]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
