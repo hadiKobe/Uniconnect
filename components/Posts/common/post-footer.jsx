@@ -5,19 +5,24 @@ import { ThumbsUp, ThumbsDown, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import CommentSection from "./comments-section/comment-section";
+import useHandleReaction from "@/hooks/Posts/handleReaction";
+import useGetComments from "@/hooks/Posts/Comments/getComments";
+import { toast } from "sonner";
 
 export default function Footer({ bottomInfo }) {
    const { post_id, user_id, likesCount, dislikesCount, commentsCount, userReaction } = bottomInfo;
+
+   const { loadingReaction, errorReaction, successReaction, fetchAddReaction, fetchDeleteReaction } = useHandleReaction();
 
    const [liked, setLiked] = useState(false);
    const [disliked, setDisliked] = useState(false);
    const [likes, setLikes] = useState(likesCount);
    const [dislikes, setDislikes] = useState(dislikesCount);
-   const [loadingInteraction, setLoadingInteraction] = useState(false);
+   const [lastReactionType, setLastReactionType] = useState(null);
 
-   const [comments, setComments] = useState([]);
+   const { loadingComments, comments, fetchComments, errorComments, onDeleteComment } = useGetComments(post_id);
    const [showComments, setShowComments] = useState(false);
-   const [loadingComments, setLoadingComments] = useState(false);
+
 
    useEffect(() => {
       if (userReaction === 1) {
@@ -33,60 +38,40 @@ export default function Footer({ bottomInfo }) {
 
    const handleInteraction = async (e, type) => {
       e.preventDefault();
-      setLoadingInteraction(true);
-      const path = `/api/posts/reaction`;
-      const delPath = `${path}/delete/${post_id}`;
-      const addPath = `${path}/add`;
-
-      const add = async () => fetch(addPath, {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ post_id, reaction: type === 'like' ? 1 : 0 })
-      });
-
-      const del = async () => fetch(delPath, {
-         method: "DELETE",
-         headers: { "Content-Type": "application/json" }
-      });
-
       const reactions = { like: liked, dislike: disliked };
-      const res = reactions[type] ? await del() : await add();
+      reactions[type] ? await fetchDeleteReaction(post_id) : await fetchAddReaction(post_id, type);
+      setLastReactionType(type); // ✅ store the current type
+   };
+   useEffect(() => {
+      if (errorReaction)
+         toast.error("Something went wrong while reacting on post", errorReaction);
 
-      if (res.ok) {
-         if (type === 'like') {
+      if (successReaction) {
+         if (lastReactionType === 'like') {
             setLiked(!liked);
             setLikes(prev => liked ? prev - 1 : prev + 1);
             disliked && setDislikes(prev => prev - 1);
             setDisliked(false);
 
-         } else if (type === 'dislike') {
+         } else if (lastReactionType === 'dislike') {
             setDisliked(!disliked);
             setDislikes(prev => disliked ? prev - 1 : prev + 1);
             liked && setLikes(prev => prev - 1);
             setLiked(false);
          }
       }
-      setLoadingInteraction(false);
-   };
+   }, [errorReaction, successReaction]);
 
    const handleCommentsClick = async () => {
-      if (!showComments) {
-         setLoadingComments(true);
-         try {
-            const path = `/api/posts/getPost/${post_id}/comments`;
-            await fetch(path)
-               .then((res) => res.json())
-               .then((data) => setComments(data))
-               .catch((err) => console.error(err));
-
-         } catch (error) {
-            console.error("Failed to fetch comments", error);
-         }
-         setLoadingComments(false);
-      }
+      if (!showComments)
+         fetchComments(post_id);
       setShowComments(prev => !prev);
-
    };
+   useEffect(() => {
+      if (errorComments)
+         toast.error("Something went wrong while reacting on post", errorComments);
+   }, [errorComments]);
+
 
    return (
       <div className="flex flex-col w-full">
@@ -98,7 +83,7 @@ export default function Footer({ bottomInfo }) {
                size="sm"
                className={cn("flex items-center gap-1 px-2", liked && "text-blue-600")}
                onClick={(e) => handleInteraction(e, 'like')}
-               disabled={loadingInteraction || loadingComments}
+               disabled={loadingReaction || loadingComments}
             >
                <ThumbsUp className={cn("h-4 w-4", liked && "fill-blue-600")} />
                <span>{likes}</span>
@@ -109,7 +94,7 @@ export default function Footer({ bottomInfo }) {
                size="sm"
                className={cn("flex items-center gap-1 px-2", disliked && "text-red-600")}
                onClick={(e) => handleInteraction(e, 'dislike')}
-               disabled={loadingInteraction || loadingComments}
+               disabled={loadingReaction || loadingComments}
             >
                <ThumbsDown className={cn("h-4 w-4", disliked && "fill-red-600")} />
                <span>{dislikes}</span>
@@ -120,7 +105,7 @@ export default function Footer({ bottomInfo }) {
                size="sm"
                className={cn("flex items-center gap-1 px-2", showComments && "text-blue-600")}
                onClick={handleCommentsClick}
-               disabled={loadingComments || loadingInteraction}
+               disabled={loadingComments || loadingReaction}
             >
                <MessageCircle className={cn("h-4 w-4", showComments && "fill-blue-600")} />
                <span>{showComments ? "Hide" : commentsCount}</span>
@@ -133,7 +118,7 @@ export default function Footer({ bottomInfo }) {
                {loadingComments ? (
                   <p className="text-sm text-gray-500">Loading comments...</p>
                ) : (
-                  <CommentSection commentsInfo={{ post_id, user_id, comments }} />
+                  <CommentSection commentsInfo={{ post_id, user_id, comments }} onDeleteComment={onDeleteComment}/>
                )}
             </div>
          )}

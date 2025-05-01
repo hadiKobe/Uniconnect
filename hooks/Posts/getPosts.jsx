@@ -9,11 +9,11 @@ export function useGetPosts(filter = '', section = 'home') {
 
 
    const fetchPosts = async () => {
-      const path = `/api/posts/getPost?section=${section}`; // Adjusted path to include section
-      let filteredPath = filter ? `${path}&filter=${filter}` : path;
-
       setLoading(true);
       setError(null);
+
+      const path = `/api/posts/getPost?section=${section}`; // Adjusted path to include section
+      let filteredPath = filter ? `${path}&filter=${filter}` : path;
 
       try {
          const response = await fetch(filteredPath, {
