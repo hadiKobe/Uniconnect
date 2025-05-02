@@ -1,45 +1,29 @@
 "use client"
 import { MapPin, BookOpen, DollarSign } from 'lucide-react'
-import { Badge } from "@/components/ui/badge"
 
 export default function TutorBody({ tutorInfo }) {
   // Default values if not provided
-  const { location = "OnNo Where", subject = "Anything", rate = "0" } = tutorInfo || {}
-
+  const { location = "No Where", subject = "Anything", rate = "0" } = tutorInfo || {}
+  // bg-blue-100 text-blue-800
   return (
-    <div className="bg-secondary/20 rounded-lg p-4 border border-secondary/30">
-      <h3 className="text-sm font-medium text-muted-foreground mb-3">Tutoring Details</h3>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Subject */}
-        <div className="group flex flex-col space-y-1.5 rounded-md border p-3 shadow-sm transition-all hover:bg-secondary/30">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-primary" />
-            <span className="text-xs font-medium uppercase text-muted-foreground">Subject</span>
-          </div>
-          <span className="font-medium">{subject}</span>
+    <div className="border-green-500 mt-2 py-2 mb-3">
+      <div className="flex flex-wrap gap-2">
+        {/* Job Type */}
+        <div className="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer">
+          <span className="font-medium text-sm">{subject}</span>
+          <BookOpen className="h-3.5 w-3.5 text-muted-foreground ml-2" />
+        </div>
+
+        {/* Salary */}
+        <div className="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer">
+          <span className="font-medium text-sm">{location}</span>
+          <MapPin className="h-3.5 w-3.5 text-muted-foreground ml-2" />
         </div>
 
         {/* Location */}
-        <div className="group flex flex-col space-y-1.5 rounded-md border p-3 shadow-sm transition-all hover:bg-secondary/30">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-primary" />
-            <span className="text-xs font-medium uppercase text-muted-foreground">Location</span>
-          </div>
-          <span className="font-medium">{location}</span>
-        </div>
-
-        {/* Rate */}
-        <div className="group flex flex-col space-y-1.5 rounded-md border p-3 shadow-sm transition-all hover:bg-secondary/30">
-          <div className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4 text-primary" />
-            <span className="text-xs font-medium uppercase text-muted-foreground">Rate</span>
-          </div>
-          <div className="flex items-center">
-            <Badge variant="secondary" className="font-medium text-foreground">
-              ${rate}
-            </Badge>
-          </div>
+        <div className="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer">
+          <span className="font-medium text-sm">${rate}/hr</span>
+          <DollarSign className="h-3.5 w-3.5 text-muted-foreground ml-2" />
         </div>
       </div>
     </div>

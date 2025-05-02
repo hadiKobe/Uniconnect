@@ -1,29 +1,23 @@
 "use client"
-import { DollarSign, MapPin } from 'lucide-react'
+import { DollarSign, MapPin, Tag } from 'lucide-react'
 
 export default function MarketBody({ marketInfo }) {
   // Default values if not provided
   const { price = "$0", location = "No Where" } = marketInfo || {}
-
+// bg-amber-100 text-amber-800
   return (
-    <div className="flex flex-col space-y-2 my-3">
-      {/* Price */}
-      <div className="flex items-center">
-        <div className="bg-amber-100 text-amber-800 rounded-l-md p-2 flex items-center justify-center">
-          <DollarSign className="h-5 w-5" />
+    <div className="border-green-500 mt-2 py-2 mb-3">
+      <div className="flex flex-wrap gap-2">
+        {/* Price */}
+        <div className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer">
+          <DollarSign className="h-4 w-4" />
+          <span className="font-medium text-sm">{price}</span>
         </div>
-        <div className="bg-amber-50 rounded-r-md py-2 px-3 flex-1">
-          <p className="font-semibold text-lg">{price}</p>
-        </div>
-      </div>
 
-      {/* Location */}
-      <div className="flex items-center">
-        <div className="bg-blue-100 text-blue-800 rounded-l-md p-2 flex items-center justify-center">
-          <MapPin className="h-5 w-5" />
-        </div>
-        <div className="bg-blue-50 rounded-r-md py-2 px-3 flex-1">
-          <p className="font-medium">{location}</p>
+        {/* Location */}
+        <div className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer">
+          <MapPin className="h-4 w-4" />
+          <span className="font-medium text-sm">{location}</span>
         </div>
       </div>
     </div>

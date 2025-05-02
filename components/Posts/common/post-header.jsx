@@ -96,6 +96,9 @@ export default function Header({ headerInfo }) {
                   <Link href={`/Profile/${user_id}`} prefetch={false} className="text-sm font-medium truncate hover:underline">
                      <h3 className="font-medium">{`${first_name} ${last_name}`}</h3>
                   </Link>
+            <Badge className={`text-xs font-medium ${badgeStyles} transition-all duration-200 hover:px-3 cursor-pointer`} variant="outline">
+               {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General"}
+            </Badge>
                </div>
 
                <div className="flex items-center text-sm text-muted-foreground">
@@ -107,9 +110,6 @@ export default function Header({ headerInfo }) {
          </div>
 
          <div className="flex items-center gap-2">
-            <Badge className={`text-xs font-medium ${badgeStyles}`} variant="outline">
-               {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General"}
-            </Badge>
 
             <DropdownMenu>
                <DropdownMenuTrigger asChild>

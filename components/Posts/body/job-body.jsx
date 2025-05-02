@@ -4,35 +4,26 @@ import { MapPin, Briefcase, DollarSign } from 'lucide-react'
 export default function JobBody({ jobInfo }) {
   // Default values if not provided
   const { location = "No Where", job_type = "No Type", salary = "$0" } = jobInfo || {}
-
+  // bg-green-100 text-green-800
   return (
-    <div className="border-l-4 border-green-500 pl-4 py-2 mb-3">
-      <div className="grid grid-cols-1 gap-3">
+    <div className="border-green-500 mt-2 py-2 mb-3">
+      <div className="flex flex-wrap gap-2">
         {/* Job Type */}
-        <div className="flex items-center gap-3">
-          <Briefcase className="h-5 w-5 text-green-600" />
-          <div>
-            <p className="text-sm text-muted-foreground">Job Type</p>
-            <p className="font-medium">{job_type}</p>
-          </div>
+        <div className="inline-flex items-center gap-1.5 bg-green-100 text-green-800 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer">
+          <Briefcase className="h-4 w-4" />
+          <span className="font-medium text-sm">{job_type}</span>
         </div>
 
         {/* Salary */}
-        <div className="flex items-center gap-3">
-          <DollarSign className="h-5 w-5 text-green-600" />
-          <div>
-            <p className="text-sm text-muted-foreground">Salary</p>
-            <p className="font-medium">{salary}</p>
-          </div>
+        <div className="inline-flex items-center gap-1.5 bg-green-100 text-green-800 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer">
+          <DollarSign className="h-4 w-4" />
+          <span className="font-medium text-sm">{salary}</span>
         </div>
 
         {/* Location */}
-        <div className="flex items-center gap-3">
-          <MapPin className="h-5 w-5 text-green-600" />
-          <div>
-            <p className="text-sm text-muted-foreground">Location</p>
-            <p className="font-medium">{location}</p>
-          </div>
+        <div className="inline-flex items-center gap-1.5 bg-green-100 text-green-800 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer">
+          <MapPin className="h-4 w-4" />
+          <span className="font-medium text-sm">{location}</span>
         </div>
       </div>
     </div>

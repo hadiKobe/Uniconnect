@@ -19,6 +19,7 @@ const Post = ({ post, onDelete }) => {
   };
   const body = {
     content: post.content,
+    media_urls: post.media_urls,
   };
   const bottom = {
     post_id: post.id,
@@ -73,10 +74,10 @@ const Post = ({ post, onDelete }) => {
   }
 
   return (
-    <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-2xl mx-auto my-4">
+    <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-xl mx-auto my-4">
       <Header headerInfo={header} />
-      <GeneralBody bodyInfo={body} />
       {SpecificBody}
+      <GeneralBody bodyInfo={body} />
       <Footer bottomInfo={bottom} />
     </div>
   );
