@@ -118,7 +118,7 @@ export function AddPost({onPostAdded}) {
         mediaUrls: uploadedMediaUrls,  // Now sending URLs, not files
       };
   
-      // ✅ Step 3: Send to your API
+
       const res = await fetch("/api/posts/add", {
         method: "POST",
         headers: {
@@ -130,7 +130,7 @@ export function AddPost({onPostAdded}) {
       if (res.ok) {
         alert("Post submitted successfully!");
   
-        // Clean up previews and state
+    
         mediaPreviews.forEach((url) => URL.revokeObjectURL(url));
         setMediaPreviews([]);
         setMediaFiles([]);

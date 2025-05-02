@@ -4,53 +4,174 @@ import { useState, useEffect } from "react";
 import { ProfileHeader } from "@/components/Profile/header";
 import Posts from "./posts";
 import { FriendsCard } from "./friends";
-import { useGetFriends } from "@/hooks/Friends/getFriends";
 import { GraduationProgressCard } from "./progress";
-import { useSession } from "next-auth/react"
+import {
+  fetchStudent,
+  fetchPosts,
+  fetchFriends,
+} from "@/lib/apis/profile";
+import { Button } from "@/components/ui/button";
+import { useSendFriendRequest } from "@/hooks/Friends/addFriend";
+import { useCancelFriendRequest } from "@/hooks/Friends/request/cancel";
+import { useBulkFriendCheck } from "@/hooks/Friends/bulkCheckFriends";
+import { useUnFriend } from "@/hooks/Friends/useUnFriend";
+import { AddPost } from "../Posts/AddPost";
+import { Dialog, DialogTrigger,DialogContent,DialogHeader,DialogTitle } from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import{ Plus } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 const Profile = ({ userID }) => {
   const [student, setStudent] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentLoadingFriendId, setCurrentLoadingFriendId] = useState(null);
+  const [showAddPost, setShowAddPost] = useState(false);  
+  const { sendFriendRequest } = useSendFriendRequest();
+  const { cancelFriendRequest } = useCancelFriendRequest();
+  const { removeFriend } = useUnFriend (); // Make sure hook is available
 
-  const { friends, loading: friendsLoading } = useGetFriends(userID);
+  const allRelevantIds = student
+    ? [...new Set([student.id, ...friends.map((friend) => friend.id)])]
+    : [];
+  const { statuses, setStatuses } = useBulkFriendCheck(allRelevantIds);
+  const { data: session } = useSession();
+
+  const isCurrentUser = Number(userID) === Number( session?.user?.id);
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllData = async () => {
       try {
-        const response = await fetch(`/api/user/getInfo/${userID}`);
-        const data = await response.json();
-        setStudent(data.userInfo);
+        const [studentData, postData, friendsData] = await Promise.all([
+          fetchStudent(userID),
+          fetchPosts(userID),
+          fetchFriends(userID),
+        ]);
+        setStudent(studentData);
+        setPosts(postData);
+        setFriends(friendsData);
+        await sleep(1000); // Optional delay
       } catch (error) {
-        console.error("Failed to load student data:", error);
+        console.error("Error loading profile data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (userID) fetchData();
+    if (userID) fetchAllData();
   }, [userID]);
+
+  const handleSendRequest = async (friendId) => {
+    setCurrentLoadingFriendId(friendId);
+    const result = await sendFriendRequest(friendId);
+    if (result.success) {
+      setStatuses((prev) => ({
+        ...prev,
+        [friendId]: { ...prev[friendId], pendingRequest: true },
+      }));
+      await sleep(1000);
+    }
+    setCurrentLoadingFriendId(null);
+  };
+
+  const handleCancelRequest = async (friendId) => {
+    setCurrentLoadingFriendId(friendId);
+    const result = await cancelFriendRequest({ friendId });
+    if (result.success) {
+      setStatuses((prev) => ({
+        ...prev,
+        [friendId]: { ...prev[friendId], pendingRequest: false },
+      }));
+      await sleep(1000);
+    }
+    setCurrentLoadingFriendId(null);
+  };
+
+  const handleFriendRemove = async (friendId) => {
+    try {
+      setCurrentLoadingFriendId(friendId);
+      await removeFriend(friendId);
+      await sleep(1000);
+      setStatuses((prev) => ({
+        ...prev,
+        [friendId]: { isFriend: false, pendingRequest: false },
+      }));
+    } catch (err) {
+      alert(err.message || "Failed to remove friend.");
+    } finally {
+      setCurrentLoadingFriendId(null);
+    }
+  };
+  const handlePostAdded = async () => {
+    const newPosts = await fetchPosts(userID); // ⬅️ re-fetch posts
+    setPosts(newPosts);                        // ⬅️ update UI
+    setShowAddPost(false);                     // ⬅️ close dialog
+  };
+  
+
 
   if (loading) return <p>Loading profile info...</p>;
   if (!student) return <p>No student data found.</p>;
 
   return (
-    <div className="container max-w-4xl mx-auto py-6 px-4 md:px-6">
+    <div className="w-full max-w-7xl mx-auto py-6 px-4 md:px-6">
+
       <div className="grid gap-6">
-        <ProfileHeader student={student} />
+        <ProfileHeader
+          student={student}
+          statuses={statuses}
+          currentLoadingFriendId={currentLoadingFriendId}
+          handleSendRequest={handleSendRequest}
+          handleCancelRequest={handleCancelRequest}
+          handleFriendRemove={handleFriendRemove}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <GraduationProgressCard
             progress={student.graduation_progress}
             graduationYear={student.expected_graduation_date}
           />
-          {friendsLoading ? (
-            <p>Loading friends...</p>
-          ) : (
-            <FriendsCard friends={friends} />
-          )}
+          <FriendsCard
+            friends={friends}
+            statuses={statuses}
+            currentLoadingFriendId={currentLoadingFriendId}
+            handleSendRequest={handleSendRequest}
+            handleCancelRequest={handleCancelRequest}
+          />
         </div>
-        <Posts userId={userID} />
+        <Card className="w-full">
+  <CardHeader className="flex flex-row items-center justify-between">
+  <CardTitle className="text-2xl font-extrabold">Posts</CardTitle>
+    <Dialog open={showAddPost} onOpenChange={setShowAddPost}>
+      {isCurrentUser && (
+        <DialogTrigger asChild>
+          <Button
+            variant="default"
+            size="sm"
+            className="rounded-full text-sm font-medium flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            New Post
+          </Button>
+        </DialogTrigger>
+      )}
+
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Create a New Post</DialogTitle>
+        </DialogHeader>
+        <AddPost onPostAdded={handlePostAdded} />
+      </DialogContent>
+    </Dialog>
+  </CardHeader>
+
+  <CardContent className="w-full min-h-[400px]">
+    <Posts posts={posts} />
+  </CardContent>
+</Card>
       </div>
-    </div> // ✅ Closing outer <div> was missing
+    </div>
   );
 };
 

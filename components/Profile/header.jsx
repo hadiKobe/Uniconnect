@@ -1,14 +1,39 @@
 "use client";
 
-import { Mail, MapPin, Calendar, GraduationCap, Users } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Mail,
+  MapPin,
+  Calendar,
+  GraduationCap,
+  UserPlus,
+  X,
+  MessageSquare,
+  UserMinus,
+} from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useSession } from "next-auth/react"
-export function ProfileHeader({ student }) {
+import { useSession } from "next-auth/react";
 
-  const { data: session } = useSession()
-  const userID = session?.user?.id
+export function ProfileHeader({
+  student,
+  statuses,
+  currentLoadingFriendId,
+  handleSendRequest,
+  handleCancelRequest,
+  handleFriendRemove, 
+}) {
+  const { data: session } = useSession();
+  const userID = session?.user?.id;
+
+  const isCurrentUser = Number(userID) === Number(student.id);
+  const friendStatus = statuses?.[student.id] || { isFriend: false, pendingRequest: false };
+  const isFriend = friendStatus.isFriend;
+  const isRequested = friendStatus.pendingRequest;
 
   return (
     <Card>
@@ -37,9 +62,51 @@ export function ProfileHeader({ student }) {
                   </h1>
                   <p className="text-muted-foreground">{student.major || "Student"}</p>
                 </div>
-                {userID == student.id && ( // ✅ Only show Edit if same user
-                <Button>Edit Profile</Button>
-              )}
+
+                {/* Right Side Buttons */}
+                {isCurrentUser ? (
+                  <Button>Edit Profile</Button>
+                ) : Number(currentLoadingFriendId) === Number(student.id) ? (
+                  <Button variant="outline" size="sm" disabled className="gap-1">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-black" />
+                  </Button>
+                ) : isFriend ? (
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" className="gap-1">
+                      <MessageSquare className="h-4 w-4" />
+                      Message
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="gap-1"
+                      onClick={() => handleFriendRemove(student.id)}
+                    >
+                      <UserMinus className="h-4 w-4" />
+                      Unfriend
+                    </Button>
+                  </div>
+                ) : isRequested ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1"
+                    onClick={() => handleCancelRequest(student.id)}
+                  >
+                    <X className="h-4 w-4" />
+                    Cancel Request
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1"
+                    onClick={() => handleSendRequest(student.id)}
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    Add Friend
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -76,7 +143,6 @@ export function ProfileHeader({ student }) {
             </div>
 
             <div className="flex items-center gap-4 text-sm">
-
               <span className="text-muted-foreground">
                 Joined {student.joined_at?.split("T")[0] || "Unknown"}
               </span>
