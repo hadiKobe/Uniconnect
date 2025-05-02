@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { useEffect } from "react"
+import Link from "next/link"
 
 import {
   DropdownMenu,
@@ -23,7 +24,7 @@ export default function CommentItem({ comment, author_id, onDeleteComment }) {
   const { loading, error, success, fetchDeleteComment } = useDeleteComment();
 
   const handleDeleteComment = () => fetchDeleteComment(comment.id);
-  
+
   useEffect(() => {
     if (success) {
       console.log(onDeleteComment);
@@ -42,12 +43,14 @@ export default function CommentItem({ comment, author_id, onDeleteComment }) {
     <div className="flex gap-3 py-3">
       <Avatar className="h-8 w-8">
         <AvatarImage src={null || "/placeholder.svg"} alt={user.first_name} />
-        <AvatarFallback>{ user?.first_name?.charAt(0) ?? "?"}</AvatarFallback>
+        <AvatarFallback>{user?.first_name?.charAt(0) ?? "?"}</AvatarFallback>
       </Avatar>
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-sm">{isCommentAuthorId ? "You" : `${user.first_name} ${user.last_name}`}</span>
+            <Link href={`/Profile/${currentUserId}`} prefetch={false} className="text-sm font-medium truncate hover:underline">
+              <span className="font-medium text-sm">{isCommentAuthorId ? "You" : `${user.first_name} ${user.last_name}`}</span>
+            </Link>
             <span className="text-xs text-muted-foreground">{timeAgo}</span>
           </div>
 
