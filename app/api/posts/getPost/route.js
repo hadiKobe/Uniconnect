@@ -1,6 +1,5 @@
 import { query } from "@/lib/db";
 import { createPostInstance } from "@/lib/models/Posts";
-import { createInteractionInstance } from "@/lib/models/Interactions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -22,6 +21,7 @@ export async function GET(request) {
     major: session.user.major
   };
 
+  // used for testing
   // const filters = {
   //   user_id: 14,
   //   major: 'Psychology'
@@ -115,11 +115,12 @@ export async function GET(request) {
   */
 
   const sqlQuery = `
-    SELECT posts.id,posts.content, posts.created_at, posts.category,
+    SELECT posts.id,posts.content, posts.created_at, posts.category, 
       users.id AS user_id, users.first_name, users.last_name, users.major,
       COUNT(CASE WHEN reactions.value = 0 THEN 1 END) AS dislikesCount,
       COUNT(CASE WHEN reactions.value = 1 THEN 1 END) AS likesCount,
       COUNT(DISTINCT CASE WHEN comments.is_deleted = 0 THEN comments.id END) AS commentsCount,
+      (SELECT JSON_ARRAYAGG(post_media.path_url) FROM post_media WHERE post_media.post_id = posts.id) AS media_urls,
 
     -- Current user reaction
       ( SELECT value
@@ -157,11 +158,11 @@ export async function GET(request) {
     GROUP BY posts.id, posts.content, posts.category, posts.created_at, users.id, users.first_name, users.last_name, users.major
     ORDER BY posts.created_at DESC;
 `;
-//console.log(sqlQuery, params);
+  //console.log(sqlQuery, params);
 
   try {
     const result = await query(sqlQuery, params);
-     //console.log(result);
+    //console.log(result);
     const posts = result.map((post) => {
       return createPostInstance(post);
     });
