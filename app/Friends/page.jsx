@@ -1,6 +1,6 @@
 'use client';
 import { FriendsContent } from "@/components/Friends/friends"; 
-import LeftSide from "@/components/Left/left";
+import LeftBarShell from "@/components/Left/LeftBarShell";
 
 import Navbar from "@/components/navbar/navbar";
 
@@ -14,7 +14,7 @@ export default function FriendsPage() {
 
       {/* Fixed Sidebar (desktop only) */}
       <div className="hidden md:block fixed top-[64px] left-0 h-[calc(100vh-64px)] w-64 border-r bg-background z-40">
-        <LeftSide/>
+        <LeftBarShell/>
       </div>
 
       {/* Main Content */}

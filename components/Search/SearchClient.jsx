@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import SearchBar from '../navbar/SearchBar'; // Your existing SearchBar component
 import SearchTabs from './SearchTabs';
-import LeftSide from '../Left/left'; // Your existing LeftSide component
+import LeftBarShell from '../Left/LeftBarShell'; // Your existing LeftBarShell component
 import Navbar from '../navbar/navbar'; // Your existing Navbar component
 
 const SearchClient = () => {
@@ -66,7 +65,7 @@ const SearchClient = () => {
 
          {/* Fixed Sidebar (hidden on mobile) */}
          <div className="hidden md:block fixed top-[64px] left-0 h-[calc(100vh-64px)] w-64 border-r bg-background z-40">
-            <LeftSide />
+            <LeftBarShell />
          </div>
 
          <div className="max-w-2xl mx-auto flex mt-8 flex-col gap-6 justify-content-around">

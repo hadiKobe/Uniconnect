@@ -1,7 +1,5 @@
-"use client"
-
-import Navbar from "@/components/navbar/navbar"
-import LeftSide from "@/components/Left/left"
+import Navbar from "@/components/navbar/navbar";
+import LeftBarShell from "@/components/Left/LeftBarShell";
 
 export default function FeedLayout({ children }) {
   return (
@@ -11,13 +9,13 @@ export default function FeedLayout({ children }) {
         <Navbar />
       </div>
 
-      {/* Fixed Sidebar (hidden on mobile) */}
+      {/* Fixed Sidebar */}
       <div className="hidden md:block fixed top-[64px] left-0 h-[calc(100vh-64px)] w-64 border-r bg-background z-40">
-        <LeftSide />
+        <LeftBarShell />
       </div>
 
-      {children}
-
+      {/* Main Content Area */}
+      <main>{children}</main>
     </div>
-  )
+  );
 }
