@@ -1,73 +1,77 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
+import { query } from "@/lib/db";
 
 export async function POST(req) {
   try {
-    // Parse JSON body to extract email
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
     const { email } = await req.json();
 
-    // Validate that email exists
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    // Generate a 6-digit numeric OTP
+    if (!/^\d+@students\.liu\.edu\.lb$/.test(email)) {
+      return NextResponse.json({ error: "Invalid LIU student email." }, { status: 400 });
+    }
+
+    const emailAttemptsResult = await query(
+      `SELECT COUNT(*) AS count FROM otp_requests WHERE email = ? AND timestamp > NOW() - INTERVAL 10 MINUTE`,
+      [email]
+    );
+    const ipAttemptsResult = await query(
+      `SELECT COUNT(*) AS count FROM otp_requests WHERE ip_address = ? AND timestamp > NOW() - INTERVAL 15 MINUTE`,
+      [ip]
+    );
+    
+    // Access the first row
+    const emailAttempts = emailAttemptsResult[0]?.count || 0;
+    const ipAttempts = ipAttemptsResult[0]?.count || 0;
+    
+    
+    if (emailAttempts >= 3 || ipAttempts >=5) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a few minutes." },
+        { status: 429 }
+      );
+    }
+    
+
+    // Check if email is already registered
+    const [existingUser] = await query(`SELECT id FROM users WHERE email = ?`, [email]);
+    if (existingUser) {
+      return NextResponse.json({ error: "Email is already registered." }, { status: 409 });
+    }
+
+    // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpToken = jwt.sign({ email, otp }, process.env.JWT_SECRET, { expiresIn: "3m" });
 
-    // Create a signed JWT token containing the OTP and email
-    // The token will expire in 2 minutes
-    const otpToken = jwt.sign({ email, otp }, process.env.JWT_SECRET, {
-      expiresIn: "2m",
-    });
-
-    // Create a Nodemailer transporter using Gmail SMTP
+    // Send email
     const transporter = nodemailer.createTransport({
       service: "Gmail",
       auth: {
-        user: process.env.EMAIL_USER, // Sender email
-        pass: process.env.EMAIL_PASS, // Sender app password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
-    // Email message content
     const mailOptions = {
-        from: `"LIU Community" <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: "Your One-Time Password (OTP) Code",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0;">
-            <h2 style="color: #333;">Verify Your Email</h2>
-            <p style="font-size: 15px; color: #555;">
-              Thank you for signing up to LIU Community. Please use the following one-time password (OTP) to verify your email address:
-            </p>
-            <div style="font-size: 32px; font-weight: bold; margin: 20px 0; color: #1a73e8;">
-              ${otp}
-            </div>
-            <p style="font-size: 14px; color: #888;">
-              This code will expire in 5 minutes. If you did not request this, please ignore this email.
-            </p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;" />
-            <p style="font-size: 13px; color: #aaa; text-align: center;">
-              &copy; ${new Date().getFullYear()} LIU Community. All rights reserved.
-            </p>
-          </div>
-        `,
-      };
-      
+      from: `"LIU Community" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your OTP Code",
+      html: `<div>Use this code: <strong>${otp}</strong>. It expires in 3 minutes.</div>`,
+    };
 
-    // Send the email
     await transporter.sendMail(mailOptions);
 
-    // Respond with success and the token
-    return NextResponse.json({
-      message: "OTP sent successfully",
-      token: otpToken,
-    });
-  } catch (error) {
-    console.error("OTP sending failed:", error);
+    // Log this attempt
+    await query(`INSERT INTO otp_requests (email, ip_address) VALUES (?, ?)`, [email, ip]);
 
-    // Handle and return any server-side errors
+    return NextResponse.json({ message: "OTP sent", token: otpToken });
+  } catch (error) {
+    console.error("OTP send error:", error);
     return NextResponse.json({ error: "Failed to send OTP" }, { status: 500 });
   }
 }

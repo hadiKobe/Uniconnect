@@ -30,7 +30,7 @@ const Profile = ({ userID }) => {
   const [showAddPost, setShowAddPost] = useState(false);  
   const { sendFriendRequest } = useSendFriendRequest();
   const { cancelFriendRequest } = useCancelFriendRequest();
-  const { removeFriend } = useUnFriend (); // Make sure hook is available
+  const { removeFriend } = useUnFriend ();
 
   const allRelevantIds = student
     ? [...new Set([student.id, ...friends.map((friend) => friend.id)])]
@@ -52,7 +52,7 @@ const Profile = ({ userID }) => {
         setStudent(studentData);
         setPosts(postData);
         setFriends(friendsData);
-        await sleep(1000); // Optional delay
+        await sleep(1000); 
       } catch (error) {
         console.error("Error loading profile data:", error);
       } finally {
@@ -98,6 +98,7 @@ const Profile = ({ userID }) => {
         ...prev,
         [friendId]: { isFriend: false, pendingRequest: false },
       }));
+      
     } catch (err) {
       alert(err.message || "Failed to remove friend.");
     } finally {
@@ -105,9 +106,9 @@ const Profile = ({ userID }) => {
     }
   };
   const handlePostAdded = async () => {
-    const newPosts = await fetchPosts(userID); // ⬅️ re-fetch posts
-    setPosts(newPosts);                        // ⬅️ update UI
-    setShowAddPost(false);                     // ⬅️ close dialog
+    const newPosts = await fetchPosts(userID); 
+    setPosts(newPosts);                       
+    setShowAddPost(false);                     
   };
   
 
