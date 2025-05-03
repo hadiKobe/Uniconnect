@@ -1,77 +1,79 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { ThumbsUp, ThumbsDown, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import CommentSection from "./comments-section/comment-section";
-import useHandleReaction from "@/hooks/Posts/handleReaction";
-import useGetComments from "@/hooks/Posts/Comments/getComments";
-import { toast } from "sonner";
+import { useState, useEffect } from "react"
+import { ThumbsUp, ThumbsDown, MessageCircle, Loader2 } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import useHandleReaction from "@/hooks/Posts/handleReaction"
+import InstagramStyleCommentSection from "./comments-section/comment-section"
+import useGetComments from "@/hooks/Posts/Comments/getComments"
+import { toast } from "sonner"
 
 export default function Footer({ bottomInfo }) {
-   const { post_id, user_id, likesCount, dislikesCount, commentsCount, userReaction } = bottomInfo;
+   const { post_id, user_id, likesCount, dislikesCount, commentsCount, userReaction } = bottomInfo
 
-   const { loadingReaction, errorReaction, successReaction, fetchAddReaction, fetchDeleteReaction } = useHandleReaction();
+   const { loadingReaction, errorReaction, successReaction, fetchAddReaction, fetchDeleteReaction } = useHandleReaction()
 
-   const [liked, setLiked] = useState(false);
-   const [disliked, setDisliked] = useState(false);
-   const [likes, setLikes] = useState(likesCount);
-   const [dislikes, setDislikes] = useState(dislikesCount);
-   const [lastReactionType, setLastReactionType] = useState(null);
+   const [liked, setLiked] = useState(false)
+   const [disliked, setDisliked] = useState(false)
+   const [likes, setLikes] = useState(likesCount)
+   const [dislikes, setDislikes] = useState(dislikesCount)
+   const [lastReactionType, setLastReactionType] = useState(null)
 
-   const { loadingComments, comments, fetchComments, errorComments, onDeleteComment } = useGetComments(post_id);
-   const [showComments, setShowComments] = useState(false);
-
+   const { loadingComments, comments, fetchComments, errorComments, onDeleteComment } = useGetComments(post_id)
+   const [isCommentsOpen, setIsCommentsOpen] = useState(false)
 
    useEffect(() => {
       if (userReaction === 1) {
-         setLiked(true);
-         setDisliked(false);
-
+         setLiked(true)
+         setDisliked(false)
       } else if (userReaction === 0) {
-         setDisliked(true);
-         setLiked(false);
+         setDisliked(true)
+         setLiked(false)
       }
-
-   }, [userReaction]);
+   }, [userReaction])
 
    const handleInteraction = async (e, type) => {
-      e.preventDefault();
-      const reactions = { like: liked, dislike: disliked };
-      reactions[type] ? await fetchDeleteReaction(post_id) : await fetchAddReaction(post_id, type);
-      setLastReactionType(type); // ✅ store the current type
-   };
+      e.preventDefault()
+      const reactions = { like: liked, dislike: disliked }
+      reactions[type] ? await fetchDeleteReaction(post_id) : await fetchAddReaction(post_id, type)
+      setLastReactionType(type)
+   }
+
    useEffect(() => {
-      if (errorReaction)
-         toast.error("Something went wrong while reacting on post", errorReaction);
+      if (errorReaction) toast.error("Something went wrong while reacting on post", errorReaction)
 
       if (successReaction) {
-         if (lastReactionType === 'like') {
-            setLiked(!liked);
-            setLikes(prev => liked ? prev - 1 : prev + 1);
-            disliked && setDislikes(prev => prev - 1);
-            setDisliked(false);
-
-         } else if (lastReactionType === 'dislike') {
-            setDisliked(!disliked);
-            setDislikes(prev => disliked ? prev - 1 : prev + 1);
-            liked && setLikes(prev => prev - 1);
-            setLiked(false);
+         if (lastReactionType === "like") {
+            setLiked(!liked)
+            setLikes((prev) => (liked ? prev - 1 : prev + 1))
+            disliked && setDislikes((prev) => prev - 1)
+            setDisliked(false)
+         } else if (lastReactionType === "dislike") {
+            setDisliked(!disliked)
+            setDislikes((prev) => (disliked ? prev - 1 : prev + 1))
+            liked && setLikes((prev) => prev - 1)
+            setLiked(false)
          }
       }
-   }, [errorReaction, successReaction]);
+   }, [errorReaction, successReaction])
 
-   const handleCommentsClick = async () => {
-      if (!showComments)
-         fetchComments(post_id);
-      setShowComments(prev => !prev);
-   };
+   const handleCommentsClick = () => {
+      // First open the modal for smooth animation
+      setIsCommentsOpen(true);
+
+      // Then fetch comments if they haven't been fetched yet
+         fetchComments(post_id).catch(error => {
+            console.error("Error fetching comments:", error);
+            toast.error("Failed to load comments. Please try again.");
+         });
+   }
+
    useEffect(() => {
-      if (errorComments)
-         toast.error("Something went wrong while reacting on post", errorComments);
-   }, [errorComments]);
-
+      if (errorComments) {
+         toast.error("Something went wrong while loading comments", errorComments);
+      }
+   }, [errorComments])
 
    return (
       <div className="flex flex-col w-full">
@@ -82,8 +84,8 @@ export default function Footer({ bottomInfo }) {
                variant="ghost"
                size="sm"
                className={cn("flex items-center gap-1 px-2", liked && "text-blue-600")}
-               onClick={(e) => handleInteraction(e, 'like')}
-               disabled={loadingReaction || loadingComments}
+               onClick={(e) => handleInteraction(e, "like")}
+               disabled={loadingReaction}
             >
                <ThumbsUp className={cn("h-4 w-4", liked && "fill-blue-600")} />
                <span>{likes}</span>
@@ -93,8 +95,8 @@ export default function Footer({ bottomInfo }) {
                variant="ghost"
                size="sm"
                className={cn("flex items-center gap-1 px-2", disliked && "text-red-600")}
-               onClick={(e) => handleInteraction(e, 'dislike')}
-               disabled={loadingReaction || loadingComments}
+               onClick={(e) => handleInteraction(e, "dislike")}
+               disabled={loadingReaction}
             >
                <ThumbsDown className={cn("h-4 w-4", disliked && "fill-red-600")} />
                <span>{dislikes}</span>
@@ -103,25 +105,30 @@ export default function Footer({ bottomInfo }) {
             <Button
                variant="ghost"
                size="sm"
-               className={cn("flex items-center gap-1 px-2", showComments && "text-blue-600")}
+               className="flex items-center gap-1 px-2"
                onClick={handleCommentsClick}
-               disabled={loadingComments || loadingReaction}
+               disabled={loadingComments && isCommentsOpen} // Only disable if loading and already open
             >
-               <MessageCircle className={cn("h-4 w-4", showComments && "fill-blue-600")} />
-               <span>{showComments ? "Hide" : commentsCount}</span>
+               {loadingComments && isCommentsOpen ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
+               ) : (
+                  <MessageCircle className="h-4 w-4" />
+               )}
+               <span>{comments?.length || commentsCount}</span>
             </Button>
          </div>
 
-         {/* Show Comments Section */}
-         {showComments && (
-            <div className="mt-4">
-               {loadingComments ? (
-                  <p className="text-sm text-gray-500">Loading comments...</p>
-               ) : (
-                  <CommentSection commentsInfo={{ post_id, user_id, comments }} onDeleteComment={onDeleteComment}/>
-               )}
-            </div>
-         )}
+         {/* Always render the comment section component */}
+         <InstagramStyleCommentSection
+            commentsInfo={{
+               post_id,
+               user_id,
+               comments: comments || [],
+            }}
+            isOpen={isCommentsOpen}
+            onClose={() => setIsCommentsOpen(false)}
+            isLoading={loadingComments}
+         />
       </div>
-   );
+   )
 }
