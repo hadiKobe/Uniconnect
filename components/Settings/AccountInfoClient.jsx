@@ -32,6 +32,9 @@ const AccountInfo = () => {
       gpa: "",
    })
 
+   // Store original data for comparison
+   const [originalData, setOriginalData] = useState(null)
+   const [changedFields, setChangedFields] = useState({})
    const [joinedDate, setJoinedDate] = useState(null)
    const [gradDate, setGradDate] = useState(null)
 
@@ -54,6 +57,7 @@ const AccountInfo = () => {
          }
 
          setFormData(sanitizedUserInfo)
+         setOriginalData(JSON.stringify(sanitizedUserInfo))
          setJoinedDate(sanitizedUserInfo.joined_in)
          setGradDate(sanitizedUserInfo.expected_graduation_date)
       }
@@ -61,7 +65,23 @@ const AccountInfo = () => {
 
    const handleInputChange = (e) => {
       const { name, value } = e.target
+
+      setChangedFields(prev =>{
+         const updated = {...prev};
+         value !== userInfo[name] ? updated[name] = value : delete updated[name];
+         return updated; 
+      })
+
       setFormData((prev) => ({ ...prev, [name]: value }))
+   }
+
+   useEffect(()=>console.log(changedFields),[changedFields])
+
+   const handleProgressChange = (e) => {
+      const value = Number.parseInt(e.target.value) || 0
+      // Ensure value is between 0 and 100
+      const clampedValue = Math.min(100, Math.max(0, value))
+      setFormData((prev) => ({ ...prev, graduation_progress: clampedValue }))
    }
 
    const handleSubmit = (e) => {
@@ -75,9 +95,23 @@ const AccountInfo = () => {
 
       // In a real app, you would save the data to your database here
       console.log("Form submitted:", formData)
+
+      // Update original data after successful submission
+      setOriginalData(JSON.stringify({ ...formData }))
    }
 
-   const isModified = JSON.stringify(formData) !== JSON.stringify(userInfo);
+   const handleCancel = () => {
+      // Reset form to original data
+      if (originalData) {
+         const originalFormData = JSON.parse(originalData)
+         setFormData(originalFormData)
+         setJoinedDate(originalFormData.joined_in)
+         setGradDate(originalFormData.expected_graduation_date)
+      }
+   }
+
+   // Better isModified check that works with the stored original data
+   const isModified = originalData ? JSON.stringify(formData) !== originalData : false
 
    // Show loading state
    if (loading) {
@@ -104,12 +138,16 @@ const AccountInfo = () => {
             <h1 className="text-3xl font-bold">Account Settings</h1>
 
             <div className="hidden md:flex justify-end gap-4">
-               <Button type="button" variant="outline" >Cancel</Button>
-               <Button type="submit" disabled={!isModified}>Save Changes</Button>
+               <Button type="button" variant="outline" onClick={handleCancel}>
+                  Cancel
+               </Button>
+               <Button type="submit" form="account-form" disabled={!isModified}>
+                  Save Changes
+               </Button>
             </div>
          </div>
 
-         <form onSubmit={handleSubmit}>
+         <form id="account-form" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                {/* Profile Picture Section */}
                <Card>
@@ -180,7 +218,7 @@ const AccountInfo = () => {
                            <Input
                               id="phone_number"
                               name="phone_number"
-                              value={formData.phone_number}
+                              value={formData.phone_number || ""}
                               onChange={handleInputChange}
                            />
                         </div>
@@ -188,7 +226,7 @@ const AccountInfo = () => {
 
                      <div className="space-y-2">
                         <Label htmlFor="address">Address</Label>
-                        <Input id="address" name="address" value={formData.address} onChange={handleInputChange} />
+                        <Input id="address" name="address" value={formData.address || ""} onChange={handleInputChange} />
                      </div>
 
                      <div className="space-y-2">
@@ -196,7 +234,7 @@ const AccountInfo = () => {
                         <Textarea
                            id="bio"
                            name="bio"
-                           value={formData.bio}
+                           value={formData.bio || ""}
                            onChange={handleInputChange}
                            className="min-h-[100px]"
                         />
@@ -249,7 +287,6 @@ const AccountInfo = () => {
                                     mode="single"
                                     selected={gradDate}
                                     onSelect={(date) => {
-                                       console.log(date);
                                        setGradDate(date)
                                        setFormData((prev) => ({ ...prev, expected_graduation_date: date }))
                                     }}
@@ -262,27 +299,39 @@ const AccountInfo = () => {
 
                      <div className="space-y-2">
                         <Label htmlFor="gpa">GPA</Label>
-                        <Input id="gpa" name="gpa" value={formData.gpa} onChange={handleInputChange} />
+                        <Input id="gpa" name="gpa" value={formData.gpa || ""} onChange={handleInputChange} />
                      </div>
 
                      <div className="space-y-2">
                         <div className="flex justify-between">
-                           <Label>Graduation Progress</Label>
+                           <Label htmlFor="graduation_progress">Graduation Progress</Label>
                            <span className="text-sm text-muted-foreground">{formData.graduation_progress}%</span>
                         </div>
+                        <Input
+                           id="graduation_progress"
+                           name="graduation_progress"
+                           type="number"
+                           min="0"
+                           max="100"
+                           value={formData.graduation_progress}
+                           onChange={handleProgressChange}
+                           className="mb-2"
+                        />
                         <Progress value={formData.graduation_progress} className="h-2" />
                         <p className="text-sm text-muted-foreground">Percentage of credits completed</p>
                      </div>
                   </CardContent>
                </Card>
-
-
             </div>
          </form>
 
          <div className="flex md:hidden justify-end gap-4 mt-6">
-            <Button type="button" variant="outline" >Cancel</Button>
-            <Button type="submit" disabled={!isModified}>Save Changes</Button>
+            <Button type="button" variant="outline" onClick={handleCancel}>
+               Cancel
+            </Button>
+            <Button type="submit" form="account-form" disabled={!isModified}>
+               Save Changes
+            </Button>
          </div>
       </div>
    )
