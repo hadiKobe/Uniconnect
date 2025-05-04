@@ -2,6 +2,7 @@ import { query } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+// user can change his name, major, joined_in, bio, profile_picture, address, phone_number, expected_graduation_date, graduation process, and gpa
 export async function PATCH(req) {
    // const userId = 14; // For testing purposes, remove this line in production
 
