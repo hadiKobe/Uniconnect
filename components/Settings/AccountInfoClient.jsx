@@ -13,10 +13,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns"
 import { CalendarIcon, Camera, Loader2, User } from "lucide-react"
 import { useGetUserInfo } from "@/hooks/Settings/getUserInfo"
+import { useChangeInfo } from "@/hooks/Settings/changeInfo"
+import { toast } from "sonner"
+
 
 const AccountInfo = () => {
    // Get user info from the hook
-   const { userInfo, loading, error } = useGetUserInfo()
+   const { userInfo, loading, error } = useGetUserInfo();
+   const { fetchChangeInfo, loadingChange } = useChangeInfo();
 
    // Initialize form data with empty values, will be updated when userInfo loads
    const [formData, setFormData] = useState({
@@ -65,17 +69,16 @@ const AccountInfo = () => {
 
    const handleInputChange = (e) => {
       const { name, value } = e.target
+      const parsedValue = !isNaN(value) && value.trim() !== "" ? Number(value) : value;
 
-      setChangedFields(prev =>{
-         const updated = {...prev};
-         value !== userInfo[name] ? updated[name] = value : delete updated[name];
-         return updated; 
+      setChangedFields(prev => {
+         const updated = { ...prev };
+         parsedValue !== userInfo[name] ? updated[name] = parsedValue : delete updated[name];
+         return updated;
       })
 
       setFormData((prev) => ({ ...prev, [name]: value }))
    }
-
-   useEffect(()=>console.log(changedFields),[changedFields])
 
    const handleProgressChange = (e) => {
       const value = Number.parseInt(e.target.value) || 0
@@ -84,21 +87,32 @@ const AccountInfo = () => {
       setFormData((prev) => ({ ...prev, graduation_progress: clampedValue }))
    }
 
-   const handleSubmit = (e) => {
-      e.preventDefault()
+
+   useEffect(() => { console.log(changedFields); }, [changedFields])
+   const handleSubmit = async (e) => {
+      e.preventDefault();
 
       // Validate required fields
       if (!formData.first_name || !formData.last_name || !formData.major) {
-         alert("Please fill in all required fields")
-         return
+         toast.error("Please fill in all required fields");
+         return;
       }
 
-      // In a real app, you would save the data to your database here
-      console.log("Form submitted:", formData)
+      // Await the result from fetchChangeInfo
+      console.log(changedFields);
+      const result = await fetchChangeInfo(changedFields);
 
-      // Update original data after successful submission
-      setOriginalData(JSON.stringify({ ...formData }))
-   }
+      if (!result.infoChanged) {
+         if (result?.isAllowedToChangeMajor === false) toast.error("Major changed in the last 5 months");
+         else toast.error(result.msg || "Update failed");
+         return; // prevent showing success toast if failed
+      }
+
+      // Show success and update local state
+      setChangedFields({});
+      toast.success("Info changed successfully");
+      setOriginalData(JSON.stringify({ ...formData }));
+   };
 
    const handleCancel = () => {
       // Reset form to original data
@@ -141,7 +155,7 @@ const AccountInfo = () => {
                <Button type="button" variant="outline" onClick={handleCancel}>
                   Cancel
                </Button>
-               <Button type="submit" form="account-form" disabled={!isModified}>
+               <Button type="submit" form="account-form" disabled={!isModified || loadingChange}>
                   Save Changes
                </Button>
             </div>
@@ -314,7 +328,10 @@ const AccountInfo = () => {
                            min="0"
                            max="100"
                            value={formData.graduation_progress}
-                           onChange={handleProgressChange}
+                           onChange={(e) => {
+                              handleProgressChange(e);
+                              handleInputChange(e);
+                           }}
                            className="mb-2"
                         />
                         <Progress value={formData.graduation_progress} className="h-2" />
