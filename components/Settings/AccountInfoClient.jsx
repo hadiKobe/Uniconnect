@@ -12,6 +12,7 @@ import { Camera, Loader2, User } from "lucide-react"
 import { useGetUserInfo } from "@/hooks/Settings/getUserInfo"
 import { useChangeInfo } from "@/hooks/Settings/changeInfo"
 import { toast } from "sonner"
+import { PhotoUploadDialog } from "./PhotoUpload"
 
 const AccountInfo = () => {
    const { userInfo, loading, error } = useGetUserInfo()
@@ -19,6 +20,12 @@ const AccountInfo = () => {
 
    const [originalData, setOriginalData] = useState({})
    const [changedFields, setChangedFields] = useState({})
+   const [openUploadPhoto, setOpenUploadPhoto] = useState(false);
+
+   const handleImageUploaded = (imageUrl) => {
+      handleInputChange({ target: { name: "profile_picture", value: imageUrl } })
+      setOpenUploadPhoto(false)
+   }
 
    const [formData, setFormData] = useState({
       first_name: "",
@@ -179,10 +186,12 @@ const AccountInfo = () => {
                         </AvatarFallback>
                      </Avatar>
 
-                     <Button type="button" variant="outline" className="flex items-center gap-2">
+                     <Button type="button" variant="outline" className="flex items-center gap-2" onClick={() => { setOpenUploadPhoto(true) }}>
                         <Camera size={16} />
                         Upload Photo
                      </Button>
+
+                     <PhotoUploadDialog open={openUploadPhoto} onOpenChange={setOpenUploadPhoto} onImageUploaded={handleImageUploaded} initialImageUrl={formData.profile_picture} />
                   </CardContent>
                </Card>
 
@@ -274,12 +283,12 @@ const AccountInfo = () => {
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                            <Label>Joined In</Label>
-                           
+
                         </div>
 
                         <div className="space-y-2">
                            <Label>Expected Graduation</Label>
-                           
+
                         </div>
                      </div>
 
@@ -312,7 +321,7 @@ const AccountInfo = () => {
                   </CardContent>
                </Card>
             </div>
-         </form>
+         </form >
 
          <div className="flex md:hidden justify-end gap-4 mt-6">
             <Button type="button" variant="outline" onClick={handleCancel}>
@@ -322,7 +331,7 @@ const AccountInfo = () => {
                Save Changes
             </Button>
          </div>
-      </div>
+      </div >
    )
 }
 
