@@ -8,8 +8,9 @@ import useHandleReaction from "@/hooks/Posts/handleReaction"
 import InstagramStyleCommentSection from "./comments-section/comment-section"
 import useGetComments from "@/hooks/Posts/Comments/getComments"
 import { toast } from "sonner"
+import EmbeddedCommentSection from "./comments-section/embedded"
 
-export default function Footer({ bottomInfo }) {
+export default function Footer({ bottomInfo ,singlePost = false}) {
    const { post_id, user_id, likesCount, dislikesCount, commentsCount, userReaction } = bottomInfo
 
    const { loadingReaction, errorReaction, successReaction, fetchAddReaction, fetchDeleteReaction } = useHandleReaction()
@@ -77,7 +78,9 @@ export default function Footer({ bottomInfo }) {
 
    return (
       <div className="flex flex-col w-full">
+         {!singlePost && (
          <div className="w-full h-px bg-border mb-3"></div>
+         )}
 
          <div className="flex items-center gap-4 pt-2">
             <Button
@@ -101,34 +104,48 @@ export default function Footer({ bottomInfo }) {
                <ThumbsDown className={cn("h-4 w-4", disliked && "fill-red-600")} />
                <span>{dislikes}</span>
             </Button>
-
+            {!singlePost && (
             <Button
                variant="ghost"
                size="sm"
                className="flex items-center gap-1 px-2"
                onClick={handleCommentsClick}
-               disabled={loadingComments && isCommentsOpen} // Only disable if loading and already open
+               disabled={loadingComments && isCommentsOpen} // Disable only when loading and comments are open
             >
                {loadingComments && isCommentsOpen ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-1" />
                ) : (
                   <MessageCircle className="h-4 w-4" />
                )}
-               <span>{comments?.length || commentsCount}</span>
+               <span>{comments?.length ?? commentsCount}</span>
             </Button>
+            )}
+
          </div>
 
          {/* Always render the comment section component */}
-         <InstagramStyleCommentSection
-            commentsInfo={{
-               post_id,
-               user_id,
-               comments: comments || [],
-            }}
-            isOpen={isCommentsOpen}
-            onClose={() => setIsCommentsOpen(false)}
-            isLoading={loadingComments}
-         />
+         {singlePost ? (
+            <EmbeddedCommentSection
+               commentsInfo={{
+                  post_id,
+                  user_id,
+                  comments: comments || [],
+               }}
+               isLoading={loadingComments}
+            />
+         ) : (
+            <InstagramStyleCommentSection
+               commentsInfo={{
+                  post_id,
+                  user_id,
+                  comments: comments || [],
+               }}
+               isOpen={isCommentsOpen}
+               onClose={() => setIsCommentsOpen(false)}
+               isLoading={loadingComments}
+            />
+         )}
+
       </div>
    )
 }
