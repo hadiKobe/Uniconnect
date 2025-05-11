@@ -4,10 +4,10 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(_request, { params }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // const session = await getServerSession(authOptions);
+    // if (!session) {
+    //   return Response.json({ error: "Unauthorized" }, { status: 401 });
+    // }
 
     const userID = (await params)?.userID;
 
@@ -29,7 +29,8 @@ export async function GET(_request, { params }) {
         users.expected_graduation_date,
         users.graduation_progress,
         users.gpa,
-        users.joined_at
+        users.joined_at,
+        users.joined_in
       FROM users
       WHERE users.id = ?
       LIMIT 1

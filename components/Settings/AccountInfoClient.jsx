@@ -8,136 +8,137 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { CalendarIcon, Camera, Loader2, User } from "lucide-react"
+import { Camera, Loader2, User } from "lucide-react"
 import { useGetUserInfo } from "@/hooks/Settings/getUserInfo"
 import { useChangeInfo } from "@/hooks/Settings/changeInfo"
 import { toast } from "sonner"
 
-
 const AccountInfo = () => {
-   // Get user info from the hook
-   const { userInfo, loading, error } = useGetUserInfo();
-   const { fetchChangeInfo, loadingChange } = useChangeInfo();
+   const { userInfo, loading, error } = useGetUserInfo()
+   const { fetchChangeInfo, loadingChange } = useChangeInfo()
 
-   // Initialize form data with empty values, will be updated when userInfo loads
+   const [originalData, setOriginalData] = useState({})
+   const [changedFields, setChangedFields] = useState({})
+
    const [formData, setFormData] = useState({
       first_name: "",
       last_name: "",
       major: "",
-      joined_in: new Date(),
+      joined_in: {
+         year: "",
+         month: "",
+      },
       bio: "",
       address: "",
       phone_number: "",
-      expected_graduation_date: new Date(),
+      expected_graduation_date: {
+         year: "",
+         month: "",
+      },
       graduation_progress: 0,
       gpa: "",
    })
 
-   // Store original data for comparison
-   const [originalData, setOriginalData] = useState(null)
-   const [changedFields, setChangedFields] = useState({})
-   const [joinedDate, setJoinedDate] = useState(null)
-   const [gradDate, setGradDate] = useState(null)
+   const handleInputChange = (e) => {
+      const { name, value } = e.target
 
-   // Update form data when userInfo is loaded
+      setChangedFields((prev) => {
+         const updated = { ...prev }
+         value === originalData[name] ? delete updated[name] : (updated[name] = value)
+         return updated
+      })
+      setFormData((prev) => ({ ...prev, [name]: value }))
+   }
+
    useEffect(() => {
       if (userInfo) {
-         // Ensure all values are defined to prevent uncontrolled to controlled warnings
+         const { joined_in = "", expected_graduation_date = "" } = userInfo
+
+         const [joined_year, joined_month] = joined_in ? joined_in.split("-") : ["0", "0"]
+         const [graduation_year, graduation_month] = expected_graduation_date
+            ? expected_graduation_date.split("-")
+            : ["0", "0"]
+
          const sanitizedUserInfo = {
             first_name: userInfo.first_name || "",
             last_name: userInfo.last_name || "",
             major: userInfo.major || "",
-            joined_in: userInfo.joined_in || new Date(),
+            joined_in: {
+               year: joined_year || "",
+               month: joined_month || "",
+            },
             bio: userInfo.bio || "",
             address: userInfo.address || "",
             phone_number: userInfo.phone_number || "",
-            expected_graduation_date: userInfo.expected_graduation_date || new Date(),
+            expected_graduation_date: {
+               year: graduation_year || "",
+               month: graduation_month || "",
+            },
             graduation_progress: userInfo.graduation_progress || 0,
             gpa: userInfo.gpa || "",
             profile_picture: userInfo.profile_picture || null,
          }
-
          setFormData(sanitizedUserInfo)
-         setOriginalData(JSON.stringify(sanitizedUserInfo))
-         setJoinedDate(sanitizedUserInfo.joined_in)
-         setGradDate(sanitizedUserInfo.expected_graduation_date)
+         setOriginalData(sanitizedUserInfo)
       }
+      console.log("userInfo : ", userInfo)
    }, [userInfo])
 
-   const handleInputChange = (e) => {
-      const { name, value } = e.target
-      const parsedValue = !isNaN(value) && value.trim() !== "" ? Number(value) : value;
+   useEffect(() => {
+      console.log("changed fields :", changedFields)
+   }, [changedFields])
 
-      setChangedFields(prev => {
-         const updated = { ...prev };
-         parsedValue !== userInfo[name] ? updated[name] = parsedValue : delete updated[name];
-         return updated;
-      })
+   useEffect(() => {
+      console.log("form data :", formData)
+   }, [formData])
 
-      setFormData((prev) => ({ ...prev, [name]: value }))
-   }
+   useEffect(() => {
+      console.log("original data :", originalData)
+   }, [originalData])
 
    const handleProgressChange = (e) => {
       const value = Number.parseInt(e.target.value) || 0
-      // Ensure value is between 0 and 100
       const clampedValue = Math.min(100, Math.max(0, value))
       setFormData((prev) => ({ ...prev, graduation_progress: clampedValue }))
    }
 
-
-   useEffect(() => { console.log(changedFields); }, [changedFields])
    const handleSubmit = async (e) => {
-      e.preventDefault();
-
-      // Validate required fields
-      if (!formData.first_name || !formData.last_name || !formData.major) {
-         toast.error("Please fill in all required fields");
-         return;
+      e.preventDefault()
+      if (changedFields.first_name === "" || changedFields.last_name === "" || changedFields.major === "") {
+         toast.error("Please fill in all required fields")
+         return
       }
 
-      // Await the result from fetchChangeInfo
-      console.log(changedFields);
-      const result = await fetchChangeInfo(changedFields);
+      const result = await fetchChangeInfo(changedFields)
 
       if (!result.infoChanged) {
-         if (result?.isAllowedToChangeMajor === false) toast.error("Major changed in the last 5 months");
-         else toast.error(result.msg || "Update failed");
-         return; // prevent showing success toast if failed
+         if (result?.notAllowedChangeMajor !== undefined) toast.error("Major changed in the last 5 months")
+         else toast.error(result.msg || "Update failed")
+         return
       }
 
-      // Show success and update local state
-      setChangedFields({});
-      toast.success("Info changed successfully");
-      setOriginalData(JSON.stringify({ ...formData }));
-   };
+      toast.success("Info changed successfully")
+      setChangedFields({})
+      setOriginalData({ ...formData })
+   }
 
    const handleCancel = () => {
-      // Reset form to original data
       if (originalData) {
          const originalFormData = JSON.parse(originalData)
          setFormData(originalFormData)
-         setJoinedDate(originalFormData.joined_in)
-         setGradDate(originalFormData.expected_graduation_date)
       }
    }
 
-   // Better isModified check that works with the stored original data
-   const isModified = originalData ? JSON.stringify(formData) !== originalData : false
+   const isModified = originalData ? JSON.stringify(formData) !== JSON.stringify(originalData) : false
 
-   // Show loading state
-   if (loading) {
+   if (!userInfo) {
       return (
-         <div className="flex justify-center items-center h-[50vh]">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="ml-2">Loading user information...</span>
+         <div className="flex justify-center items-center h-full">
+            <Loader2 className="animate-spin text-muted-foreground" size={40} />
          </div>
-      )
+      );
    }
 
-   // Show error state
    if (error) {
       return (
          <div className="flex justify-center items-center h-[50vh] text-destructive">
@@ -147,6 +148,7 @@ const AccountInfo = () => {
    }
 
    return (
+
       <div className="container mx-auto py-6 max-w-3xl">
          <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold">Account Settings</h1>
@@ -171,7 +173,7 @@ const AccountInfo = () => {
                   </CardHeader>
                   <CardContent className="flex flex-col items-center space-y-4">
                      <Avatar className="h-32 w-32">
-                        <AvatarImage src={formData.profile_picture || "/placeholder.svg?height=128&width=128"} alt="Profile" />
+                        <AvatarImage src={formData.profile_picture || "/placeholder.svg"} alt="Profile" />
                         <AvatarFallback className="text-4xl">
                            <User size={64} />
                         </AvatarFallback>
@@ -224,7 +226,13 @@ const AccountInfo = () => {
                            <Label htmlFor="major">
                               Major <span className="text-destructive">*</span>
                            </Label>
-                           <Input id="major" name="major" value={formData.major || ""} onChange={handleInputChange} required />
+                           <Input
+                              id="major"
+                              name="major"
+                              value={formData.major || ""}
+                              onChange={handleInputChange}
+                              required
+                           />
                         </div>
 
                         <div className="space-y-2">
@@ -257,7 +265,7 @@ const AccountInfo = () => {
                </Card>
 
                {/* Academic Information */}
-               <Card>
+               <Card className="md:col-span-2">
                   <CardHeader>
                      <CardTitle>Academic Information</CardTitle>
                      <CardDescription>Update your academic details and progress</CardDescription>
@@ -266,48 +274,12 @@ const AccountInfo = () => {
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                            <Label>Joined In</Label>
-                           <Popover>
-                              <PopoverTrigger asChild>
-                                 <Button variant="outline" className="w-full justify-start text-left font-normal">
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {joinedDate ? format(joinedDate, "PPP") : "Select date"}
-                                 </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0">
-                                 <Calendar
-                                    mode="single"
-                                    selected={joinedDate}
-                                    onSelect={(date) => {
-                                       setJoinedDate(date)
-                                       setFormData((prev) => ({ ...prev, joined_in: date }))
-                                    }}
-                                    initialFocus
-                                 />
-                              </PopoverContent>
-                           </Popover>
+                           
                         </div>
 
                         <div className="space-y-2">
                            <Label>Expected Graduation</Label>
-                           <Popover>
-                              <PopoverTrigger asChild>
-                                 <Button variant="outline" className="w-full justify-start text-left font-normal">
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {gradDate ? format(gradDate, "PPP") : "Select date"}
-                                 </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0">
-                                 <Calendar
-                                    mode="single"
-                                    selected={gradDate}
-                                    onSelect={(date) => {
-                                       setGradDate(date)
-                                       setFormData((prev) => ({ ...prev, expected_graduation_date: date }))
-                                    }}
-                                    initialFocus
-                                 />
-                              </PopoverContent>
-                           </Popover>
+                           
                         </div>
                      </div>
 
@@ -329,8 +301,8 @@ const AccountInfo = () => {
                            max="100"
                            value={formData.graduation_progress}
                            onChange={(e) => {
-                              handleProgressChange(e);
-                              handleInputChange(e);
+                              handleProgressChange(e)
+                              handleInputChange(e)
                            }}
                            className="mb-2"
                         />
@@ -353,5 +325,7 @@ const AccountInfo = () => {
       </div>
    )
 }
+
+
 
 export default AccountInfo

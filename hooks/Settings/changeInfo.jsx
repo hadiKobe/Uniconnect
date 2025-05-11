@@ -1,12 +1,11 @@
 import { useState } from "react";
 
-export  function useChangeInfo() {
+export function useChangeInfo() {
    const [loadingChange, setLoadingChange] = useState(false);
    const [errorChange, setErrorChange] = useState(null);
    const path = '/api/settings/info';
 
    const fetchChangeInfo = async (info) => {
-      console.log(path);
       setLoadingChange(true);
       setErrorChange(null);
 
@@ -24,7 +23,7 @@ export  function useChangeInfo() {
 
          if (!result.ok) {
             isChanged.infoChanged = false;
-            if (!(msg?.isAllowedToChangeMajor)) isChanged.isAllowedToChangeMajor = false;
+            if (msg?.notAllowedChangeMajor !== undefined) isChanged.notAllowedChangeMajor = true;
          }
 
       } catch (error) {
