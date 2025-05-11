@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import LeftSide from "@/components/Left/left";
-import SettingsPanel from "@/components/Left/SettingsPanel";
+import SettingsPanel from "@/components/Settings/SettingsPanel";
 
 export default function LeftBarShell() {
    const [isSettingsOpen, setIsSettingsOpen] = useState(false);

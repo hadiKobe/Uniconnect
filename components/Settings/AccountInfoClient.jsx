@@ -88,20 +88,19 @@ const AccountInfo = () => {
          setFormData(sanitizedUserInfo)
          setOriginalData(sanitizedUserInfo)
       }
-      console.log("userInfo : ", userInfo)
    }, [userInfo])
 
-   useEffect(() => {
-      console.log("changed fields :", changedFields)
-   }, [changedFields])
+   // useEffect(() => {
+   //    console.log("changed fields :", changedFields)
+   // }, [changedFields])
 
-   useEffect(() => {
-      console.log("form data :", formData)
-   }, [formData])
+   // useEffect(() => {
+   //    console.log("form data :", formData)
+   // }, [formData])
 
-   useEffect(() => {
-      console.log("original data :", originalData)
-   }, [originalData])
+   // useEffect(() => {
+   //    console.log("original data :", originalData)
+   // }, [originalData])
 
    const handleProgressChange = (e) => {
       const value = Number.parseInt(e.target.value) || 0

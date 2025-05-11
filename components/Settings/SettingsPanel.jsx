@@ -8,7 +8,6 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils"; // If not already imported
 import { useState, useEffect } from "react";
-import { set } from "date-fns";
 
 const settingsSections = [
    { id: "AccountInfo", label: "Account Info", icon: User },
@@ -18,6 +17,7 @@ const settingsSections = [
 export default function SettingsPanel({ onClose, goBack }) {
    const router = useRouter();
    const [prevPath, setPrevPath] = useState("/Feed");
+
    useEffect(() => {
       const prev = sessionStorage.getItem("previousPath");
       console.log("previousPath", prev);
