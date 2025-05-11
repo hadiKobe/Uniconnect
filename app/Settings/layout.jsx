@@ -3,16 +3,17 @@ import SettingsPanel from "@/components/Left/SettingsPanel";
 
 export default function SettingsLayout({ children }) {
    return (
-      <div className="flex flex-col md:flex-row">
-         <div className="flex flex-col md:flex-row pl-0 md:pl-64 min-h-screen">
-            {/* Fixed Sidebar */}
-            <div className="hidden md:block fixed left-0  h-[calc(100vh-64px)] w-64 border-r bg-background z-40">
-               <SettingsPanel goBack={true}/>
-            </div>
-
-            {/* Shared Main Area Styling */}
-            <main className="flex-grow p-6">{children}</main>
+      <div className="flex flex-col md:flex-row min-h-screen">
+         {/* Fixed Sidebar (Desktop) */}
+         <div className="hidden md:block fixed left-0 top-0 h-full w-64 border-r bg-background z-40">
+            <SettingsPanel goBack={true} />
          </div>
+
+         {/* Main Content Area */}
+         <main className="flex-grow p-4 flex justify-center items-start">
+            {children}
+         </main>
       </div>
+
    );
 }

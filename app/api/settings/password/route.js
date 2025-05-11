@@ -4,12 +4,12 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import bcrypt from 'bcryptjs';
 
 export async function PATCH(req) {
-   const userId = 14; // For testing purposes, remove this line in production
+   // const userId = 14; // For testing purposes, remove this line in production
 
-   // const session = await getServerSession(authOptions);
-   // if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
-   // const userId = session.user?.id;
-   // if (!userId) return Response.json({ error: "User ID not found" }, { status: 400 });
+   const session = await getServerSession(authOptions);
+   if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+   const userId = session.user?.id;
+   if (!userId) return Response.json({ error: "User ID not found" }, { status: 400 });
 
    // get the old and new pass from the frontend
    const { old_password, new_password } = await req.json();
@@ -19,7 +19,7 @@ export async function PATCH(req) {
    const sqlQuery = `SELECT password FROM users WHERE id = ?`;
    let result;
    try { result = await query(sqlQuery, [userId]); }
-   catch (error) { return Response.json({ error, message: 'Internal Server Error' }, { status: 500 }); }
+   catch (error) { return Response.json({ error: 'Internal Server Error' + error, }, { status: 500 }); }
 
    // if no, return user not found
    if (result.length === 0) return Response.json({ error: "User not found" }, { status: 404 });
@@ -29,7 +29,7 @@ export async function PATCH(req) {
    const isMatch = await bcrypt.compare(old_password, hashedPassword);
 
    // if no return incorrect password
-   if (!isMatch) return Response.json({ error: "Incorrect password" }, { status: 401 });
+   if (!isMatch) return Response.json({ error: "Incorrect Password" }, { status: 401 });
 
    // if yes, hash the new pass and update it in the db
    const newHashedPassword = await bcrypt.hash(new_password, 10);
@@ -42,5 +42,5 @@ export async function PATCH(req) {
    if (updateResult.affectedRows === 0) return Response.json({ error: "Failed to update password" }, { status: 500 });
 
    // if yes, return success
-   return Response.json({ message: "Password updated successfully" }, { status: 200 });
+   return Response.json({ changed: true }, { status: 200 });
 }

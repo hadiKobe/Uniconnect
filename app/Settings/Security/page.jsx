@@ -1,8 +1,8 @@
-import React from 'react'
+import SecurityClient from "@/components/Settings/SecurityClient"
 
 const Security = () => {
   return (
-    <div>Security</div>
+    <SecurityClient/>
   )
 }
 
