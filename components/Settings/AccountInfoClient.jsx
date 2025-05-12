@@ -13,19 +13,17 @@ import { useGetUserInfo } from "@/hooks/Settings/getUserInfo"
 import { useChangeInfo } from "@/hooks/Settings/changeInfo"
 import { toast } from "sonner"
 import { PhotoUploadDialog } from "./PhotoUpload"
+import DateSelector from "./DateSelector"
+import LoadingPage from "../Loading/LoadingPage"
 
 const AccountInfo = () => {
    const { userInfo, loading, error } = useGetUserInfo()
    const { fetchChangeInfo, loadingChange } = useChangeInfo()
 
    const [originalData, setOriginalData] = useState({})
+   const [joinedInYear, setJoinedInYear] = useState("");
    const [changedFields, setChangedFields] = useState({})
    const [openUploadPhoto, setOpenUploadPhoto] = useState(false);
-
-   const handleImageUploaded = (imageUrl) => {
-      handleInputChange({ target: { name: "profile_picture", value: imageUrl } })
-      setOpenUploadPhoto(false)
-   }
 
    const [formData, setFormData] = useState({
       first_name: "",
@@ -46,25 +44,46 @@ const AccountInfo = () => {
       gpa: "",
    })
 
+   const handleImageUploaded = (imageUrl) => {
+      handleInputChange({ target: { name: "profile_picture", value: imageUrl } })
+      setOpenUploadPhoto(false)
+   }
+
    const handleInputChange = (e) => {
-      const { name, value } = e.target
+      const { name, value } = e.target;
 
       setChangedFields((prev) => {
-         const updated = { ...prev }
-         value === originalData[name] ? delete updated[name] : (updated[name] = value)
-         return updated
-      })
-      setFormData((prev) => ({ ...prev, [name]: value }))
-   }
+         const updated = { ...prev };
+         value === originalData[name] ? delete updated[name] : (updated[name] = value);
+         return updated;
+      });
+
+      setFormData((prev) => ({ ...prev, [name]: value }));
+
+      if (name === "joined_in") {
+         const selectedYear = parseInt(value.year) || 0;
+         setJoinedInYear(selectedYear);
+
+         setChangedFields((prev) => {
+            const updated = { ...prev };
+            const expectedGrad = updated.expected_graduation_date;
+
+            // If expected graduation year is less than selected joined year, reset it
+            if (expectedGrad && parseInt(expectedGrad.year) < selectedYear) {
+               delete updated["expected_graduation_date"];
+            }
+
+            return updated;
+         });
+      }
+   };
 
    useEffect(() => {
       if (userInfo) {
          const { joined_in = "", expected_graduation_date = "" } = userInfo
 
-         const [joined_year, joined_month] = joined_in ? joined_in.split("-") : ["0", "0"]
-         const [graduation_year, graduation_month] = expected_graduation_date
-            ? expected_graduation_date.split("-")
-            : ["0", "0"]
+         const [joined_year, joined_month] = joined_in ? joined_in.split("-") : ["", ""]
+         const [graduation_year, graduation_month] = expected_graduation_date ? expected_graduation_date.split("-") : ["", ""]
 
          const sanitizedUserInfo = {
             first_name: userInfo.first_name || "",
@@ -87,7 +106,9 @@ const AccountInfo = () => {
          }
          setFormData(sanitizedUserInfo)
          setOriginalData(sanitizedUserInfo)
+         setJoinedInYear(sanitizedUserInfo.joined_in.year || "0")
       }
+
    }, [userInfo])
 
    // useEffect(() => {
@@ -155,182 +176,213 @@ const AccountInfo = () => {
 
    return (
 
-      <div className="container mx-auto py-6 max-w-3xl">
-         <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold">Account Settings</h1>
+      <div>
+         {loading ?
+            <LoadingPage />
+            :
+            <div className="container mx-auto py-6 max-w-3xl">
+               <div className="flex items-center justify-between mb-6">
+                  <h1 className="text-3xl font-bold">Account Settings</h1>
 
-            <div className="hidden md:flex justify-end gap-4">
-               <Button type="button" variant="outline" onClick={handleCancel}>
-                  Cancel
-               </Button>
-               <Button type="submit" form="account-form" disabled={!isModified || loadingChange}>
-                  Save Changes
-               </Button>
-            </div>
-         </div>
-
-         <form id="account-form" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               {/* Profile Picture Section */}
-               <Card>
-                  <CardHeader>
-                     <CardTitle>Profile Picture</CardTitle>
-                     <CardDescription>Upload a profile picture to personalize your account</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col items-center space-y-4">
-                     <Avatar className="h-32 w-32">
-                        <AvatarImage src={formData.profile_picture || "/placeholder.svg"} alt="Profile" />
-                        <AvatarFallback className="text-4xl">
-                           <User size={64} />
-                        </AvatarFallback>
-                     </Avatar>
-
-                     <Button type="button" variant="outline" className="flex items-center gap-2" onClick={() => { setOpenUploadPhoto(true) }}>
-                        <Camera size={16} />
-                        Upload Photo
+                  <div className="hidden md:flex justify-end gap-4">
+                     <Button type="button" variant="outline" onClick={handleCancel}>
+                        Cancel
                      </Button>
+                     <Button type="submit" form="account-form" disabled={!isModified || loadingChange}>
+                        Save Changes
+                     </Button>
+                  </div>
+               </div>
 
-                     <PhotoUploadDialog open={openUploadPhoto} onOpenChange={setOpenUploadPhoto} onImageUploaded={handleImageUploaded} initialImageUrl={formData.profile_picture} />
-                  </CardContent>
-               </Card>
+               <form id="account-form" onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     {/* Profile Picture Section */}
+                     <Card>
+                        <CardHeader>
+                           <CardTitle>Profile Picture</CardTitle>
+                           <CardDescription>Upload a profile picture to personalize your account</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-col items-center space-y-4">
+                           <Avatar className="h-32 w-32">
+                              <AvatarImage src={formData.profile_picture || "/placeholder.svg"} alt="Profile" />
+                              <AvatarFallback className="text-4xl">
+                                 <User size={64} />
+                              </AvatarFallback>
+                           </Avatar>
 
-               {/* Personal Information */}
-               <Card>
-                  <CardHeader>
-                     <CardTitle>Personal Information</CardTitle>
-                     <CardDescription>Update your personal details</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                           <Label htmlFor="first_name">
-                              First Name <span className="text-destructive">*</span>
-                           </Label>
-                           <Input
-                              id="first_name"
-                              name="first_name"
-                              value={formData.first_name || ""}
-                              onChange={handleInputChange}
-                              required
-                           />
-                        </div>
+                           <Button type="button" variant="outline" className="flex items-center gap-2" onClick={() => { setOpenUploadPhoto(true) }}>
+                              <Camera size={16} />
+                              Upload Photo
+                           </Button>
 
-                        <div className="space-y-2">
-                           <Label htmlFor="last_name">
-                              Last Name <span className="text-destructive">*</span>
-                           </Label>
-                           <Input
-                              id="last_name"
-                              name="last_name"
-                              value={formData.last_name || ""}
-                              onChange={handleInputChange}
-                              required
-                           />
-                        </div>
-                     </div>
+                           <PhotoUploadDialog open={openUploadPhoto} onOpenChange={setOpenUploadPhoto} onImageUploaded={handleImageUploaded} initialImageUrl={formData.profile_picture} />
+                        </CardContent>
+                     </Card>
 
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                           <Label htmlFor="major">
-                              Major <span className="text-destructive">*</span>
-                           </Label>
-                           <Input
-                              id="major"
-                              name="major"
-                              value={formData.major || ""}
-                              onChange={handleInputChange}
-                              required
-                           />
-                        </div>
+                     {/* Personal Information */}
+                     <Card>
+                        <CardHeader>
+                           <CardTitle>Personal Information</CardTitle>
+                           <CardDescription>Update your personal details</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                 <Label htmlFor="first_name">
+                                    First Name <span className="text-destructive">*</span>
+                                 </Label>
+                                 <Input
+                                    id="first_name"
+                                    name="first_name"
+                                    value={formData.first_name || ""}
+                                    onChange={handleInputChange}
+                                    required
+                                 />
+                              </div>
 
-                        <div className="space-y-2">
-                           <Label htmlFor="phone_number">Phone Number</Label>
-                           <Input
-                              id="phone_number"
-                              name="phone_number"
-                              value={formData.phone_number || ""}
-                              onChange={handleInputChange}
-                           />
-                        </div>
-                     </div>
+                              <div className="space-y-2">
+                                 <Label htmlFor="last_name">
+                                    Last Name <span className="text-destructive">*</span>
+                                 </Label>
+                                 <Input
+                                    id="last_name"
+                                    name="last_name"
+                                    value={formData.last_name || ""}
+                                    onChange={handleInputChange}
+                                    required
+                                 />
+                              </div>
+                           </div>
 
-                     <div className="space-y-2">
-                        <Label htmlFor="address">Address</Label>
-                        <Input id="address" name="address" value={formData.address || ""} onChange={handleInputChange} />
-                     </div>
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                 <Label htmlFor="major">
+                                    Major <span className="text-destructive">*</span>
+                                 </Label>
+                                 <Input
+                                    id="major"
+                                    name="major"
+                                    value={formData.major || ""}
+                                    onChange={handleInputChange}
+                                    required
+                                 />
+                              </div>
 
-                     <div className="space-y-2">
-                        <Label htmlFor="bio">Bio</Label>
-                        <Textarea
-                           id="bio"
-                           name="bio"
-                           value={formData.bio || ""}
-                           onChange={handleInputChange}
-                           className="min-h-[100px]"
-                        />
-                     </div>
-                  </CardContent>
-               </Card>
+                              <div className="space-y-2">
+                                 <Label htmlFor="phone_number">Phone Number</Label>
+                                 <Input
+                                    id="phone_number"
+                                    name="phone_number"
+                                    value={formData.phone_number || ""}
+                                    onChange={handleInputChange}
+                                 />
+                              </div>
+                           </div>
 
-               {/* Academic Information */}
-               <Card className="md:col-span-2">
-                  <CardHeader>
-                     <CardTitle>Academic Information</CardTitle>
-                     <CardDescription>Update your academic details and progress</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                           <Label>Joined In</Label>
+                           <div className="space-y-2">
+                              <Label htmlFor="address">Address</Label>
+                              <Input id="address" name="address" value={formData.address || ""} onChange={handleInputChange} />
+                           </div>
 
-                        </div>
+                           <div className="space-y-2">
+                              <Label htmlFor="bio">Bio</Label>
+                              <Textarea
+                                 id="bio"
+                                 name="bio"
+                                 value={formData.bio || ""}
+                                 onChange={handleInputChange}
+                                 className="min-h-[100px]"
+                              />
+                           </div>
+                        </CardContent>
+                     </Card>
 
-                        <div className="space-y-2">
-                           <Label>Expected Graduation</Label>
+                     {/* Academic Information */}
+                     <Card className="md:col-span-2">
+                        <CardHeader>
+                           <CardTitle>Academic Information</CardTitle>
+                           <CardDescription>Update your academic details and progress</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                 <Label>Joined In</Label>
+                                 <DateSelector
+                                    name="joined"
+                                    year={originalData.joined_in.year || 'none'}
+                                    month={originalData.joined_in.month}
+                                    onChange={(value) => {
+                                       handleInputChange({
+                                          target: {
+                                             name: 'joined_in',
+                                             value
+                                          }
+                                       })
+                                    }}
+                                 />
+                              </div>
 
-                        </div>
-                     </div>
+                              <div className="space-y-2">
+                                 <Label>Expected Graduation</Label>
+                                 <DateSelector
+                                    name="expected"
+                                    startYear={joinedInYear}
+                                    year={originalData.expected_graduation_date.year || 'none'}
+                                    month={originalData.expected_graduation_date.month}
+                                    onChange={(value) => {
+                                       handleInputChange({
+                                          target: {
+                                             name: 'expected_graduation_date',
+                                             value
+                                          }
+                                       })
+                                    }}
+                                 />
+                              </div>
+                           </div>
 
-                     <div className="space-y-2">
-                        <Label htmlFor="gpa">GPA</Label>
-                        <Input id="gpa" name="gpa" value={formData.gpa || ""} onChange={handleInputChange} />
-                     </div>
+                           <div className="space-y-2">
+                              <Label htmlFor="gpa">GPA</Label>
+                              <Input id="gpa" name="gpa" value={formData.gpa || ""} onChange={handleInputChange} />
+                           </div>
 
-                     <div className="space-y-2">
-                        <div className="flex justify-between">
-                           <Label htmlFor="graduation_progress">Graduation Progress</Label>
-                           <span className="text-sm text-muted-foreground">{formData.graduation_progress}%</span>
-                        </div>
-                        <Input
-                           id="graduation_progress"
-                           name="graduation_progress"
-                           type="number"
-                           min="0"
-                           max="100"
-                           value={formData.graduation_progress}
-                           onChange={(e) => {
-                              handleProgressChange(e)
-                              handleInputChange(e)
-                           }}
-                           className="mb-2"
-                        />
-                        <Progress value={formData.graduation_progress} className="h-2" />
-                        <p className="text-sm text-muted-foreground">Percentage of credits completed</p>
-                     </div>
-                  </CardContent>
-               </Card>
-            </div>
-         </form >
+                           <div className="space-y-2">
+                              <div className="flex justify-between">
+                                 <Label htmlFor="graduation_progress">Graduation Progress</Label>
+                                 <span className="text-sm text-muted-foreground">{formData.graduation_progress}%</span>
+                              </div>
+                              <Input
+                                 id="graduation_progress"
+                                 name="graduation_progress"
+                                 type="number"
+                                 min="0"
+                                 max="100"
+                                 value={formData.graduation_progress}
+                                 onChange={(e) => {
+                                    handleProgressChange(e)
+                                    handleInputChange(e)
+                                 }}
+                                 className="mb-2"
+                              />
+                              <Progress value={formData.graduation_progress} className="h-2" />
+                              <p className="text-sm text-muted-foreground">Percentage of credits completed</p>
+                           </div>
+                        </CardContent>
+                     </Card>
+                  </div>
+               </form >
 
-         <div className="flex md:hidden justify-end gap-4 mt-6">
-            <Button type="button" variant="outline" onClick={handleCancel}>
-               Cancel
-            </Button>
-            <Button type="submit" form="account-form" disabled={!isModified}>
-               Save Changes
-            </Button>
-         </div>
-      </div >
+               <div className="flex md:hidden justify-end gap-4 mt-6">
+                  <Button type="button" variant="outline" onClick={handleCancel}>
+                     Cancel
+                  </Button>
+                  <Button type="submit" form="account-form" disabled={!isModified}>
+                     Save Changes
+                  </Button>
+               </div>
+            </div >}
+      </div>
+
    )
 }
 

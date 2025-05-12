@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 export function useGetUserInfo() {
    const { data: session } = useSession();
    const userId = session?.user?.id;
-   const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(true);
    const [userInfo, setUserInfo] = useState({});
    const [error, setError] = useState(null);
 

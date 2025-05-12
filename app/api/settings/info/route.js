@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const patchDate = (date) => {
-   const dateFormat = new Date(parseInt(date.year), parseInt(date.month) - 1);
+   const dateFormat = new Date(parseInt(date.year), parseInt(date.month));
    return dateFormat;
 }
 
