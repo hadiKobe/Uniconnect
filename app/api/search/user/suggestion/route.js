@@ -48,7 +48,7 @@ export async function GET(request) {
 
    try {
       const results = await query(sqlQuery, params);
-      console.log("Results:", results); // Debugging line to check the results
+      // console.log("Results:", results); // Debugging line to check the results
       return Response.json( {users : results} );
    } catch (error) {
       return Response.json({ error: "Internal Server Error" }, { status: 500 });

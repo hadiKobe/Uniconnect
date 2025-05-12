@@ -38,12 +38,12 @@ export async function PATCH(req) {
 
    if (info.expected_graduation_date){
       info.expected_graduation_date = patchDate(info.expected_graduation_date);
-      console.log(info.expected_graduation_date);
+      // console.log(info.expected_graduation_date);
    }
 
    if (info.joined_in){
       info.joined_in = patchDate(info.joined_in);
-      console.log(info.joined_in);
+      // console.log(info.joined_in);
    }
 
    const changedFields = Object.entries(info).map(([key, value]) => {

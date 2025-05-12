@@ -5,7 +5,7 @@ export async function DELETE(request,{params}) {
    const sqlQuery = `UPDATE posts SET is_deleted = 1 WHERE id = ?`;
    try {
       const result = await query(sqlQuery,[postID]);
-      console.log(result);
+      // console.log(result);
 
       return Response.json({ message: "Post deleted successfully!" });
    } catch (error) {

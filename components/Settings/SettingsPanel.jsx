@@ -20,7 +20,7 @@ export default function SettingsPanel({ onClose, goBack }) {
 
    useEffect(() => {
       const prev = sessionStorage.getItem("previousPath");
-      console.log("previousPath", prev);
+      // console.log("previousPath", prev);
       setPrevPath(prev || "/Feed");
    }, [prevPath]);
 
