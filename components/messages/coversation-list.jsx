@@ -1,21 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { ConversationItem } from "./conversation-item"
+import { useState } from "react";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ConversationItem } from "./conversation-item";
 
-
-
-export function ConversationList({ conversations, activeConversationId, onSelectConversation }) {
-  const [searchQuery, setSearchQuery] = useState("")
+export function ConversationList({ conversations = [], activeConversationId, onSelectConversation }) {
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredConversations = conversations.filter((conversation) =>
-    conversation.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+    (conversation.name || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col h-full border-r">
+      {/* Search Bar */}
       <div className="p-3 border-b">
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -28,14 +27,15 @@ export function ConversationList({ conversations, activeConversationId, onSelect
         </div>
       </div>
 
+      {/* Conversations List */}
       <div className="flex-1 overflow-y-auto">
         {filteredConversations.length > 0 ? (
           filteredConversations.map((conversation) => (
             <ConversationItem
-              key={conversation.id}
+              key={conversation._id }
               conversation={conversation}
               isActive={activeConversationId === conversation.id}
-              onClick={() => onSelectConversation(conversation.id)}
+              onClick={() => onSelectConversation(conversation._id)}
             />
           ))
         ) : (
@@ -43,5 +43,5 @@ export function ConversationList({ conversations, activeConversationId, onSelect
         )}
       </div>
     </div>
-  )
+  );
 }

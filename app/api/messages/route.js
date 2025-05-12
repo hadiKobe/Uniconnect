@@ -15,6 +15,7 @@ export async function GET(req) {
     await connectToDB(); // ✅ Ensure DB is connected before querying
 
     const result = await getMessages(chatId, limit, skip);
+  
     return Response.json(result);
   } catch (error) {
     console.error("❌ Failed to fetch messages:", error);

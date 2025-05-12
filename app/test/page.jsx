@@ -4,6 +4,8 @@ import { io } from "socket.io-client";
 import { useChat } from "@/hooks/chatSystem/chat";
 import { useGetMessages } from "@/hooks/chatSystem/getMassages";
 
+
+
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000";
 
 export default function SessionChat() {
@@ -132,3 +134,4 @@ export default function SessionChat() {
     </div>
   );
 }
+

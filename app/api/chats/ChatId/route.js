@@ -1,7 +1,13 @@
 import connectToDB from "@/server/db";
 import { getOrCreateChat } from "@/server/controllers/chatController";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(req) {
+   const session = await getServerSession(authOptions);
+      if (!session) {
+        return Response.json({ error: "Unauthorized" }, { status: 401 });
+      }
   const { searchParams } = new URL(req.url);
   const userA = searchParams.get("userA");
   const userB = searchParams.get("userB");

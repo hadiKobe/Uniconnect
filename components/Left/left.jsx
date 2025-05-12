@@ -107,12 +107,12 @@ export default function LeftSide({ onSettingsClick }) {
             </Link>
           </li>
           <li>
-            <Link href="/messages" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+            <Link href="/Messages" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <MessageSquare className="h-4 w-4" /> Messages
               <Badge className="ml-auto bg-primary text-xs">5</Badge>
             </Link>
           </li>
-          <li>
+         <li>
             <Link href="/notifications" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <Bell className="h-4 w-4" /> Notifications
               {count > 0 && (
