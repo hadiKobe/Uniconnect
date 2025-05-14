@@ -4,22 +4,37 @@ import { useState, useRef } from "react";
 import { Send, ImageIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { uploadMedia } from "@/lib/supaBase/storage";
 
 export function MessageInput({ onSendMessage }) {
   const [message, setMessage] = useState("");
-  const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // Store the File object
+  const [imagePreview, setImagePreview] = useState(null); // For preview URL
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  const handleSend = () => {
-    if (!message.trim() && !image) return;
+ const handleSend = async () => {
+  if (!message.trim() && !imageFile) return;
 
-    // Call the parent handler with message and image
-    onSendMessage(message.trim(), image);
+  setUploading(true);
+  let imageUrl = null;
 
-    // Reset state after sending
-    setMessage("");
-    setImage(null);
-  };
+  if (imageFile) {
+    const res = await uploadMedia(imageFile, "messages");
+    if (res?.publicUrl) {
+      imageUrl = res.publicUrl;
+    }
+  }
+
+  onSendMessage(message.trim(), imageUrl);
+
+  // Reset state after sending
+  setMessage("");
+  setImageFile(null);
+  setImagePreview(null);
+  setUploading(false);
+};
+
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -31,21 +46,24 @@ export function MessageInput({ onSendMessage }) {
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
   return (
     <div className="space-y-2">
-      {image && (
+      {imagePreview && (
         <div className="relative inline-block">
-          <img src={image} alt="Upload preview" className="h-20 rounded-md" />
+          <img src={imagePreview} alt="Upload preview" className="h-20 rounded-md" />
           <Button
             variant="destructive"
             size="icon"
             className="h-5 w-5 absolute top-1 right-1 rounded-full"
-            onClick={() => setImage(null)}
+            onClick={() => {
+              setImageFile(null);
+              setImagePreview(null);
+            }}
           >
             <X className="h-3 w-3" />
           </Button>
@@ -83,7 +101,7 @@ export function MessageInput({ onSendMessage }) {
           size="icon"
           className="rounded-full flex-shrink-0"
           onClick={handleSend}
-          disabled={!message.trim() && !image}
+          disabled={(!message.trim() && !imageFile) || uploading}
         >
           <Send className="h-4 w-4" />
           <span className="sr-only">Send message</span>

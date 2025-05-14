@@ -16,7 +16,7 @@ export function MessageItem({ message, isOwnMessage }) {
   } = message;
 
   const formattedTime = timestamp ? format(new Date(timestamp), "p, MMM d") : "";
-console.log(isOwnMessage);
+
   return (
     <div className={cn("flex", isOwnMessage ? "justify-end" : "justify-start")}>
       

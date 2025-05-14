@@ -2,38 +2,45 @@ const Message = require("../models/messages");
 const Chat = require("../models/chats");
 
 async function saveMessage({ toUserId, fromUserId, message, media = [] }) {
-  if (!toUserId || !fromUserId || !message) {
-    throw new Error("Missing required fields: toUserId, fromUserId, or message.");
+  if (!toUserId || !fromUserId || (!message && media.length === 0)) {
+    throw new Error("Missing required fields: toUserId, fromUserId, or message/media.");
   }
 
-  // Find or create the chat
-  let chat = await Chat.findOne({ participants: { $all: [fromUserId, toUserId] } });
+  try {
+    // Find or create the chat
+    let chat = await Chat.findOne({ participants: { $all: [fromUserId, toUserId] } });
 
-  if (!chat) {
-    chat = await Chat.create({ participants: [fromUserId, toUserId] });
+    if (!chat) {
+      chat = await Chat.create({ participants: [fromUserId, toUserId] });
+      if (!chat) throw new Error("Failed to create a new chat.");
+    }
+
+    const validatedMedia = media.map((item) => ({
+      url: item.url,
+      type: item.type,
+    }));
+
+    // Create and save the new message
+    const newMessage = await Message.create({
+      chatId: chat._id,
+      fromUserId,
+      toUserId,
+      message,
+      media: validatedMedia,
+    });
+
+    if (!newMessage) throw new Error("Failed to save the message.");
+
+    // Update chat metadata
+    chat.lastMessage = message || (validatedMedia.length > 0 ? "Media Sent" : "");
+    chat.lastUpdated = new Date();
+    await chat.save();
+
+    return newMessage;
+  } catch (err) {
+    console.error("Error in saveMessage:", err);
+    throw new Error("Failed to save message: " + err.message);
   }
-
-  // Validate media (ensure correct structure if media is sent)
-  const validatedMedia = media.map((item) => ({
-    url: item.url,
-    type: item.type,
-  }));
-
-  // Create and save the new message
-  const newMessage = await Message.create({
-    chatId: chat._id,
-    fromUserId,
-    toUserId,
-    message,
-    media: validatedMedia,
-  });
-
-  // Update chat metadata
-  chat.lastMessage = message || (validatedMedia.length > 0 ? "Media Sent" : "");
-  chat.lastUpdated = new Date();
-  await chat.save();
-
-  return newMessage;
 }
 
 async function getMessages(chatId, limit = 20, skip = 0) {
@@ -41,15 +48,49 @@ async function getMessages(chatId, limit = 20, skip = 0) {
     throw new Error("chatId is required to fetch messages.");
   }
 
-  const messages = await Message.find({ chatId })
-    .sort({ createdAt: 1 }) // Oldest first for chat display
-    .skip(skip)
-    .limit(limit);
+  try {
+   const messages = await Message.find({ chatId })
+  .sort({ createdAt: -1 })
+  .skip(skip)
+  .limit(limit);
 
-  const totalCount = await Message.countDocuments({ chatId });
 
-  return { messages, totalCount };
+
+
+    const totalCount = await Message.countDocuments({ chatId });
+
+    return { messages: messages.reverse(), totalCount };
+  } catch (err) {
+    console.error("Error in getMessages:", err);
+    throw new Error("Failed to retrieve messages: " + err.message);
+  }
 }
 
-// ✅ Proper Export for Importing in Other Files
-module.exports = { saveMessage, getMessages };
+async function markMessagesAsRead({ chatId, userId }) {
+  if (!chatId || !userId) {
+    throw new Error("chatId and userId are required to mark messages as read.");
+  }
+
+  try {
+    const result = await Message.updateMany(
+      { chatId, toUserId: userId, isRead: false },
+      { $set: { isRead: true } }
+    );
+
+    if (result.modifiedCount === 0) {
+      console.warn("No messages were marked as read.");
+    }
+
+    const affectedSenders = await Message.find({
+      chatId,
+      toUserId: userId,
+    }).distinct("fromUserId");
+
+    return affectedSenders;
+  } catch (err) {
+    console.error("Error in markMessagesAsRead:", err);
+    throw new Error("Failed to mark messages as read: " + err.message);
+  }
+}
+
+module.exports = { saveMessage, getMessages, markMessagesAsRead };
