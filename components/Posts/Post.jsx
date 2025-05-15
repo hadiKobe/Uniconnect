@@ -5,6 +5,7 @@ import MarketBody from "./body/market-body"
 import JobBody from "./body/job-body"
 import Footer from "./common/post-footer"
 import JobPost from "./types/JobPost"
+import TutorPost from "./types/TutorPost"
 import { useRouter } from 'next/navigation';
 
 const Post = ({ post, onDelete, section }) => {
@@ -79,15 +80,10 @@ const Post = ({ post, onDelete, section }) => {
   }
 
   switch (section) {
-    case 'job':
-      return <JobPost post={post} onClick={post_id => router.push(`/post/${post_id}`)} />
+    case 'job': return <JobPost post={post}  />
   
-    case 'tutor':
-      break;
-
+    case 'tutor': return <TutorPost post={post}/>
     case 'market':
-      break;
-
     default:
       return (
         <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-xl mx-auto my-4">

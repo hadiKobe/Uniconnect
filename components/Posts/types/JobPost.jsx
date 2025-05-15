@@ -1,6 +1,7 @@
 "use client"
 import { formatDistanceToNow } from "date-fns"
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 // Icons as simple SVG components for standard JSX compatibility
 const MapPinIcon = () => (
@@ -92,7 +93,9 @@ const ClockIcon = () => (
    </svg>
 )
 
-const JobPost = ({ post, onClick }) => {
+const JobPost = ({ post }) => {
+
+   const router = useRouter();
 
    // Format the date to show how long ago the post was created
    const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true })
@@ -102,8 +105,13 @@ const JobPost = ({ post, onClick }) => {
       return `${post.user_first_name.charAt(0)}${post.user_last_name.charAt(0)}`
    }
 
+   // Handle click to navigate to single post page
+   const handleClick = () => {
+      router.push(`/post/${post.id}`)
+   }
+
    return (
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 max-w-2xl mx-auto my-4 mb-4">
+      <div className="bg-white border border-gray-200 rounded shadow-sm hover:shadow-md transition-shadow p-4 max-w-xl mx-auto my-4 mb-4">
          <div className="flex items-center mb-3 hover:underline cursor-pointer">
             {post.profile_picture ? (
                <img
@@ -160,7 +168,7 @@ const JobPost = ({ post, onClick }) => {
             </div>
 
             <div
-               onClick={() => onClick(post.id)}
+               onClick={handleClick}
                className="text-sm font-medium text-blue-600 hover:underline cursor-pointer"
             >
                See More →
