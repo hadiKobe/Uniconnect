@@ -10,7 +10,7 @@ import useGetComments from "@/hooks/Posts/Comments/getComments"
 import { toast } from "sonner"
 import EmbeddedCommentSection from "./comments-section/embedded"
 
-export default function Footer({ bottomInfo ,singlePost = false}) {
+export default function Footer({ bottomInfo, singlePost = false }) {
    const { post_id, user_id, likesCount, dislikesCount, commentsCount, userReaction } = bottomInfo
 
    const { loadingReaction, errorReaction, successReaction, fetchAddReaction, fetchDeleteReaction } = useHandleReaction()
@@ -19,6 +19,7 @@ export default function Footer({ bottomInfo ,singlePost = false}) {
    const [disliked, setDisliked] = useState(false)
    const [likes, setLikes] = useState(likesCount)
    const [dislikes, setDislikes] = useState(dislikesCount)
+   const [commentsNum, setCommentsNum] = useState(commentsCount);
    const [lastReactionType, setLastReactionType] = useState(null)
 
    const { loadingComments, comments, fetchComments, errorComments, onDeleteComment } = useGetComments(post_id)
@@ -64,10 +65,10 @@ export default function Footer({ bottomInfo ,singlePost = false}) {
       setIsCommentsOpen(true);
 
       // Then fetch comments if they haven't been fetched yet
-         fetchComments(post_id).catch(error => {
-            console.error("Error fetching comments:", error);
-            toast.error("Failed to load comments. Please try again.");
-         });
+      fetchComments(post_id).catch(error => {
+         console.error("Error fetching comments:", error);
+         toast.error("Failed to load comments. Please try again.");
+      });
    }
 
    useEffect(() => {
@@ -79,7 +80,7 @@ export default function Footer({ bottomInfo ,singlePost = false}) {
    return (
       <div className="flex flex-col w-full">
          {!singlePost && (
-         <div className="w-full h-px bg-border mb-3"></div>
+            <div className="w-full h-px bg-border mb-3"></div>
          )}
 
          <div className="flex items-center gap-4 pt-2">
@@ -105,20 +106,20 @@ export default function Footer({ bottomInfo ,singlePost = false}) {
                <span>{dislikes}</span>
             </Button>
             {!singlePost && (
-            <Button
-               variant="ghost"
-               size="sm"
-               className="flex items-center gap-1 px-2"
-               onClick={handleCommentsClick}
-               disabled={loadingComments && isCommentsOpen} // Disable only when loading and comments are open
-            >
-               {loadingComments && isCommentsOpen ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
-               ) : (
-                  <MessageCircle className="h-4 w-4" />
-               )}
-               <span>{comments?.length ?? commentsCount}</span>
-            </Button>
+               <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-1 px-2"
+                  onClick={handleCommentsClick}
+                  disabled={loadingComments && isCommentsOpen} // Disable only when loading and comments are open
+               >
+                  {loadingComments && isCommentsOpen ? (
+                     <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                  ) : (
+                     <MessageCircle className="h-4 w-4" />
+                  )}
+                  <span>{commentsNum}</span>
+               </Button>
             )}
 
          </div>
@@ -142,6 +143,7 @@ export default function Footer({ bottomInfo ,singlePost = false}) {
                }}
                isOpen={isCommentsOpen}
                onClose={() => setIsCommentsOpen(false)}
+               onManageComment={setCommentsNum}
                isLoading={loadingComments}
             />
          )}

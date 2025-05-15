@@ -5,11 +5,12 @@ import MarketBody from "./body/market-body"
 import JobBody from "./body/job-body"
 import Footer from "./common/post-footer"
 
-const Post = ({ post, onDelete }) => {
+const Post = ({ post, onDelete, section }) => {
 
   const header = {
     post_id: post.id,
     user_id: post.user_id,
+    profile_picture: post.profile_picture,
     first_name: post.user_first_name,
     last_name: post.user_last_name,
     major: post.major,
@@ -72,6 +73,8 @@ const Post = ({ post, onDelete }) => {
     default:
       SpecificBody = "";
   }
+
+
 
   return (
     <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-xl mx-auto my-4">

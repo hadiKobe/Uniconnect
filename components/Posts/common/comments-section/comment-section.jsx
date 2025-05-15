@@ -16,6 +16,7 @@ export default function InstagramStyleCommentSection({
   isOpen,
   onClose,
   isLoading,
+  onManageComment
 }) {
   const { user_id: author_id, comments: initialComments, post_id } = commentsInfo;
 
@@ -53,11 +54,13 @@ export default function InstagramStyleCommentSection({
       setTimeout(() => {
         commentInputRef.current?.focus();
       }, 100);
+      onManageComment(prev => prev + 1)
     }
   };
 
   const handleDeleteComment = (commentId) => {
     setCommentsArray((prev) => prev.filter((c) => c.id !== commentId));
+    onManageComment(prev => prev - 1)
   };
 
   const closeComments = () => {

@@ -26,7 +26,7 @@ const FeedClient = ({ section }) => {
     setFilter((prev) => prev + ' '); // trigger small change to re-run hook
     setShowAddPost(false);
   };
-  const handlePostDeleted = async (post_id) => {
+  const handlePostDeleted = (post_id) => {
     onDeletePost(post_id);
   };
 
@@ -75,7 +75,7 @@ const FeedClient = ({ section }) => {
       {loading ? <LoadingPage /> :
         error ? <p className="text-red-500">Error: {error}</p>
           : posts.length === 0 ? <p className="text-muted-foreground">No posts found. Be The First To Post</p>
-            : posts.map((post) => (<Post key={post.id} post={post} onDelete={handlePostDeleted} />))
+            : posts.map((post) => (<Post key={post.id} post={post} onDelete={handlePostDeleted} section={section}/>))
       }
     </div>
   );

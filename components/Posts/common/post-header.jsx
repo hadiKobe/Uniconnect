@@ -54,7 +54,7 @@ const postTypeEmoji = {
 }
 
 export default function Header({ headerInfo }) {
-   const { post_id, user_id, first_name, last_name, major, created_at, post_type = "general", onDelete } = headerInfo;
+   const { post_id, user_id, first_name, last_name, major, created_at, post_type = "general", onDelete, profile_picture } = headerInfo;
    const publishedAt = new Date(created_at);
    const timeAgo = formatDistanceToNow(publishedAt, { addSuffix: true })
 
@@ -87,7 +87,7 @@ export default function Header({ headerInfo }) {
       <div className="flex items-center justify-between">
          <div className="flex items-center gap-3">
             <Avatar>
-               <AvatarImage src={null || "/placeholder.svg"} alt={first_name} />
+               <AvatarImage src={profile_picture || "/placeholder.svg"} alt={first_name} />
                <AvatarFallback>{first_name.charAt(0)}</AvatarFallback>
             </Avatar>
 
@@ -96,9 +96,9 @@ export default function Header({ headerInfo }) {
                   <Link href={`/Profile/${user_id}`} prefetch={false} className="text-sm font-medium truncate hover:underline">
                      <h3 className="font-medium">{`${first_name} ${last_name}`}</h3>
                   </Link>
-            <Badge className={`text-xs font-medium ${badgeStyles} transition-all duration-200 hover:px-3 cursor-pointer`} variant="outline">
-               {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General"}
-            </Badge>
+                  <Badge className={`text-xs font-medium ${badgeStyles} transition-all duration-200 hover:px-3 cursor-pointer`} variant="outline">
+                     {post_type?.charAt(0).toUpperCase() + post_type?.slice(1).toLowerCase() + postTypeEmoji[post_type] || "General"}
+                  </Badge>
                </div>
 
                <div className="flex items-center text-sm text-muted-foreground">
