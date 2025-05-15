@@ -7,9 +7,9 @@ const Posts = ({ posts }) => {
   if (posts.length === 0) return <p className="text-muted-foreground">No posts found.</p>;
 
   return (
-        posts.map((post) => (
-          <Post key={post.id} post={post} />
-        ))
+    posts.map((post) => (
+      <Post key={post.id} post={post} />
+    ))
   );
 };
 

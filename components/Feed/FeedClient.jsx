@@ -75,7 +75,7 @@ const FeedClient = ({ section }) => {
       {loading ? <LoadingPage /> :
         error ? <p className="text-red-500">Error: {error}</p>
           : posts.length === 0 ? <p className="text-muted-foreground">No posts found. Be The First To Post</p>
-            : posts.map((post) => (<Post key={post.id} post={post} onDelete={handlePostDeleted} section={section}/>))
+            : posts.map((post) => (<Post key={post.id} post={post} onDelete={handlePostDeleted} section={section} />))
       }
     </div>
   );

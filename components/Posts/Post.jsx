@@ -4,8 +4,12 @@ import TutorBody from "./body/tutor-body"
 import MarketBody from "./body/market-body"
 import JobBody from "./body/job-body"
 import Footer from "./common/post-footer"
+import JobPost from "./types/JobPost"
+import { useRouter } from 'next/navigation';
 
 const Post = ({ post, onDelete, section }) => {
+
+  const router = useRouter();
 
   const header = {
     post_id: post.id,
@@ -30,7 +34,7 @@ const Post = ({ post, onDelete, section }) => {
     userReaction: post.currentUserReaction,
     commentsCount: post.commentsCount,
   };
-  
+
   let categoryDetails = {};
   switch (post.category) {
     case "tutor":
@@ -74,16 +78,29 @@ const Post = ({ post, onDelete, section }) => {
       SpecificBody = "";
   }
 
+  switch (section) {
+    case 'job':
+      return <JobPost post={post} onClick={post_id => router.push(`/post/${post_id}`)} />
+  
+    case 'tutor':
+      break;
+
+    case 'market':
+      break;
+
+    default:
+      return (
+        <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-xl mx-auto my-4">
+          <Header headerInfo={header} />
+          {SpecificBody}
+          <GeneralBody bodyInfo={body} />
+          <Footer bottomInfo={bottom} />
+        </div>
+      );
+
+  }
 
 
-  return (
-    <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-xl mx-auto my-4">
-      <Header headerInfo={header} />
-      {SpecificBody}
-      <GeneralBody bodyInfo={body} />
-      <Footer bottomInfo={bottom} />
-    </div>
-  );
 };
 
 export default Post;
