@@ -1,83 +1,131 @@
-'use client'
+"use client"
 
-import { formatDistanceToNow } from 'date-fns'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { MapPin, Clock, GraduationCap, BookOpen } from 'lucide-react'
+import { formatDistanceToNow } from "date-fns"
+import { useRouter } from "next/navigation"
+import { MapPin, Clock, GraduationCap, BookOpen, DollarSign, ExternalLink, MoreHorizontal } from 'lucide-react'
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-
-export default function TutorPoster({ post }) {
+export default function TutorPost({ post, onDelete }) {
    const router = useRouter()
 
    // Format the date to be more readable
-   const formattedDate = post.created_at
-      ? formatDistanceToNow(new Date(post.created_at), { addSuffix: true })
-      : 'Recently'
+   const formattedDate = post.created_at ? formatDistanceToNow(new Date(post.created_at), { addSuffix: true }) : "Recently"
 
    // Handle click to navigate to single post page
-   const handleClick = () => {
-      router.push(`/post/${post.id}`)
+   const handleClick = () => { router.push(`/post/${post.id}`) }
+
+   // Handle profile click
+   const handleProfileClick = (e) => {
+      e.stopPropagation()
+      router.push(`/Profile/${post.user_id}`)
    }
 
    return (
-      <Card className="w-full overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer p-4 max-w-xl mx-auto my-4 mb-4"      >
-         <CardContent className="p-0">
-            <div className="flex items-start p-4 border-b">
-               <Avatar className="h-12 w-12 mr-3">
-                  <AvatarImage src={post.profile_picture || "/placeholder.svg"} alt={`${post.user_first_name} ${post.user_last_name}`} />
-                  <AvatarFallback>{post.user_first_name.charAt(0)}{post.user_last_name.charAt(0)}</AvatarFallback>
-               </Avatar>
-               <div className="flex-1">
-                  <h3 className="font-semibold text-lg">{post.user_first_name} {post.user_last_name}</h3>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                     <div className="flex items-center text-sm text-muted-foreground">
-                        <GraduationCap className="h-4 w-4 mr-1" />
-                        {post.major}
+      <Card
+         className={`hover:shadow-md transition-shadow `}
+         onClick={handleClick}
+      >
+         <CardContent className="p-4">
+            {/* Header with user info and actions */}
+            <div className="flex items-center justify-between mb-3">
+               <div className="flex items-center" onClick={handleProfileClick}>
+                  <Avatar className="h-10 w-10 mr-3 cursor-pointer">
+                     <AvatarImage
+                        src={post.profile_picture || "/placeholder.svg"}
+                        alt={`${post.user_first_name} ${post.user_last_name}`}
+                     />
+                     <AvatarFallback className="bg-purple-100 text-purple-600">
+                        {post.user_first_name?.charAt(0)}{post.user_last_name?.charAt(0)}
+                     </AvatarFallback>
+                  </Avatar>
+                  <div>
+                     <div className="font-medium text-gray-900 hover:underline cursor-pointer">
+                        {post.user_first_name} {post.user_last_name}
                      </div>
-                     {post.subject && (
-                        <div className="flex items-center text-sm text-muted-foreground">
-                           <BookOpen className="h-4 w-4 mr-1" />
-                           {post.subject}
+                     <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="flex items-center">
+                           <GraduationCap className="h-3 w-3 mr-1" />
+                           {post.major}
                         </div>
-                     )}
+                        {post.subject && (
+                           <div className="flex items-center">
+                              <BookOpen className="h-3 w-3 mr-1" />
+                              {post.subject}
+                           </div>
+                        )}
+                     </div>
                   </div>
                </div>
+
+               {onDelete && (
+                  <DropdownMenu>
+                     <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                           <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                     </DropdownMenuTrigger>
+                     <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={(e) => {
+                           e.stopPropagation()
+                           onDelete(post.id)
+                        }}>
+                           Delete
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                           Report
+                        </DropdownMenuItem>
+                     </DropdownMenuContent>
+                  </DropdownMenu>
+               )}
             </div>
 
-            <div className="p-4">
-               <p className="text-sm mb-4 line-clamp-3">{post.content}</p>
+            {/* Tutor content */}
+            <p className="text-gray-800 mb-4 line-clamp-3">{post.content}</p>
 
-               <div className="flex flex-wrap gap-2 mb-3">
-                  {post.rate && (
-                     <Badge variant="secondary" className="font-medium">
-                        ${post.rate}/hr
-                     </Badge>
-                  )}
-                  {post.location && (
-                     <Badge variant="outline" className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {post.location}
-                     </Badge>
-                  )}
+            {/* Tutor details */}
+            <div className="flex flex-wrap gap-2 mb-3">
+               {post.rate && (
+                  <Badge variant="outline" className="flex items-center gap-1 py-1 px-2 bg-green-50 text-green-700 border-green-200">
+                     <DollarSign className="h-3.5 w-3.5" />
+                     ${post.rate}/hr
+                  </Badge>
+               )}
+               {post.location && (
+                  <Badge variant="outline" className="flex items-center gap-1 py-1 px-2 bg-red-50 text-red-700 border-red-200">
+                     <MapPin className="h-3.5 w-3.5" />
+                     {post.location}
+                  </Badge>
+               )}
+               {post.subject && (
+                  <Badge variant="outline" className="flex items-center gap-1 py-1 px-2 bg-purple-50 text-purple-700 border-purple-200">
+                     <BookOpen className="h-3.5 w-3.5" />
+                     {post.subject}
+                  </Badge>
+               )}
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+               <div className="flex items-center text-xs text-gray-500">
+                  <Clock className="h-3.5 w-3.5 mr-1" />
+                  {formattedDate}
                </div>
 
-               <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-
-                  <div className="flex items-center text-xs text-muted-foreground mt-2">
-                     <Clock className="h-3 w-3 mr-1" />
-                     {formattedDate}
-                  </div>
-
-                  <div
-                     onClick={handleClick}
-                     className="text-sm font-medium text-blue-600 hover:underline cursor-pointer"
-                  >
-                     See More →
-                  </div>
-               </div>
+               <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-800 p-0 h-auto"
+                  onClick={(e) => {
+                     e.stopPropagation()
+                     handleClick()
+                  }}
+               >
+                  See More <ExternalLink className="h-3.5 w-3.5 ml-1" />
+               </Button>
             </div>
          </CardContent>
       </Card>

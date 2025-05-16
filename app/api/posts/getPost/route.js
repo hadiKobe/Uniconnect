@@ -53,7 +53,8 @@ export async function GET(request) {
         WHEN posts.category = 'market' THEN (
           SELECT JSON_OBJECT(
             'price', product_details.price,
-            'location', product_details.location
+            'location', product_details.location,
+            'product_name',product_details.product_name
           ) FROM product_details WHERE product_details.post_id = posts.id LIMIT 1)
     `,
     job: `
@@ -61,7 +62,8 @@ export async function GET(request) {
           SELECT JSON_OBJECT(
             'job_type', jobs_details.job_type,
             'salary', jobs_details.salary,
-            'location', jobs_details.location
+            'location', jobs_details.location,
+            'position', jobs_details.position
           ) FROM jobs_details WHERE jobs_details.post_id = posts.id LIMIT 1)
         `,
   };
@@ -97,7 +99,7 @@ export async function GET(request) {
 
       switch (section) {
         case 'job': conditions.push(`jobs_details.job_type = ?`); break;
-        case 'tutor': conditions.push('tutroing_details.subject = ?'); break;
+        case 'tutor': conditions.push('tutoring_details.subject = ?'); break;
         case 'market': conditions.push('product_details.type = ?'); break;
       }
       params.push(specific);

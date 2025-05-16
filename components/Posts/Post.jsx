@@ -1,16 +1,15 @@
 import Header from "./common/post-header"
 import GeneralBody from "./common/post-general-body"
+import { Card, CardContent } from "@/components/ui/card"
 import TutorBody from "./body/tutor-body"
 import MarketBody from "./body/market-body"
 import JobBody from "./body/job-body"
 import Footer from "./common/post-footer"
 import JobPost from "./types/JobPost"
 import TutorPost from "./types/TutorPost"
-import { useRouter } from 'next/navigation';
+import MarketPost from "./types/MarketPost"
 
 const Post = ({ post, onDelete, section }) => {
-
-  const router = useRouter();
 
   const header = {
     post_id: post.id,
@@ -83,15 +82,17 @@ const Post = ({ post, onDelete, section }) => {
     case 'job': return <JobPost post={post} />
     case 'tutor': return <TutorPost post={post} />
     case 'market': return <MarketPost post={post} />
-    
+
     default:
       return (
-        <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-xl mx-auto my-4">
-          <Header headerInfo={header} />
-          {SpecificBody}
-          <GeneralBody bodyInfo={body} />
-          <Footer bottomInfo={bottom} />
-        </div>
+        <Card className={`overflow-hidden`}>
+          <div className="px-4">
+            <Header headerInfo={header} />
+            {SpecificBody}
+            <GeneralBody bodyInfo={body} />
+            <Footer bottomInfo={bottom} />
+          </div>
+        </Card>
       );
 
   }
