@@ -80,10 +80,10 @@ const Post = ({ post, onDelete, section }) => {
   }
 
   switch (section) {
-    case 'job': return <JobPost post={post}  />
-  
-    case 'tutor': return <TutorPost post={post}/>
-    case 'market':
+    case 'job': return <JobPost post={post} />
+    case 'tutor': return <TutorPost post={post} />
+    case 'market': return <MarketPost post={post} />
+    
     default:
       return (
         <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-xl mx-auto my-4">

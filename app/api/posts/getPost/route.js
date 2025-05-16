@@ -17,7 +17,7 @@ export async function GET(request) {
   // location 
   const location = searchParams.get("location") || "";
   // job type
-  const job_type = searchParams.get("job_type") || "";
+  const specific = searchParams.get("specific") || "";
 
   const sections = {
     job: 'jobs_details',
@@ -93,13 +93,14 @@ export async function GET(request) {
       params.push(location);
     }
 
-    switch (section) {
-      case 'job':
-        if (job_type) {
-          conditions.push(`jobs_details.job_type = ?`);
-          params.push(job_type);
-        }
-        break;
+    if (specific) {
+
+      switch (section) {
+        case 'job': conditions.push(`jobs_details.job_type = ?`); break;
+        case 'tutor': conditions.push('tutroing_details.subject = ?'); break;
+        case 'market': conditions.push('product_details.type = ?'); break;
+      }
+      params.push(specific);
     }
   }
 

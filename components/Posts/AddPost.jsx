@@ -82,6 +82,7 @@ export function AddPost({ onPostAdded }) {
         description = document.getElementById("market-description").value;
         details.price = document.getElementById("market-price")?.value || "";
         details.location = document.getElementById("market-location")?.value || "";
+        details.type = document.getElementById("market-type")?.value || "";
         break;
       case "job":
         description = document.getElementById("job-description").value;
@@ -225,6 +226,10 @@ export function AddPost({ onPostAdded }) {
                   <div>
                     <Label htmlFor="market-location">Location</Label>
                     <Input id="market-location" placeholder="Pickup location" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="market-type">Type</Label>
+                    <Input id="market-type" placeholder="Choose Type" required />
                   </div>
                 </div>
                 <div>

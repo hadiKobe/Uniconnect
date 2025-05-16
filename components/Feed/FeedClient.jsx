@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Post from "@/components/Posts/Post";
 import { useGetPosts } from "@/hooks/Posts/getPosts";
 import LoadingPage from "@/components/Loading/LoadingPage";
@@ -51,11 +51,11 @@ function DropDownMenu({ name, filters, onChange }) {
 export default function FeedClient({ section }) {
 
   const [filter, setFilter] = useState('');
-  const [job_type, setJobType] = useState('');
   const [location, setLocation] = useState('');
+  const [specific, setSpecific] = useState('');
   const [showAddPost, setShowAddPost] = useState(false);
 
-  const { posts, onDeletePost, loading, error } = useGetPosts(filter, section, job_type, location);
+  const { posts, onDeletePost, loading, error } = useGetPosts(filter, section, specific, location);
 
   const handlePostAdded = () => {
     // Changing filter state will auto-trigger refetch via hook
@@ -69,7 +69,9 @@ export default function FeedClient({ section }) {
 
   const filters = {
     job: ['Full-Time', 'Part-Time', 'Internship'],
-    location: ['Beirut','Bekaa','Rayak','Tripoli', 'Nabatyeh','Campus A']
+    location: ['Beirut', 'Bekaa', 'Rayak', 'Tripoli', 'Nabatyeh', 'Campus A'],
+    tutor: ['Computer Science', "Maths", 'Physics'],
+    market: ['Book','Course','Lab Coat']
   };
 
   return (
@@ -120,10 +122,12 @@ export default function FeedClient({ section }) {
         }
       </div>
 
-      <div>
-        <DropDownMenu name="Job" filters={filters.job} onChange={(value) => setJobType(value.trim())} />
-        <DropDownMenu name="Location" filters={filters.location} onChange={(value) => setLocation(value.trim())} />
-      </div>
+      {section !== "home" &&
+        <div>
+          <DropDownMenu name={section.charAt(0).toUpperCase() + section.slice(1)} filters={filters[section]} onChange={(value) => setSpecific(value.trim())} />
+          <DropDownMenu name="Location" filters={filters.location} onChange={(value) => setLocation(value.trim())} />
+        </div>
+      }
     </div>
 
   );
