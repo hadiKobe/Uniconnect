@@ -1,6 +1,37 @@
 const Message = require("../models/messages");
 const Chat = require("../models/chats");
 
+
+async function getUnreadCountsByChat(userId) {
+  if (!userId) throw new Error("userId is required");
+
+  const unreadCounts = await Message.aggregate([
+    {
+      $match: {
+        toUserId: userId,
+        isRead: false,
+      },
+    },
+    {
+      $group: {
+        _id: "$chatId",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  // Return as object: { chatId1: 3, chatId2: 7, ... }
+  const result = {};
+  unreadCounts.forEach(({ _id, count }) => {
+    result[_id.toString()] = count;
+  });
+console.log("Unread counts by chat:", result); // Log the counts for debugging
+  return result;
+}
+
+
+
+
 async function saveMessage({ toUserId, fromUserId, message, media = [] }) {
   if (!toUserId || !fromUserId || (!message && media.length === 0)) {
     throw new Error("Missing required fields: toUserId, fromUserId, or message/media.");
@@ -93,4 +124,4 @@ async function markMessagesAsRead({ chatId, userId }) {
   }
 }
 
-module.exports = { saveMessage, getMessages, markMessagesAsRead };
+module.exports = { saveMessage, getMessages, markMessagesAsRead ,getUnreadCountsByChat };

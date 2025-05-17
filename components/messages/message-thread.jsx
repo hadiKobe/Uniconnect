@@ -8,8 +8,9 @@ import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery"
+
 export function MessageThread({ conversation = {}, messages = [], onSendMessage, onBack }) {
-//     setShowConversationList(false);
+
   const messagesEndRef = useRef(null);
 const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -71,10 +72,10 @@ const { data: session } = useSession();
 
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">  
         {messages.map((message) => (
           <MessageItem 
-            key={message._id } 
+            key={message._id || message.tempId || `${message.chatId}-${message.timestamp}`}
             message={message} 
             isOwnMessage={Number(message.fromUserId) === Number(userId)}
           />

@@ -38,7 +38,9 @@ socket.on("markMessagesAsRead", async ({ chatId, userId }) => {
 
 
 socket.on("sendPrivateMessage", ({ toUserId, fromUserId, message, media = [], chatId }) => {
-  // Prepare the message object (without DB confirmation)
+  // ✅ Generate a tempId for optimistic tracking
+  const tempId = `${fromUserId}-${Date.now()}`;
+
   const newMessage = {
     fromUserId,
     toUserId,
@@ -47,11 +49,12 @@ socket.on("sendPrivateMessage", ({ toUserId, fromUserId, message, media = [], ch
     chatId,
     timestamp: new Date().toISOString(),
     isRead: false,
+    tempId, // ✅ Just assign the generated value here
   };
 
   const targetSocketId = sessions[toUserId];
 
-  // ✅ Immediately send to recipient if online
+  // ✅ Send to recipient if online
   if (targetSocketId) {
     io.to(targetSocketId).emit("newMessageNotification", {
       fromUserId,
@@ -62,17 +65,21 @@ socket.on("sendPrivateMessage", ({ toUserId, fromUserId, message, media = [], ch
     io.to(targetSocketId).emit("receivePrivateMessage", newMessage);
   }
 
-  // ✅ Immediately acknowledge sender
+  // ✅ Acknowledge to sender immediately (optimistic UI)
   socket.emit("messageSent", newMessage);
 
-  // 🗃️ Save message to DB asynchronously (don't block UI)
-  saveMessage({ toUserId, fromUserId, message, media, chatId })
+  
+  saveMessage({ toUserId, fromUserId, message, media, chatId, tempId })
+    .then((savedMessage) => {
+      // Optional: Let sender replace optimistic message with real saved one
+      socket.emit("messageSaved", { ...savedMessage.toObject(), tempId });
+    })
     .catch((error) => {
       console.error("Failed to save message:", error);
-      // Optional: Notify sender if saving fails (e.g., mark message as "failed" in UI)
       socket.emit("errorMessage", { error: "Message delivery failed to save in DB." });
     });
 });
+
 
 
   socket.on("disconnect", () => {

@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 
+// Utility sleep function
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function useUserChats(userId) {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,6 +17,8 @@ export function useUserChats(userId) {
         const res = await fetch(`/api/chats/getUserChats?userId=${userId}`);
         if (!res.ok) throw new Error("Failed to fetch user chats");
         const data = await res.json();
+
+        await sleep(500); // ⏱️ Delay for smoother transition
         setChats(data);
       } catch (err) {
         setError(err);

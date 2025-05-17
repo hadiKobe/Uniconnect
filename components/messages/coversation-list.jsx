@@ -5,12 +5,22 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ConversationItem } from "./conversation-item";
 
-export function ConversationList({ conversations = [], activeConversationId, onSelectConversation }) {
+export function ConversationList({ conversations = [], activeConversationId, onSelectConversation ,loading}) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredConversations = conversations.filter((conversation) =>
-    (conversation.name || "").toLowerCase().includes(searchQuery.toLowerCase())
+ const filteredConversations = conversations.filter((conversation) => {
+  const participant = conversation.participants?.[0];
+  const fullName = `${participant?.first_name || ""} ${participant?.last_name || ""}`.toLowerCase();
+  return fullName.includes(searchQuery.toLowerCase());
+});
+
+if (loading) {
+  return (
+    <div className="flex justify-center items-center h-full">
+      <div className="h-6 w-6 border-2 border-t-transparent border-primary animate-spin rounded-full" />
+    </div>
   );
+}
 
   return (
     <div className="flex flex-col h-full border-r">
@@ -34,7 +44,7 @@ export function ConversationList({ conversations = [], activeConversationId, onS
             <ConversationItem
               key={conversation._id }
               conversation={conversation}
-              isActive={activeConversationId === conversation.id}
+              isActive={activeConversationId == conversation._id}
               onClick={() => onSelectConversation(conversation._id)}
             />
           ))

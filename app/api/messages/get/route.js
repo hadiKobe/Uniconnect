@@ -1,7 +1,15 @@
 import connectToDB from "@/server/db"; // Ensure DB connection before using the controller
 import { getMessages } from "@/server/controllers/messageController";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function GET(req) {
+   const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
   const { searchParams } = new URL(req.url);
   const chatId = searchParams.get("chatId");
   const limit = parseInt(searchParams.get("limit")) || 20;

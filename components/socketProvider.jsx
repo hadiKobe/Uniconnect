@@ -7,31 +7,52 @@ import { useMessageStore } from "@/lib/store/messageStore"; // Import your Zusta
 
 export function SocketProvider() {
   const { data: session } = useSession();
+  
   const incrementUnread = useMessageStore((state) => state.incrementUnread);
+  const setUnreadCounts = useMessageStore((state) => state.setUnreadCounts);
 
+  // ✅ Fetch unread counts once when session is ready
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch("/api/messages/countUnRead");
+        if (!res.ok) throw new Error("Unread count fetch failed");
+
+
+        const data = await res.json();
+        setUnreadCounts(data); // { chatId: count }
+      } catch (err) {
+        console.error("Failed to fetch unread counts:", err);
+      }
+    };
+
+    fetchUnread();
+  }, [session?.user?.id, setUnreadCounts]);
+
+  // ✅ Setup Socket.IO only once
   useEffect(() => {
     const socket = getSocket();
 
-    if (session?.user?.id) {
-      if (!socket.connected) socket.connect();
+    if (!session?.user?.id) return;
 
-      socket.emit("login", { userId: session.user.id });
+    if (!socket.connected) socket.connect();
+    socket.emit("login", { userId: session.user.id });
 
-      socket.on("newMessageNotification", ({ chatId }) => {
-        incrementUnread(chatId);
-      });
+    socket.on("newMessageNotification", ({ chatId }) => {
+      incrementUnread(chatId);
+    });
 
-      socket.on("connect", () => {
-        console.log("Socket connected with ID:", socket.id);
-      });
-    }
+    socket.on("connect", () => {
+      console.log("Socket connected with ID:", socket.id);
+    });
 
     return () => {
-      // ✅ Clean up events on unmount to prevent duplicates
       socket.off("newMessageNotification");
       socket.off("connect");
     };
-  }, [session, incrementUnread]);
+  }, [session?.user?.id, incrementUnread]);
 
-  return null; // Only for side effects
+  return null;
 }
