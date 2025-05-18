@@ -1,13 +1,23 @@
 import { create } from 'zustand';
 
 export const useFilterStore = create((set) => ({
-   location: '',
-   filter: '',
-   specific: '',
+   filters: {},
 
-   setLocation: (value) => set({ location: value }),
-   setFilter: (value) => set({ filter: value }),
-   setSpecific: (value) => set({ specific: value }),
+   setFilters: (pathname, newFilters) =>
+      set((state) => ({
+         filters: {
+            ...state.filters,
+            [pathname]: {
+               ...(state.filters[pathname] || {}),
+               ...newFilters,
+            },
+         },
+      })),
 
-   resetFilters: () => set({ location: '', filter: '', specific: '' }),
+   resetFilters: (pathname) =>
+      set((state) => {
+         const updated = { ...state.filters };
+         delete updated[pathname];
+         return { filters: updated };
+      }),
 }));
