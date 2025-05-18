@@ -25,10 +25,7 @@ export default function TutorPost({ post, onDelete }) {
    }
 
    return (
-      <Card
-         className={`hover:shadow-md transition-shadow `}
-         onClick={handleClick}
-      >
+      <Card className={`hover:shadow-md transition-shadow `}      >
          <CardContent className="p-4">
             {/* Header with user info and actions */}
             <div className="flex items-center justify-between mb-3">

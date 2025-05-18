@@ -4,6 +4,7 @@ import Post from "@/components/Posts/Post"
 import { useGetPosts } from "@/hooks/Posts/getPosts"
 import LoadingPage from "@/components/Loading/LoadingPage"
 import { useFilterStore } from "@/hooks/Filters/useFilterStore"
+import { usePathname } from "next/navigation"
 
 import { Button } from "../ui/button"
 import { List, GraduationCap, User, Plus, Briefcase, BookOpen, ShoppingBag, Filter } from "lucide-react"
@@ -43,13 +44,15 @@ function DropDownMenu({ initial, name, filters, onChange }) {
 
 export default function FeedClient({ section }) {
 
-  const location = useFilterStore((state) => state.location);
-  const filter = useFilterStore((state) => state.filter);
-  const specific = useFilterStore((state) => state.specific);
+  const pathname = usePathname();
 
-  const setLocation = useFilterStore((state) => state.setLocation);
-  const setFilter = useFilterStore((state) => state.setFilter);
-  const setSpecific = useFilterStore((state) => state.setSpecific);
+  const location = useFilterStore((state) => state.filters[pathname]?.location || '');
+  const filter = useFilterStore((state) => state.filters[pathname]?.filter || '');
+  const specific = useFilterStore((state) => state.filters[pathname]?.specific || '');
+  const setFilters = useFilterStore((state) => state.setFilters); // extract the function
+  const resetFilters = useFilterStore((state) => state.resetFilters);
+
+  const set = (updates) => setFilters(pathname, updates);
 
   const [showAddPost, setShowAddPost] = useState(false)
 
@@ -113,7 +116,7 @@ export default function FeedClient({ section }) {
               variant={filter === "" ? "default" : "ghost"}
               size="sm"
               className="rounded-full text-sm font-medium"
-              onClick={() => setFilter("")}
+              onClick={() => set({ filter: "" })}
             >
               <List className="w-4 h-4 mr-1.5" />
               All
@@ -123,7 +126,7 @@ export default function FeedClient({ section }) {
               variant={filter === "major" ? "default" : "ghost"}
               size="sm"
               className="rounded-full text-sm font-medium"
-              onClick={() => setFilter("major")}
+              onClick={() => set({ filter: "major" })}
             >
               <GraduationCap className="w-4 h-4 mr-1.5" />
               MyMajor
@@ -133,7 +136,7 @@ export default function FeedClient({ section }) {
               variant={filter === "friends" ? "default" : "ghost"}
               size="sm"
               className="rounded-full text-sm font-medium"
-              onClick={() => setFilter("friends")}
+              onClick={() => set({ filter: "friends" })}
             >
               <User className="w-4 h-4 mr-1.5" />
               MyFeed
@@ -177,7 +180,7 @@ export default function FeedClient({ section }) {
                   initial={specific}
                   name={section.charAt(0).toUpperCase() + section.slice(1)}
                   filters={filters[section]}
-                  onChange={(value) => setSpecific(value.trim())}
+                  onChange={(value) => set({ specific: value.trim() })}
                 />
               </div>
               <div className="flex-shrink-0">
@@ -185,7 +188,7 @@ export default function FeedClient({ section }) {
                   initial={location}
                   name="Location"
                   filters={filters.location}
-                  onChange={(value) => setLocation(value.trim())}
+                  onChange={(value) => set({ location: value.trim() })}
                 />
               </div>
             </div>
@@ -296,7 +299,7 @@ export default function FeedClient({ section }) {
                       initial={specific}
                       name={section.charAt(0).toUpperCase() + section.slice(1)}
                       filters={filters[section]}
-                      onChange={(value) => setSpecific(value.trim())}
+                      onChange={(value) => set({ specific: value.trim() })}
                     />
                   </div>
 
@@ -306,9 +309,22 @@ export default function FeedClient({ section }) {
                       initial={location}
                       name="Location"
                       filters={filters.location}
-                      onChange={(value) => setLocation(value.trim())}
+                      onChange={(value) => set({ location: value.trim() })}
                     />
                   </div>
+
+                  <div className="flex items-center justify-center rounded-lg p-3">
+                    <Button
+                    variant="destructive"
+                      size="sm"
+                      onClick={() => resetFilters(pathname)}
+                      className="text-sm"
+                    >
+                      Reset Filters
+                    </Button>
+                  </div>
+
+
                 </div>
 
               </div>
