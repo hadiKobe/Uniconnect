@@ -7,14 +7,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FriendItem } from "@/components/Friends/friendItem";
 import { useUnFriend } from "@/hooks/Friends/useUnFriend";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export function MyFriendsSection({ friends }) {
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id;
   const { removeFriend, loading, error } = useUnFriend();
   const [loadingId, setLoadingId] = useState(null);
   const [statuses, setStatuses] = useState({});
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  const router = useRouter();
+  const handleMessageClick = (id) => {
+    router.push(`/Messages?userA=${currentUserId}&userB=${id}`);
+  };
   const onRemove = async (id) => {
     try {
       setLoadingId(id);
@@ -52,7 +60,8 @@ export function MyFriendsSection({ friends }) {
                     </Badge>
                   ) : (
                     <div className="flex gap-2">
-                      <Button size="icon" variant="ghost">
+                     <Button size="icon" variant="ghost" onClick={() => handleMessageClick(friend.id)}>
+
                         <MessageSquare className="h-4 w-4" />
                         <span className="sr-only">Message</span>
                       </Button>

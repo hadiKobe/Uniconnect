@@ -3,7 +3,7 @@ import "./globals.css";
 import Providers from "./provider";
 import { Toaster } from "sonner";
 import { RouteTracker } from "@/components/RouteTracker/RouteTracker";
-
+import { SocketProvider } from "@/components/socketProvider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,6 +24,9 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="font-sans antialiased">
         <Providers>
+          <SocketProvider />
+
+          
           <RouteTracker />
           <Toaster richColors position="top-center" />
           {children}
