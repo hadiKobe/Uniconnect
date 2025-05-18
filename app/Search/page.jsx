@@ -12,9 +12,7 @@ const Search = async () => {
 
    return (
       <div className="h-screen">
-         <div>
-            <SearchClient />
-         </div>
+         <SearchClient />
       </div>
    )
 }

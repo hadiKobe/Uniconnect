@@ -9,6 +9,7 @@ import DropdownMenu from './dropdown-suggestion';
 
 const SearchBar = () => {
    const [searchQuery, setSearchQuery] = useState("");
+   
    // suggestion = {id, name, profile_picture, mutualFriendsCount}
    const [suggestions, setSuggestions] = useState([]);
    const [loading, setLoading] = useState(false);
@@ -29,7 +30,7 @@ const SearchBar = () => {
             return setSuggestions([]);
 
          setLoading(true);
-         const path = `/api/search/user/suggestion?term=${searchQuery}`;
+         const path = `/api/search/user/suggestion?term=${encodeURIComponent(searchQuery)}`;
          try {
 
             await fetch(path)

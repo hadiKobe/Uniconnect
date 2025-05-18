@@ -3,6 +3,7 @@ import { useState } from "react"
 import Post from "@/components/Posts/Post"
 import { useGetPosts } from "@/hooks/Posts/getPosts"
 import LoadingPage from "@/components/Loading/LoadingPage"
+import { useFilterStore } from "@/hooks/Filters/useFilterStore"
 
 import { Button } from "../ui/button"
 import { List, GraduationCap, User, Plus, Briefcase, BookOpen, ShoppingBag, Filter } from "lucide-react"
@@ -11,11 +12,11 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 
-function DropDownMenu({ name, filters, onChange }) {
+function DropDownMenu({ initial, name, filters, onChange }) {
   const isArray = Array.isArray(filters)
 
   return (
-    <Select onValueChange={onChange}>
+    <Select value={initial} onValueChange={onChange}>
       <SelectTrigger className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150">
         <SelectValue placeholder={`Choose ${name} Type`} />
       </SelectTrigger>
@@ -41,9 +42,15 @@ function DropDownMenu({ name, filters, onChange }) {
 }
 
 export default function FeedClient({ section }) {
-  const [filter, setFilter] = useState("")
-  const [location, setLocation] = useState("")
-  const [specific, setSpecific] = useState("")
+
+  const location = useFilterStore((state) => state.location);
+  const filter = useFilterStore((state) => state.filter);
+  const specific = useFilterStore((state) => state.specific);
+
+  const setLocation = useFilterStore((state) => state.setLocation);
+  const setFilter = useFilterStore((state) => state.setFilter);
+  const setSpecific = useFilterStore((state) => state.setSpecific);
+
   const [showAddPost, setShowAddPost] = useState(false)
 
   const { posts, onDeletePost, loading, error } = useGetPosts(filter, section, specific, location)
@@ -167,6 +174,7 @@ export default function FeedClient({ section }) {
               </div>
               <div className="flex-shrink-0">
                 <DropDownMenu
+                  initial={specific}
                   name={section.charAt(0).toUpperCase() + section.slice(1)}
                   filters={filters[section]}
                   onChange={(value) => setSpecific(value.trim())}
@@ -174,6 +182,7 @@ export default function FeedClient({ section }) {
               </div>
               <div className="flex-shrink-0">
                 <DropDownMenu
+                  initial={location}
                   name="Location"
                   filters={filters.location}
                   onChange={(value) => setLocation(value.trim())}
@@ -284,6 +293,7 @@ export default function FeedClient({ section }) {
                       {section.charAt(0).toUpperCase() + section.slice(1)} Type
                     </label>
                     <DropDownMenu
+                      initial={specific}
                       name={section.charAt(0).toUpperCase() + section.slice(1)}
                       filters={filters[section]}
                       onChange={(value) => setSpecific(value.trim())}
@@ -293,6 +303,7 @@ export default function FeedClient({ section }) {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
                     <DropDownMenu
+                      initial={location}
                       name="Location"
                       filters={filters.location}
                       onChange={(value) => setLocation(value.trim())}
