@@ -15,6 +15,8 @@ export function FriendsContent() {
   const [myFriends, setMyFriends] = useState([])
   const [suggestedFriends, setSuggestedFriends] = useState([])
   const [sentRes, setSentRes] = useState([])
+  const [loading, setLoading] = useState(true)
+
 
   const fetchData = async () => {
     if (!userID) return;
@@ -43,7 +45,9 @@ export function FriendsContent() {
       setSentRes(sentData.sentRequests || []);
     } catch (error) {
       console.error("Failed to load friend data:", error);
-    }
+    }finally {
+    setLoading(false);
+  }
   };
   
   useEffect(() => {
@@ -51,31 +55,32 @@ export function FriendsContent() {
   }, [userID])
 
 
-  return (
-    <div className="mx-auto py-6 space-y-6 max-w-7xl px-4">
-      <h1 className="text-3xl font-bold">Friends</h1>
-  
-      {/* Flex Row: 3/4 main content | 1/4 sent requests */}
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Left side - 3/4 width */}
-        <div className="w-full md:w-3/4 space-y-6">
-          <FriendRequestsSection
-            requests={friendRequests}
+ return (
+  <div className="mx-auto py-6 space-y-6 max-w-7xl px-4">
+    <h1 className="text-3xl font-bold">Friends</h1>
 
-          />
-          <MyFriendsSection friends={myFriends}  />
-          <SuggestedFriendsSection
-            suggestions={suggestedFriends}
-          
-          />
+    {/* Responsive layout: stack on small screens, side-by-side on md+ */}
+    <div className="flex flex-col lg:flex-row gap-6">
+      {/* Left section: Friend Requests, My Friends, Suggested */}
+      <div className="w-full lg:w-3/4 space-y-6">
+        <div className="max-h-[500px] overflow-y-auto">
+          <FriendRequestsSection requests={friendRequests} loading={loading} />
         </div>
-  
-        {/* Right side - 1/4 width */}
-        <div className="w-full md:w-1/4">
-          <SentRequestsSection requests={sentRes}  />
+        <div className="max-h-[500px] overflow-y-auto">
+          <MyFriendsSection friends={myFriends} loading={loading} />
+        </div>
+        <div className="max-h-[500px] overflow-y-auto">
+          <SuggestedFriendsSection suggestions={suggestedFriends} loading={loading} />
         </div>
       </div>
+
+      {/* Right section: Sent Requests */}
+      <div className="w-full lg:w-1/4">
+
+          <SentRequestsSection requests={sentRes} loading={loading} />
+        
+      </div>
     </div>
-  );
-  
-} 
+  </div>
+);
+}

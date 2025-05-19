@@ -9,11 +9,12 @@ import { useUnFriend } from "@/hooks/Friends/useUnFriend";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
-export function MyFriendsSection({ friends }) {
+import { Loader2 } from "lucide-react";
+export function MyFriendsSection({ friends,loading }) {
   const { data: session } = useSession();
   const currentUserId = session?.user?.id;
-  const { removeFriend, loading, error } = useUnFriend();
+ const { removeFriend, loading: unfriendLoading, error } = useUnFriend();
+
   const [loadingId, setLoadingId] = useState(null);
   const [statuses, setStatuses] = useState({});
 
@@ -46,7 +47,13 @@ export function MyFriendsSection({ friends }) {
         <CardDescription>People you are connected with</CardDescription>
       </CardHeader>
       <CardContent>
-        {friends.length > 0 ? (
+          {loading ? (
+    <div className="flex justify-center py-6">
+      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+    </div>
+  ) :
+        
+        friends.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2">
             {friends.map((friend) => (
               <FriendItem

@@ -7,8 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FriendItem } from "@/components/Friends/friendItem";
 import { useSendFriendRequest } from "@/hooks/Friends/addFriend";
 import { Badge } from "@/components/ui/badge";
-
-export function SuggestedFriendsSection({ suggestions }) {
+import { Loader2 } from "lucide-react";
+export function SuggestedFriendsSection({ suggestions, loading }) {
   const { sendFriendRequest } = useSendFriendRequest();
   const [statuses, setStatuses] = useState({});
   const [loadingId, setLoadingId] = useState(null);
@@ -39,7 +39,12 @@ export function SuggestedFriendsSection({ suggestions }) {
       </CardHeader>
 
       <CardContent>
-        {suggestions.length > 0 ? (
+          {loading ? (
+    <div className="flex justify-center py-6">
+      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+    </div>
+  ) :
+        suggestions.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2">
             {suggestions.map((friend) => (
               <FriendItem

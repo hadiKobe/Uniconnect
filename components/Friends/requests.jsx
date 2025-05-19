@@ -7,8 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FriendItem } from "@/components/Friends/friendItem";
 import { useUpdateFriendRequest } from "@/hooks/Friends/request/useUpdate";
 import { Badge } from "../ui/badge";
-export function FriendRequestsSection({ requests }) {
-  const { updateFriendRequest, loading, error } = useUpdateFriendRequest();
+import { Loader2 } from "lucide-react";
+
+export function FriendRequestsSection({ requests, loading }) {
+  const { updateFriendRequest, loading: updateLoading, error } = useUpdateFriendRequest();
+
 
   const [statuses, setStatuses] = useState({});         // For tracking accept/decline statuses
   const [loadingId, setLoadingId] = useState(null);
@@ -76,8 +79,12 @@ export function FriendRequestsSection({ requests }) {
         <CardDescription>People who want to connect with you</CardDescription>
       </CardHeader>
 
-      <CardContent>
-        {requests.length > 0 ? (
+      <CardContent>{loading ? (
+    <div className="flex justify-center py-6">
+      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+    </div>
+  ) : 
+        requests.length > 0 ? (
           <div className="grid gap-4">
             {requests.map((friend) => {
               const status = statuses[friend.request_id];

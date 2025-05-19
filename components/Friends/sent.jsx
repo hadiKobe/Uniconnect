@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FriendItem } from "@/components/Friends/friendItem";
 import { useCancelFriendRequest } from "@/hooks/Friends/request/cancel";
-import { Badge } from "@/components/ui/badge";
-
-export function SentRequestsSection({ requests }) {
+import { Loader2 } from "lucide-react";
+export function SentRequestsSection({ requests ,loading }) {
   const { cancelFriendRequest } = useCancelFriendRequest();
   const [statuses, setStatuses] = useState({});
   const [loadingId, setLoadingId] = useState(null);
@@ -41,8 +40,13 @@ export function SentRequestsSection({ requests }) {
         <CardDescription>Friend Requests sent by you</CardDescription>
       </CardHeader>
 
-      <CardContent>
-        {requests.length > 0 ? (
+      <CardContent className="max-h-[400px] overflow-y-auto pr-1">
+          {loading ? (
+    <div className="flex justify-center py-6">
+      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+    </div>
+  ) :
+        requests.length > 0 ? (
           <div className="grid gap-4">
             {requests.map((friend) => (
               <FriendItem
