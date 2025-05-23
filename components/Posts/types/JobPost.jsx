@@ -10,7 +10,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 const JobPost = ({ post, onDelete }) => {
-   const router = useRouter()
+   const router = useRouter();
+   const badgeStyle = "inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer";
 
    // Format the date to show how long ago the post was created
    const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true })
@@ -59,12 +60,12 @@ const JobPost = ({ post, onDelete }) => {
                   {/* Location and posting time */}
                   <div className="flex flex-wrap items-center text-sm text-gray-500 gap-x-2">
                      {post.location && (
-                        <div className="flex items-center">
+                        <div className={badgeStyle}>
                            <MapPin className="h-3.5 w-3.5 mr-1 text-gray-400" />
                            {post.location}
                         </div>
                      )}
-                     <div className="flex items-center">
+                     <div className='flex items-center'>
                         <Clock className="h-3.5 w-3.5 mr-1 text-gray-400" />
                         {timeAgo}
                      </div>
@@ -102,7 +103,7 @@ const JobPost = ({ post, onDelete }) => {
                   {post.job_type && (
                      <Badge
                         variant="outline"
-                        className="flex items-center gap-1 py-1 px-2 bg-blue-50 text-blue-700 border-blue-200"
+                        className={badgeStyle}
                      >
                         <Briefcase className="h-3.5 w-3.5" />
                         {post.job_type}
@@ -112,7 +113,7 @@ const JobPost = ({ post, onDelete }) => {
                   {post.salary && (
                      <Badge
                         variant="outline"
-                        className="flex items-center gap-1 py-1 px-2 bg-green-50 text-green-700 border-green-200"
+                        className={badgeStyle}
                      >
                         <DollarSign className="h-3.5 w-3.5" />
                         {post.salary}
@@ -121,7 +122,7 @@ const JobPost = ({ post, onDelete }) => {
 
                   <Badge
                      variant="outline"
-                     className="flex items-center gap-1 py-1 px-2 bg-purple-50 text-purple-700 border-purple-200"
+                     className={badgeStyle}
                   >
                      <GraduationCap className="h-3.5 w-3.5" />
                      {post.major}
@@ -134,7 +135,7 @@ const JobPost = ({ post, onDelete }) => {
                {/* <div className="text-xs text-gray-500">Job ID: {post.id?.substring(0, 8)}</div> */}
 
                <div className="flex gap-2">
-                  <Button
+                  {/* <Button
                      variant="default"
                      size="sm"
                      className="text-sm font-medium bg-black hover:bg-amber-950"
@@ -144,7 +145,7 @@ const JobPost = ({ post, onDelete }) => {
                      }}
                   >
                      Apply Now
-                  </Button>
+                  </Button> */}
 
                   <button
                      onClick={handleClick}

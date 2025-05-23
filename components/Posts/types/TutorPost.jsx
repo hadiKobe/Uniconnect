@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function TutorPost({ post, onDelete }) {
-   const router = useRouter()
+   const router = useRouter();
+   const badgeStyle = "inline-flex items-center gap-1.5 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer";
 
    // Format the date to be more readable
    const formattedDate = post.created_at ? formatDistanceToNow(new Date(post.created_at), { addSuffix: true }) : "Recently"
@@ -86,19 +87,19 @@ export default function TutorPost({ post, onDelete }) {
             {/* Tutor details */}
             <div className="flex flex-wrap gap-2 mb-3">
                {post.rate && (
-                  <Badge variant="outline" className="flex items-center gap-1 py-1 px-2 bg-green-50 text-green-700 border-green-200">
+                  <Badge variant="outline" className={`${badgeStyle} bg-green-50 text-green-700 border-green-200`}>
                      <DollarSign className="h-3.5 w-3.5" />
                      ${post.rate}/hr
                   </Badge>
                )}
                {post.location && (
-                  <Badge variant="outline" className="flex items-center gap-1 py-1 px-2 bg-red-50 text-red-700 border-red-200">
+                  <Badge variant="outline" className={`${badgeStyle} bg-red-50 text-red-700 border-red-200`} >
                      <MapPin className="h-3.5 w-3.5" />
                      {post.location}
                   </Badge>
                )}
                {post.subject && (
-                  <Badge variant="outline" className="flex items-center gap-1 py-1 px-2 bg-purple-50 text-purple-700 border-purple-200">
+                  <Badge variant="outline" className={`${badgeStyle} bg-purple-50 text-purple-700 border-purple-200`} >
                      <BookOpen className="h-3.5 w-3.5" />
                      {post.subject}
                   </Badge>
