@@ -46,7 +46,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="#" className="flex items-center gap-2 font-semibold">
 
-          <span className="hidden md:inline-block">LIU UNITY</span>
+          <span className="hidden md:inline-block">UNI-CONNECT</span>
         </Link>
 
 

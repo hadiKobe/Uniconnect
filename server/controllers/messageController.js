@@ -1,10 +1,11 @@
 const Message = require("../models/messages");
 const Chat = require("../models/chats");
+const connectToDB = require("../db")
 
 
 async function getUnreadCountsByChat(userId) {
   if (!userId) throw new Error("userId is required");
-
+  await connectToDB();
   const unreadCounts = await Message.aggregate([
     {
       $match: {
