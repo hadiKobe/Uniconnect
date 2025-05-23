@@ -60,7 +60,7 @@ export default function FeedClient({ section }) {
 
   const handlePostAdded = () => {
     // Changing filter state will auto-trigger refetch via hook
-    setFilter((prev) => prev + " ") // trigger small change to re-run hook
+    set((prev) => ({ filter: prev.filter + " " })); // trigger small change to re-run hook
     setShowAddPost(false)
   }
 
@@ -109,110 +109,12 @@ export default function FeedClient({ section }) {
       {/* Main container */}
       <div className="flex flex-col gap-4">
 
-        {/* Filters + New Post - Sticky header */}
-        <div className="bg-white/90 backdrop-blur-sm sticky top-0 z-40 py-2 px-3 rounded-lg shadow-sm border border-gray-100">
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant={filter === "" ? "default" : "ghost"}
-              size="sm"
-              className="rounded-full text-sm font-medium"
-              onClick={() => set({ filter: "" })}
-            >
-              <List className="w-4 h-4 mr-1.5" />
-              All
-            </Button>
-
-            <Button
-              variant={filter === "major" ? "default" : "ghost"}
-              size="sm"
-              className="rounded-full text-sm font-medium"
-              onClick={() => set({ filter: "major" })}
-            >
-              <GraduationCap className="w-4 h-4 mr-1.5" />
-              MyMajor
-            </Button>
-
-            <Button
-              variant={filter === "friends" ? "default" : "ghost"}
-              size="sm"
-              className="rounded-full text-sm font-medium"
-              onClick={() => set({ filter: "friends" })}
-            >
-              <User className="w-4 h-4 mr-1.5" />
-              MyFeed
-            </Button>
-
-            <div className="ml-auto">
-              <Dialog open={showAddPost} onOpenChange={setShowAddPost}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="rounded-full text-sm font-medium flex items-center gap-2"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span className="hidden sm:inline">New Post</span>
-                    <span className="sm:hidden">Post</span>
-                  </Button>
-                </DialogTrigger>
-
-                <DialogContent className="max-w-2xl w-full">
-                  <DialogHeader>
-                    <DialogTitle>Create a New Post</DialogTitle>
-                  </DialogHeader>
-                  <AddPost onPostAdded={handlePostAdded} />
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-
-          {/* Mobile filters - horizontal scrollable row */}
-          {section !== "home" && (
-            <div className="mt-2 lg:hidden overflow-x-auto pb-2 flex items-center gap-2">
-              <div className="flex-shrink-0">
-                <Badge variant="outline" className={`${getSectionColor()} border-0 flex items-center gap-1 px-2 py-1`}>
-                  {getSectionIcon()}
-                  {section.charAt(0).toUpperCase() + section.slice(1)} 
-                </Badge>
-              </div>
-              <div className="flex-shrink-0">
-                <DropDownMenu
-                  initial={specific}
-                  name={section.charAt(0).toUpperCase() + section.slice(1)}
-                  filters={filters[section]}
-                  onChange={(value) => set({ specific: value.trim() })}
-                />
-              </div>
-              <div className="flex-shrink-0">
-                <DropDownMenu
-                  initial={location}
-                  name="Location"
-                  filters={filters.location}
-                  onChange={(value) => set({ location: value.trim() })}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Section title with icon */}
         <div className="flex items-center gap-2 px-1">
           <Badge variant="outline" className={`${getSectionColor()} border-0 flex items-center gap-1 px-2 py-1`}>
             {getSectionIcon()}
             {section.charAt(0).toUpperCase() + section.slice(1)} Section
           </Badge>
-          {/* <h2 className="text-xl font-semibold">
-            {section === "home"
-              ? "Feed"
-              : section === "job"
-                ? "Job Listings"
-                : section === "tutor"
-                  ? "Tutoring Services"
-                  : section === "market"
-                    ? "Marketplace"
-                    : section.charAt(0).toUpperCase() + section.slice(1)}
-          </h2> */}
-
           {/* Active filters display */}
           <div className="flex items-center gap-1 ">
             {specific && (
@@ -232,6 +134,88 @@ export default function FeedClient({ section }) {
             }
           </div>
         </div>
+
+        {/* Filters + New Post - Sticky header */}
+        <div className="sticky top-0 z-40 py-2 px-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant={filter === "" ? "default" : "ghost"}
+              size="sm"
+              className="rounded-md text-sm font-medium"
+              onClick={() => set({ filter: "" })}
+            >
+              <List className="w-4 h-4 mr-1.5" />
+              All
+            </Button>
+
+            <Button
+              variant={filter === "major" ? "default" : "ghost"}
+              size="sm"
+              className="rounded-md text-sm font-medium"
+              onClick={() => set({ filter: "major" })}
+            >
+              <GraduationCap className="w-4 h-4 mr-1.5" />
+              MyMajor
+            </Button>
+
+            <Button
+              variant={filter === "friends" ? "default" : "ghost"}
+              size="sm"
+              className="rounded-md text-sm font-medium"
+              onClick={() => set({ filter: "friends" })}
+            >
+              <User className="w-4 h-4 mr-1.5" />
+              MyFeed
+            </Button>
+
+            <div className="hidden sm:block">
+              <Dialog open={showAddPost} onOpenChange={setShowAddPost}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="rounded-md text-sm font-medium flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="hidden sm:inline">New Post</span>
+                    <span className="sm:hidden">Post</span>
+                  </Button>
+                </DialogTrigger>
+
+                <DialogContent className="max-w-2xl w-full">
+                  <DialogHeader>
+                    <DialogTitle>Create a New Post</DialogTitle>
+                  </DialogHeader>
+                  <AddPost onPostAdded={handlePostAdded} />
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile filters - horizontal scrollable row */}
+        {section !== "home" && (
+          <div className="lg:hidden overflow-x-auto pb-2 ">
+            <div className="flex items-center gap-1">
+              <div className="flex-shrink-0">
+                <DropDownMenu
+                  initial={specific}
+                  name={section.charAt(0).toUpperCase() + section.slice(1)}
+                  filters={filters[section]}
+                  onChange={(value) => set({ specific: value.trim() })}
+                />
+              </div>
+              <div className="flex-shrink-0">
+                <DropDownMenu
+                  initial={location}
+                  name="Location"
+                  filters={filters.location}
+                  onChange={(value) => set({ location: value.trim() })}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Main content area */}
@@ -315,7 +299,7 @@ export default function FeedClient({ section }) {
 
                   <div className="flex items-center justify-center rounded-lg p-3">
                     <Button
-                    variant="destructive"
+                      variant="destructive"
                       size="sm"
                       onClick={() => resetFilters(pathname)}
                       className="text-sm"

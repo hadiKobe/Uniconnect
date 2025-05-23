@@ -140,19 +140,19 @@ export function AddPost({ onPostAdded }) {
           <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="general" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">General</span>
+              <span >General</span>
             </TabsTrigger>
             <TabsTrigger value="tutor" className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4" />
-              <span className="hidden sm:inline">Tutor</span>
+              <span >Tutor</span>
             </TabsTrigger>
             <TabsTrigger value="market" className="flex items-center gap-2">
               <ShoppingBag className="h-4 w-4" />
-              <span className="hidden sm:inline">Market</span>
+              <span >Market</span>
             </TabsTrigger>
             <TabsTrigger value="job" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
-              <span className="hidden sm:inline">Job</span>
+              <span >Job</span>
             </TabsTrigger>
           </TabsList>
 
