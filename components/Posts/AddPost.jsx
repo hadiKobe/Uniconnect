@@ -82,6 +82,7 @@ export function AddPost({ onPostAdded }) {
         description = document.getElementById("market-description").value;
         details.price = document.getElementById("market-price")?.value || "";
         details.location = document.getElementById("market-location")?.value || "";
+        details.type = document.getElementById("market-type")?.value || "";
         break;
       case "job":
         description = document.getElementById("job-description").value;
@@ -139,19 +140,19 @@ export function AddPost({ onPostAdded }) {
           <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="general" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">General</span>
+              <span >General</span>
             </TabsTrigger>
             <TabsTrigger value="tutor" className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4" />
-              <span className="hidden sm:inline">Tutor</span>
+              <span >Tutor</span>
             </TabsTrigger>
             <TabsTrigger value="market" className="flex items-center gap-2">
               <ShoppingBag className="h-4 w-4" />
-              <span className="hidden sm:inline">Market</span>
+              <span >Market</span>
             </TabsTrigger>
             <TabsTrigger value="job" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
-              <span className="hidden sm:inline">Job</span>
+              <span >Job</span>
             </TabsTrigger>
           </TabsList>
 
@@ -225,6 +226,10 @@ export function AddPost({ onPostAdded }) {
                   <div>
                     <Label htmlFor="market-location">Location</Label>
                     <Input id="market-location" placeholder="Pickup location" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="market-type">Type</Label>
+                    <Input id="market-type" placeholder="Choose Type" required />
                   </div>
                 </div>
                 <div>
