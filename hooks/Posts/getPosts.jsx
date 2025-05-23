@@ -16,7 +16,7 @@ export function useGetPosts(filter = '', section = 'home', specific = '', locati
       const path = `/api/posts/getPost?`; // Adjusted path to include section
       const params = Object.entries(filters).map(([key, value]) => { return value ? `${key}=${value}` : null; }).filter(Boolean); // removes null or undefined
       let filteredPath = `${path}${params.join('&')}`;
-      console.log(filteredPath);
+      // console.log(filteredPath);
 
       try {
          const response = await fetch(filteredPath, {
