@@ -1,9 +1,13 @@
 import Header from "./common/post-header"
 import GeneralBody from "./common/post-general-body"
+import { Card, CardContent } from "@/components/ui/card"
 import TutorBody from "./body/tutor-body"
 import MarketBody from "./body/market-body"
 import JobBody from "./body/job-body"
 import Footer from "./common/post-footer"
+import JobPost from "./types/JobPost"
+import TutorPost from "./types/TutorPost"
+import MarketPost from "./types/MarketPost"
 
 const Post = ({ post, onDelete, section }) => {
 
@@ -30,7 +34,7 @@ const Post = ({ post, onDelete, section }) => {
     userReaction: post.currentUserReaction,
     commentsCount: post.commentsCount,
   };
-  
+
   let categoryDetails = {};
   switch (post.category) {
     case "tutor":
@@ -74,16 +78,26 @@ const Post = ({ post, onDelete, section }) => {
       SpecificBody = "";
   }
 
+  switch (section) {
+    case 'job': return <JobPost post={post} />
+    case 'tutor': return <TutorPost post={post} />
+    case 'market': return <MarketPost post={post} />
+
+    default:
+      return (
+        <Card className={`overflow-hidden`}>
+          <div className="px-4">
+            <Header headerInfo={header} />
+            {SpecificBody}
+            <GeneralBody bodyInfo={body} />
+            <Footer bottomInfo={bottom} />
+          </div>
+        </Card>
+      );
+
+  }
 
 
-  return (
-    <div className="bg-white text-black shadow-lg rounded-xl p-4 max-w-xl mx-auto my-4">
-      <Header headerInfo={header} />
-      {SpecificBody}
-      <GeneralBody bodyInfo={body} />
-      <Footer bottomInfo={bottom} />
-    </div>
-  );
 };
 
 export default Post;

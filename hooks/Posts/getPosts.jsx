@@ -2,18 +2,21 @@
 
 import { useState, useEffect } from "react"
 
-export function useGetPosts(filter = '', section = 'home') {
-   const [loading, setLoading] = useState(false);
+export function useGetPosts(filter = '', section = 'home', specific = '', location = '') {
+   const [loading, setLoading] = useState(true);
    const [posts, setPosts] = useState([]);
    const [error, setError] = useState(null);
 
+   const filters = { filter, section, specific, location }
 
    const fetchPosts = async () => {
       setLoading(true);
       setError(null);
 
-      const path = `/api/posts/getPost?section=${section}`; // Adjusted path to include section
-      let filteredPath = filter ? `${path}&filter=${filter}` : path;
+      const path = `/api/posts/getPost?`; // Adjusted path to include section
+      const params = Object.entries(filters).map(([key, value]) => { return value ? `${key}=${value}` : null; }).filter(Boolean); // removes null or undefined
+      let filteredPath = `${path}${params.join('&')}`;
+      // console.log(filteredPath);
 
       try {
          const response = await fetch(filteredPath, {
@@ -39,7 +42,7 @@ export function useGetPosts(filter = '', section = 'home') {
 
    useEffect(() => {
       fetchPosts();
-   }, [filter, section]);
+   }, [filter, section, specific, location]);
 
    return { posts, onDeletePost, loading, error };
 }

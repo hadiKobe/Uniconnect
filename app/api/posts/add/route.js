@@ -37,10 +37,10 @@ export async function POST(req) {
     }
 
     if (cat === "market" && details) {
-      const { price, location } = details;
+      const { price, location, type } = details;
       await query(
-        `INSERT INTO product_details (post_id, price, location) VALUES (?, ?)`,
-        [postId, price ?? null, location ?? null]
+        `INSERT INTO product_details (post_id, price, location, type) VALUES (?, ?, ?, ?)`,
+        [postId, price ?? null, location ?? null, type ?? null]
       );
     }
 
@@ -53,20 +53,20 @@ export async function POST(req) {
     }
 
     // ✅ Save media URLs (from Supabase) to post_media table
-if (Array.isArray(mediaUrls) && mediaUrls.length > 0) {
-  for (const url of mediaUrls) {
-    if (typeof url !== "string" || url.trim() === "") {
-      throw new Error("Invalid media URL detected");
+    if (Array.isArray(mediaUrls) && mediaUrls.length > 0) {
+      for (const url of mediaUrls) {
+        if (typeof url !== "string" || url.trim() === "") {
+          throw new Error("Invalid media URL detected");
+        }
+
+        const type = url.includes(".mp4") ? "video" : "image";
+
+        await query(
+          `INSERT INTO post_media (post_id, path_url, type) VALUES (?, ?, ?)`,
+          [postId, url, type]
+        );
+      }
     }
-
-    const type = url.includes(".mp4") ? "video" : "image";
-
-    await query(
-      `INSERT INTO post_media (post_id, path_url, type) VALUES (?, ?, ?)`,
-      [postId, url, type]
-    );
-  }
-}
 
 
     return Response.json({ message: "Post and media uploaded successfully!" });

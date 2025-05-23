@@ -4,8 +4,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Search, Users, FileText } from 'lucide-react';
 import SearchResults from './SearchResults';
 import EmptyState from './EmptyState';
+import DOMPurify from 'dompurify';
 
 const SearchTabs = ({ activeTab, setActiveTab, filteredResults, isLoading, searchTerm }) => {
+   const cleanSearchTerm = DOMPurify.sanitize(searchTerm);
+
    return (
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
          <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto">
@@ -25,6 +28,7 @@ const SearchTabs = ({ activeTab, setActiveTab, filteredResults, isLoading, searc
 
          {/* Results */}
          <div className="mt-6">
+            <h2>Search for '{cleanSearchTerm}'</h2>
             {isLoading ? (
                <LoadingSkeletons />
             ) : searchTerm ? (
@@ -40,7 +44,7 @@ const SearchTabs = ({ activeTab, setActiveTab, filteredResults, isLoading, searc
                      ) : (
                         <EmptyState
                            type="all"
-                           searchTerm={searchTerm}
+                           searchTerm={cleanSearchTerm}
                         />
                      )}
                   </TabsContent>
@@ -55,7 +59,7 @@ const SearchTabs = ({ activeTab, setActiveTab, filteredResults, isLoading, searc
                      ) : (
                         <EmptyState
                            type="accounts"
-                           searchTerm={searchTerm}
+                           searchTerm={cleanSearchTerm}
                         />
                      )}
                   </TabsContent>
@@ -70,7 +74,7 @@ const SearchTabs = ({ activeTab, setActiveTab, filteredResults, isLoading, searc
                      ) : (
                         <EmptyState
                            type="posts"
-                           searchTerm={searchTerm}
+                           searchTerm={cleanSearchTerm}
                         />
                      )}
                   </TabsContent>

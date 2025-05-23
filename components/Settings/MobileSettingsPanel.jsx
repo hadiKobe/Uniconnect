@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, X, User, Lock, LogOut } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 
 export default function SettingsMobileHeader({ goBack, onClose }) {
    const router = useRouter();
@@ -48,16 +49,23 @@ export default function SettingsMobileHeader({ goBack, onClose }) {
                {menuOpen && (
                   <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-background border border-border">
                      <div className="py-1">
-                        <Link href="/Settings/AccountInfo" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted">
+                        <Link href="/Settings/AccountInfo" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted"
+                           onClick={() => setMenuOpen(false)}
+                        >
                            <User className="w-4 h-4" /> Account Info
                         </Link>
-                        <Link href="/Settings/Security" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted">
+                        <Link href="/Settings/Security" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted"
+                           onClick={() => setMenuOpen(false)}
+                        >
                            <Lock className="w-4 h-4" /> Security
                         </Link>
                         <div className="w-full h-px bg-border my-1" />
                         <button
                            className="flex items-center gap-2 px-4 py-2 text-sm w-full text-left hover:bg-muted"
-                           onClick={() => {/* Add your logout logic here */ }}
+                           onClick={() => {
+                              signOut();
+                              setMenuOpen(false);
+                           }}
                         >
                            <LogOut className="w-4 h-4" /> Log Out
                         </button>

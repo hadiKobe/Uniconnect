@@ -1,47 +1,24 @@
 "use client"
 import Link from "next/link"
-import { Home, Menu, MessageSquare, User, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import MobileMenu from "./mobile-menu"
 import SearchBar from "./SearchBar"
+import { AddPost } from "../Posts/AddPost"
+import { useState } from "react"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
+
 
 export default function Navbar() {
+  const [showAddPost, setShowAddPost] = useState(false)
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-16 items-center px-4 sm:px-6">
+
         {/* Mobile menu (hamburger icon) */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[240px] sm:w-[300px]">
-            <nav className="flex flex-col gap-4 pt-4">
-              <Link href="#" className="flex items-center gap-2 text-lg font-semibold">
-                <Users className="h-5 w-5" />
-                <span>SocialApp</span>
-              </Link>
-              <Link href="#" className="flex items-center gap-2 text-sm">
-                <Home className="h-4 w-4" />
-                <span>Home</span>
-              </Link>
-              <Link href="#" className="flex items-center gap-2 text-sm">
-                <Users className="h-4 w-4" />
-                <span>Friends</span>
-              </Link>
-              <Link href="#" className="flex items-center gap-2 text-sm">
-                <MessageSquare className="h-4 w-4" />
-                <span>Messages</span>
-              </Link>
-              <Link href="#" className="flex items-center gap-2 text-sm">
-                <User className="h-4 w-4" />
-                <span>Profile</span>
-              </Link>
-            </nav>
-          </SheetContent>
-        </Sheet>
+        <div className="md:hidden">
+          <MobileMenu />
+        </div>
 
         {/* Logo */}
         <Link href="#" className="flex items-center gap-2 font-semibold">
@@ -49,9 +26,30 @@ export default function Navbar() {
           <span className="hidden md:inline-block">UNI-CONNECT</span>
         </Link>
 
-
         {/* Search bar */}
         <SearchBar />
+
+        {/* ADDPOST in mobile phones */}
+        <div className="block sm:hidden ml-2">
+          <Dialog open={showAddPost} onOpenChange={setShowAddPost}>
+            <DialogTrigger asChild>
+              <Button
+                variant="default"
+                size="sm"
+                className="rounded-md text-sm font-medium flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="max-w-2xl w-full">
+              <DialogHeader>
+                <DialogTitle>Create a New Post</DialogTitle>
+              </DialogHeader>
+              <AddPost onPostAdded={() => { setShowAddPost(false) }} />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </header>
   )
