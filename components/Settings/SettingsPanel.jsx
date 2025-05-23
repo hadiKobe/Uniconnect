@@ -16,13 +16,6 @@ const settingsSections = [
 
 export default function SettingsPanel({ onClose, goBack }) {
    const router = useRouter();
-   const [prevPath, setPrevPath] = useState("/Feed");
-
-   useEffect(() => {
-      const prev = sessionStorage.getItem("previousPath");
-      // console.log("previousPath", prev);
-      setPrevPath(prev || "/Feed");
-   }, [prevPath]);
 
    return (
       <Card className="h-full w-full flex flex-col p-4 rounded-none border-none">
@@ -30,7 +23,7 @@ export default function SettingsPanel({ onClose, goBack }) {
 
          {goBack &&
             <div className="flex items-center gap-4 px-2 pt-2">
-               <Button className="hover:bg-muted" variant="ghost" size="icon" onClick={() => router.push(prevPath)}>
+               <Button className="hover:bg-muted" variant="ghost" size="icon" onClick={() => router.back()}>
                   <ChevronLeft className="w-5 h-5" />
                </Button>
                <h2 className="text-xl font-semibold ">Settings</h2>
