@@ -86,9 +86,6 @@ async function getMessages(chatId, limit = 20, skip = 0) {
   .skip(skip)
   .limit(limit);
 
-
-
-
     const totalCount = await Message.countDocuments({ chatId });
 
     return { messages: messages.reverse(), totalCount };
