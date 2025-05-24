@@ -83,12 +83,15 @@ export function AddPost({ onPostAdded }) {
         details.price = document.getElementById("market-price")?.value || "";
         details.location = document.getElementById("market-location")?.value || "";
         details.type = document.getElementById("market-type")?.value || "";
+        details.product_name = document.getElementById("market-product_name")?.value || "";
         break;
       case "job":
         description = document.getElementById("job-description").value;
         details.salary = document.getElementById("job-salary")?.value || "";
         details.location = document.getElementById("job-location")?.value || "";
         details.type = document.getElementById("job-type")?.textContent || "";
+        details.position = document.getElementById("job-position")?.value || "";
+        console.log(details.position);
         break;
       default:
         return;
@@ -220,16 +223,20 @@ export function AddPost({ onPostAdded }) {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
+                    <Label htmlFor="market-product_name">Name</Label>
+                    <Input id="market-product_name" placeholder="English Book, Lab Coat" required />
+                  </div>
+                  <div>
                     <Label htmlFor="market-price">Price ($)</Label>
                     <Input id="market-price" type="number" min="0" placeholder="50" required />
                   </div>
                   <div>
-                    <Label htmlFor="market-location">Location</Label>
-                    <Input id="market-location" placeholder="Pickup location" required />
-                  </div>
-                  <div>
                     <Label htmlFor="market-type">Type</Label>
                     <Input id="market-type" placeholder="Choose Type" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="market-location">Location</Label>
+                    <Input id="market-location" placeholder="Pickup location" required />
                   </div>
                 </div>
                 <div>
@@ -267,6 +274,10 @@ export function AddPost({ onPostAdded }) {
                     <Label htmlFor="job-location">Location</Label>
                     <Input id="job-location" placeholder="Remote or on-campus" required />
                   </div>
+                </div>
+                <div>
+                  <Label htmlFor="job-position">Position</Label>
+                  <Input id="job-position" placeholder="Intern, Entry-level, Senior" required />
                 </div>
                 <div>
                   <Label htmlFor="job-salary">Salary/Compensation</Label>
