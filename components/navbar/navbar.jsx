@@ -21,8 +21,9 @@ export default function Navbar() {
         </div>
 
         {/* Logo */}
-        <Link href="/Feed" className="flex items-center gap-2 font-semibold">
-          <span className="hidden md:inline-block">LIU UNITY</span>
+        <Link href="#" className="flex items-center gap-2 font-semibold">
+
+          <span className="hidden md:inline-block">UNI-CONNECT</span>
         </Link>
 
         {/* Search bar */}
