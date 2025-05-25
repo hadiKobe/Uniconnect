@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -23,16 +25,64 @@ import { useMessageStore } from "@/lib/store/messageStore";
 
 export default function LeftSide({ onSettingsClick }) {
   const { data: session, status } = useSession();
+  const pathname = usePathname()
+  const isActive = (href) => pathname === href;
   const { count } = useUnreadNotifications(); // Fetch unread notifications count
 
   const userId = session?.user?.id;
 
-const unreadCounts = useMessageStore((state) => state.unreadCounts);
-const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
+  const unreadCounts = useMessageStore((state) => state.unreadCounts);
+  const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
   const userName =
     session?.user?.name || `${session?.user?.first_name ?? "User"}`;
   const userMajor = session?.user?.major || "Unknown Major";
   const [requestCount, setRequestCount] = useState(0);
+
+  const linkStyle = {
+    selected: "bg-black text-white hover:bg-amber-950",
+    notSelected: "text-gray-800 hover:bg-gray-100"
+  };
+
+  const list = [
+    {
+      href: "/Feed",
+      icon: Home,
+      label: "Home"
+    },
+    {
+      href: "/Feed/Tutoring",
+      icon: GraduationCap,
+      label: "Tutor Section"
+    },
+    {
+      href: "/Feed/JobOffers",
+      icon: FileText,
+      label: "Job Section"
+    },
+    {
+      href: "/Feed/MarketPlace",
+      icon: ShoppingBag,
+      label: "Market"
+    },
+    {
+      href: "/Friends",
+      icon: Users,
+      label: "Friends",
+      badge: requestCount > 0 ? requestCount : null
+    },
+    {
+      href: "/Messages",
+      icon: MessageSquare,
+      label: "Messages",
+      badge: totalUnread > 0 ? totalUnread : null
+    },
+    {
+      href: "/notifications",
+      icon: Bell,
+      label: "Notifications",
+      badge: count > 0 ? count : null
+    }
+  ];
 
   useEffect(() => {
     const fetchCount = async () => {
@@ -79,52 +129,25 @@ const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + cou
       {/* Navigation with scroll if needed */}
       <nav className="flex-1 overflow-y-auto p-1">
         <ul className="space-y-1">
-          <li>
-            <Link href="/Feed" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <Home className="h-4 w-4" /> Home
-            </Link>
-          </li>
-          <li>
-            <Link href="/Feed/Tutoring" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <GraduationCap className="h-4 w-4" /> Tutor Section
-            </Link>
-          </li>
-          <li>
-            <Link href="/Feed/JobOffers" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <FileText className="h-4 w-4" /> Job Section
-            </Link>
-          </li>
-          <li>
-            <Link href="/Feed/MarketPlace" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <ShoppingBag className="h-4 w-4" /> Market
-            </Link>
-          </li>
-
-          <li>
-            <Link href="/Friends" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <Users className="h-4 w-4" /> friends
-              {requestCount > 0 && (
-                <Badge className="ml-auto  shrink-0 bg-primary text-xs">{requestCount}</Badge>
-              )}
-
-            </Link>
-          </li>
-          <li>
-            <Link href="/Messages" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <MessageSquare className="h-4 w-4" /> Messages
-              {totalUnread > 0 && (
-                <Badge className="ml-auto bg-primary text-xs">{totalUnread}</Badge>
-              )}
-            </Link>
-          </li>
-         <li>
-            <Link href="/notifications" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <Bell className="h-4 w-4" /> Notifications
-              {count > 0 && (
-                <Badge className="ml-auto  shrink-0 bg-primary text-xs">{count}</Badge>
-              )}
-            </Link>
-          </li>
+          {list.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium ",
+                  isActive(item.href) ? linkStyle.selected : linkStyle.notSelected
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+                {item.badge && (
+                  <Badge className="ml-auto shrink-0 bg-primary text-xs">
+                    {item.badge}
+                  </Badge>
+                )}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
 
