@@ -15,7 +15,7 @@ export async function POST(req) {
     if (!/^\d+@students\.liu\.edu\.lb$/.test(email)) {
       return NextResponse.json({ error: "Invalid LIU student email." }, { status: 400 });
     }
-
+//Check email and IP rate limits
     const emailAttemptsResult = await query(
       `SELECT COUNT(*) AS count FROM otp_requests WHERE email = ? AND timestamp > NOW() - INTERVAL 10 MINUTE`,
       [email]
@@ -30,7 +30,7 @@ export async function POST(req) {
     const ipAttempts = ipAttemptsResult[0]?.count || 0;
     
     
-    if (emailAttempts >= 3 || ipAttempts >=5) {
+    if (emailAttempts >= 3 || ipAttempts >=5) {//email limit is 3 per 10 minutes, IP limit is 5 per 15 minutes
       return NextResponse.json(
         { error: "Too many requests. Please wait a few minutes." },
         { status: 429 }

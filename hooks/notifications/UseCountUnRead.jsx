@@ -2,37 +2,37 @@
 
 import { useState, useEffect } from "react";
 
-export function useUnreadNotifications() {
-  const [count, setCount] = useState(0); // count is a number
-  const [error, setError] = useState(null); // optional if you still want error handling
+export function useUnreadNotifications(pollingInterval = 10000, enabled = true) {
+  const [count, setCount] = useState(0);
+  const [error, setError] = useState(null);
+
+  const fetchCount = async () => {
+    try {
+      const res = await fetch("/api/notifications/countUnRead", {
+        method: "GET",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to fetch unread notifications.");
+      }
+
+      setCount(data.count ?? 0);
+    } catch (err) {
+      console.error("Fetching unread notifications error:", err);
+      setError(err.message || "Unknown error");
+    }
+  };
 
   useEffect(() => {
-    async function fetchCount() {
-      try {
-        const res = await fetch("/api/notifications/countUnRead", {
-          method: "GET",
-        });
+    if (!enabled) return;
 
-        const data = await res.json();
+    fetchCount(); // Fetch once on mount
 
-        if (!res.ok) {
-          throw new Error(data.error || "Failed to fetch unread notifications.");
-        }
+    const interval = setInterval(fetchCount, pollingInterval);
+    return () => clearInterval(interval); // Cleanup
+  }, [pollingInterval, enabled]);
 
-        if (data.count !== undefined) {
-          setCount(data.count);
-        } else {
-          setCount(0);
-        }
-
-      } catch (err) {
-        console.error("Fetching unread notifications error:", err);
-        setError(err.message);
-      }
-    }
-
-    fetchCount(); // call once on mount
-  }, []);
-
-  return { count, error }; // no loading
+  return { count, error, refetch: fetchCount };
 }

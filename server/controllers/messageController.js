@@ -26,7 +26,7 @@ async function getUnreadCountsByChat(userId) {
   unreadCounts.forEach(({ _id, count }) => {
     result[_id.toString()] = count;
   });
-console.log("Unread counts by chat:", result); // Log the counts for debugging
+//console.log("Unread counts by chat:", result); // Log the counts for debugging
   return result;
 }
 
@@ -70,7 +70,7 @@ async function saveMessage({ toUserId, fromUserId, message, media = [] }) {
 
     return newMessage;
   } catch (err) {
-    console.error("Error in saveMessage:", err);
+   // console.error("Error in saveMessage:", err);
     throw new Error("Failed to save message: " + err.message);
   }
 }
@@ -81,19 +81,25 @@ async function getMessages(chatId, limit = 20, skip = 0) {
   }
 
   try {
-   const messages = await Message.find({ chatId })
-  .sort({ createdAt: -1 })
-  .skip(skip)
-  .limit(limit);
+    // Fetch newest messages first, then reverse for UI
+    const messages = await Message.find({ chatId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(); // ✅ improves performance
 
     const totalCount = await Message.countDocuments({ chatId });
 
-    return { messages: messages.reverse(), totalCount };
+    return {
+      messages: messages.reverse(), // to show oldest at top
+      totalCount,
+    };
   } catch (err) {
-    console.error("Error in getMessages:", err);
+   // console.error("❌ Error in getMessages:", err);
     throw new Error("Failed to retrieve messages: " + err.message);
   }
 }
+
 
 async function markMessagesAsRead({ chatId, userId }) {
   if (!chatId || !userId) {
@@ -107,7 +113,7 @@ async function markMessagesAsRead({ chatId, userId }) {
     );
 
     if (result.modifiedCount === 0) {
-      console.warn("No messages were marked as read.");
+    //  console.warn("No messages were marked as read.");
     }
 
     const affectedSenders = await Message.find({
@@ -117,7 +123,7 @@ async function markMessagesAsRead({ chatId, userId }) {
 
     return affectedSenders;
   } catch (err) {
-    console.error("Error in markMessagesAsRead:", err);
+   // console.error("Error in markMessagesAsRead:", err);
     throw new Error("Failed to mark messages as read: " + err.message);
   }
 }

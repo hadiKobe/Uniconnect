@@ -1,17 +1,14 @@
-'use client';
-
+'use client'
 import { useEffect } from "react";
 import { getSocket } from "@/lib/socket";
 import { useSession } from "next-auth/react";
-import { useMessageStore } from "@/lib/store/messageStore"; // Import your Zustand store
+import { useMessageStore } from "@/lib/store/messageStore";
 
 export function SocketProvider() {
   const { data: session } = useSession();
-  
   const incrementUnread = useMessageStore((state) => state.incrementUnread);
   const setUnreadCounts = useMessageStore((state) => state.setUnreadCounts);
 
-  // ✅ Fetch unread counts once when session is ready
   useEffect(() => {
     if (!session?.user?.id) return;
 
@@ -19,10 +16,8 @@ export function SocketProvider() {
       try {
         const res = await fetch("/api/messages/countUnRead");
         if (!res.ok) throw new Error("Unread count fetch failed");
-
-
         const data = await res.json();
-        setUnreadCounts(data); // { chatId: count }
+        setUnreadCounts(data);
       } catch (err) {
         console.error("Failed to fetch unread counts:", err);
       }
@@ -31,28 +26,46 @@ export function SocketProvider() {
     fetchUnread();
   }, [session?.user?.id, setUnreadCounts]);
 
-  // ✅ Setup Socket.IO only once
-  useEffect(() => {
-    const socket = getSocket();
+ useEffect(() => {
+  if (!session?.user?.id) return;
 
-    if (!session?.user?.id) return;
+  const connectSocket = async () => {
+    try {
+      const socket = await getSocket();
+      if (!socket.connected) socket.connect();
 
-    if (!socket.connected) socket.connect();
-    socket.emit("login", { userId: session.user.id });
+      console.log("✅ Socket connected for unread tracking");
 
-    socket.on("newMessageNotification", ({ chatId }) => {
-      incrementUnread(chatId);
-    });
+      socket.emit("login", { userId: session.user.id });
 
-    socket.on("connect", () => {
-      console.log("Socket connected with ID:", socket.id);
-    });
+      socket.on("connect", () => {
+        console.log("🟢 Socket connected:", socket.id);
+      });
 
-    return () => {
-      socket.off("newMessageNotification");
-      socket.off("connect");
-    };
-  }, [session?.user?.id, incrementUnread]);
+      socket.on("newMessageNotification", ({ chatId }) => {
+        console.log("📨 Received newMessageNotification:", chatId);
+        incrementUnread(chatId); // This must log, or it’s not firing
+      });
 
-  return null;
-}
+    } catch (err) {
+      console.error("❌ Socket setup failed:", err);
+    }
+  };
+
+  connectSocket();
+
+  return () => {
+    (async () => {
+      try {
+        const socket = await getSocket();
+        socket.off("newMessageNotification");
+        socket.off("connect");
+      } catch (err) {
+        console.error("❌ Socket cleanup failed:", err);
+      }
+    })();
+  };
+}, [session?.user?.id, incrementUnread]);
+
+  return null; // This component doesn't render anything
+} 

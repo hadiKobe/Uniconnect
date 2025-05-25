@@ -55,7 +55,10 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   session: {
-    strategy: "jwt", // ✅ Required for middleware support
+    strategy: "jwt",
+  },
+  jwt: {
+    encryption: false, 
   },
 
   pages: {

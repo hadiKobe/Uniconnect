@@ -20,39 +20,21 @@ import {
 import { useState, useEffect } from "react"
 import { useUnreadNotifications } from "@/hooks/notifications/UseCountUnRead";
 import { useMessageStore } from "@/lib/store/messageStore";
+import { useFriendRequestsCount } from "@/hooks/Friends/request/countRequests";
 
 export default function LeftSide({ onSettingsClick }) {
   const { data: session, status } = useSession();
-  const { count } = useUnreadNotifications(); // Fetch unread notifications count
-
+ 
   const userId = session?.user?.id;
 
-const unreadCounts = useMessageStore((state) => state.unreadCounts);
-const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
-  const userName =
-    session?.user?.name || `${session?.user?.first_name ?? "User"}`;
+  const unreadCounts = useMessageStore((state) => state.unreadCounts);
+  const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
+  const userName =session?.user?.name || `${session?.user?.first_name ?? "User"}`;
   const userMajor = session?.user?.major || "Unknown Major";
-  const [requestCount, setRequestCount] = useState(0);
+ 
+  const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id);
+  const { count: notfcount } = useUnreadNotifications(10000, !!session?.user?.id);// Fetch unread notifications count
 
-  useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const res = await fetch("/api/Friends/Requests/count");
-
-        if (!res.ok) {
-          console.error("Error fetching request count:", res.statusText);
-          return;
-        }
-
-        const data = await res.json();
-        setRequestCount(data.count || 0);
-      } catch (err) {
-        console.error("Failed to load request count", err);
-      }
-    };
-
-    fetchCount();
-  }, []);
 
   if (status === "loading") return null; // or a loader, skeleton, etc.
   return (
@@ -120,8 +102,8 @@ const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + cou
          <li>
             <Link href="/notifications" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <Bell className="h-4 w-4" /> Notifications
-              {count > 0 && (
-                <Badge className="ml-auto  shrink-0 bg-primary text-xs">{count}</Badge>
+              {notfcount > 0 && (
+                <Badge className="ml-auto  shrink-0 bg-primary text-xs">{notfcount}</Badge>
               )}
             </Link>
           </li>

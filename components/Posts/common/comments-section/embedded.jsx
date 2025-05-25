@@ -27,12 +27,12 @@ export default function EmbeddedCommentSection({ commentsInfo, isLoading }) {
     name: session?.user?.name || `${session?.user?.first_name ?? "User"}`,
   };
 
-  useEffect(() => {
-    if (!firstRender.current || initialComments?.length > 0) {
-      setCommentsArray(initialComments || []);
-    }
-    firstRender.current = false;
-  }, [initialComments]);
+useEffect(() => {
+  if (Array.isArray(initialComments)) {
+    setCommentsArray(initialComments);
+  }
+}, [initialComments]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,7 +89,7 @@ export default function EmbeddedCommentSection({ commentsInfo, isLoading }) {
   <form onSubmit={handleSubmit} className="flex items-start gap-4 p-6 border-t">
     <Avatar className="h-10 w-10">
       <AvatarImage src={null || "/placeholder.svg"} alt={currentUser.name} />
-      <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+      <AvatarFallback>{currentUser.name?.charAt(0) || "U"}</AvatarFallback>
     </Avatar>
     <div className="relative flex-1">
       <Textarea

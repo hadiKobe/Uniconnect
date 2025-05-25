@@ -31,7 +31,7 @@ const { data: session } = useSession();
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [showConversationList, setShowConversationList] = useState(!isMobile);
   const [messagesMap, setMessagesMap] = useState({});
-  const { messages: fetchedMessages } = useGetMessages(activeConversationId);
+  const { messages: fetchedMessages , hasMore, loadMore } = useGetMessages(activeConversationId);
   const resetUnread = useMessageStore.getState().resetUnread;
   const setActiveChatId = useMessageStore((state) => state.setActiveChatId);
   const { chats = [] ,loading} = useUserChats(userId); 
@@ -60,13 +60,13 @@ useEffect(() => {
    useEffect(() => {
     if (!userId || socketRef.current) return;
 
-    const socket = getSocket();
 
-    // ✅ Edit: Only connect if not already connected
-    if (!socket.connected) socket.connect();
+      const setupSocket = async () => {
+      const socket = await getSocket();
+      if (!socket.connected) socket.connect();
+      socketRef.current = socket;
 
-    socket.emit("login", { userId });
-    socketRef.current = socket;
+
 
     socket.on("receivePrivateMessage", (data) => {
       const { chatId, toUserId } = data;
@@ -105,11 +105,18 @@ useEffect(() => {
         });
         resetUnread(activeConversationId);
 
-        return () => {
-          socket.off("receivePrivateMessage");
-          socket.off("messagesMarkedAsRead");
-        };
-      }, [userId]);
+       };
+
+  setupSocket();
+
+  return () => {
+    (async () => {
+      const socket = await getSocket();
+      socket.off("receivePrivateMessage");
+      socket.off("messagesMarkedAsRead");
+    })();
+  };
+}, [userId]);
 
       // ✅ Keep messages in sync when fetched
       useEffect(() => {
@@ -173,6 +180,7 @@ useEffect(() => {
     };
 
     socketRef.current?.emit("sendPrivateMessage", newMessage);
+    
 
     // ✅ Optimistic UI update
     setMessagesMap((prev) => ({
@@ -192,6 +200,13 @@ useEffect(() => {
 );
 
   };
+  useEffect(() => { // Runs when the component is unmounted (i.e., when leaving the page)
+  return () => {
+    setActiveChatId(null);
+    
+  };
+}, []);
+
 
   const activeConversation = conversations.find((c) => c._id === activeConversationId);
   const activeMessages = activeConversationId ? messagesMap[activeConversationId] || [] : [];
@@ -228,6 +243,8 @@ useEffect(() => {
           setActiveConversationId(null);
           setActiveChatId(null);
         }}
+          onLoadMoreMessages={loadMore}  
+           hasMore={hasMore}  
 
         loading={!fetchedMessages}
       />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 
-export function useGetMessages(chatId, limit = 20) {
+export function useGetMessages(chatId, limit = 100) {
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,8 @@ export function useGetMessages(chatId, limit = 20) {
       if (!res.ok) throw new Error("Failed to fetch messages");
 
       const data = await res.json();
-      setMessages((prev) => (newSkip === 0 ? data.messages : [...prev, ...data.messages]));
+      setMessages((prev) => (newSkip === 0 ? data.messages : [...data.messages, ...prev]));
+
       setTotalCount(data.totalCount);
       setSkip(newSkip + limit);
     } catch (err) {
