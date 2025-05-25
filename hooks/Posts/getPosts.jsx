@@ -27,6 +27,7 @@ export function useGetPosts(filter = '', section = 'home', specific = '', locati
             .map(([key, value]) => value ? `${key}=${value}` : null)
             .filter(Boolean)
          const finalPath = path + params.join("&")
+         console.log(finalPath);
 
          try {
             const response = await fetch(finalPath)
@@ -56,8 +57,6 @@ export function useGetPosts(filter = '', section = 'home', specific = '', locati
    const onDeletePost = (postId) => {
       setPosts(prev => prev.filter(post => post.id !== postId))
    }
-
-   useEffect(() => {console.log(posts);},[posts]);
 
    return { posts, onDeletePost, loading, error }
 }
