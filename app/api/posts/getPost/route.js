@@ -32,7 +32,7 @@ export async function GET(request) {
 
   // conditions
   const conditions = ['posts.is_deleted = 0'];
-  const params = [filters.user_id];
+  const params = [filters.user_id]; //for current user reaction
 
   const joins = [
     'posts JOIN users ON posts.user_id = users.id',
@@ -54,7 +54,8 @@ export async function GET(request) {
           SELECT JSON_OBJECT(
             'price', product_details.price,
             'location', product_details.location,
-            'product_name',product_details.product_name
+            'product_name',product_details.product_name,
+            'type', product_details.type
           ) FROM product_details WHERE product_details.post_id = posts.id LIMIT 1)
     `,
     job: `
@@ -105,8 +106,6 @@ export async function GET(request) {
       params.push(specific);
     }
   }
-
-
 
   const sqlQuery = `
     SELECT posts.id,posts.content, posts.created_at, posts.category, 
