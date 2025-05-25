@@ -19,6 +19,11 @@ export async function GET(request) {
   // job type
   const specific = searchParams.get("specific") || "";
 
+  // page 
+  const page = parseInt(searchParams.get("page")) || 1;
+  const pageSize = 20; // Assuming a default page size
+  const offset = (page - 1) * pageSize; // Calculate the offset for pagination
+
   const sections = {
     job: 'jobs_details',
     market: 'product_details',
@@ -26,7 +31,7 @@ export async function GET(request) {
   };
 
   const filters = {
-    user_id: session.user.id,
+    user_id: parseInt(session.user.id),
     major: session.user.major
   };
 
@@ -97,7 +102,6 @@ export async function GET(request) {
     }
 
     if (specific) {
-
       switch (section) {
         case 'job': conditions.push(`jobs_details.job_type = ?`); break;
         case 'tutor': conditions.push('tutoring_details.subject = ?'); break;
@@ -129,7 +133,8 @@ export async function GET(request) {
     FROM ${joins.join(' ')}
     WHERE ${conditions.join(' AND ')}
     GROUP BY posts.id, posts.content, posts.category, posts.created_at, users.id, users.first_name, users.last_name, users.major
-    ORDER BY posts.created_at DESC;
+    ORDER BY posts.created_at DESC
+    LIMIT ${pageSize} OFFSET ${offset} 
 `;
   // console.log(sqlQuery, params);
 
@@ -142,7 +147,8 @@ export async function GET(request) {
     // console.log(posts);
     return Response.json(posts);
   } catch (error) {
-    return Response.json({ error: "Internal Server Error" }, { status: 500 });
+    console.log(error);
+    return Response.json({ error: "Internal Server Error", }, { status: 500 });
   }
 }
 

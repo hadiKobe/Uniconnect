@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useRef, useEffect, use } from "react"
 import Post from "@/components/Posts/Post"
 import { useGetPosts } from "@/hooks/Posts/getPosts"
 import LoadingPage from "@/components/Loading/LoadingPage"
@@ -12,6 +12,9 @@ import { AddPost } from "../Posts/AddPost"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+
+const PAGE_SIZE = 20
+const PRELOAD_TRIGGER_INDEX = 15
 
 function DropDownMenu({ initial, name, filters, onChange }) {
   const isArray = Array.isArray(filters)
@@ -44,6 +47,9 @@ function DropDownMenu({ initial, name, filters, onChange }) {
 
 export default function FeedClient({ section }) {
 
+  const [page, setPage] = useState(1)
+  const triggerRef = useRef()
+
   const pathname = usePathname();
 
   const location = useFilterStore((state) => state.filters[pathname]?.location || '');
@@ -54,9 +60,29 @@ export default function FeedClient({ section }) {
 
   const set = (updates) => setFilters(pathname, updates);
 
-  const [showAddPost, setShowAddPost] = useState(false)
+  const [showAddPost, setShowAddPost] = useState(false);
+  const [loadingMorePosts, setLoadingMorePosts] = useState(false);
 
-  const { posts, onDeletePost, loading, error } = useGetPosts(filter, section, specific, location)
+  const { posts, onDeletePost, loading, error } = useGetPosts(filter, section, specific, location, page);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading) {
+          setPage((prev) => prev + 1)
+        }
+      },
+      { threshold: 1.0 }
+    )
+
+    if (triggerRef.current) observer.observe(triggerRef.current)
+    return () => observer.disconnect()
+  }, [loading, posts])
+
+  useEffect(() => {
+    if (page > 1) setLoadingMorePosts(loading); // ✅ true when loading, false when done
+    
+  }, [loading, page]);
 
   const handlePostAdded = () => {
     // Changing filter state will auto-trigger refetch via hook
@@ -232,7 +258,7 @@ export default function FeedClient({ section }) {
                       : "flex flex-col gap-3"
               }
             >
-              {loading ? (
+              {loading && page === 1 ? (
                 <LoadingPage />
               ) : error ? (
                 <div className="p-4 text-center rounded-lg bg-red-50 text-red-500 border border-red-100">
@@ -243,22 +269,31 @@ export default function FeedClient({ section }) {
                   <p className="text-muted-foreground">No posts found. Be the first to post!</p>
                 </div>
               ) : (
-                posts.map((post) => (
-                  <Post
-                    key={post.id}
-                    post={post}
-                    onDelete={handlePostDeleted}
-                    section={section}
-                    className={
-                      section === "job"
-                        ? "border border-blue-100 bg-blue-50/30 rounded-lg p-4"
-                        : section === "tutor"
-                          ? "border border-purple-100 bg-purple-50/30 rounded-lg p-4"
-                          : section === "home"
-                            ? "border border-gray-200 rounded-lg p-4 bg-white"
-                            : ""
+                posts.map((post, idx) => (
+                  <div
+                    key={`${section}-${post.id}-${idx}`}
+                    ref={
+                      idx === PRELOAD_TRIGGER_INDEX + (page - 1) * PAGE_SIZE
+                        ? triggerRef
+                        : null
                     }
-                  />
+                    className="mb-4"
+                  >
+                    <Post
+                      post={post}
+                      onDelete={handlePostDeleted}
+                      section={section}
+                      className={
+                        section === "job"
+                          ? "border border-blue-100 bg-blue-50/30 rounded-lg p-4"
+                          : section === "tutor"
+                            ? "border border-purple-100 bg-purple-50/30 rounded-lg p-4"
+                            : section === "home"
+                              ? "border border-gray-200 rounded-lg p-4 bg-white"
+                              : ""
+                      }
+                    />
+                  </div>
                 ))
               )}
             </div>
@@ -316,6 +351,9 @@ export default function FeedClient({ section }) {
           )}
         </div>
       </div>
+
+      {loadingMorePosts && <div className="text-center py-4 text-muted">Loading more...</div>}
+
     </div>
   )
 }

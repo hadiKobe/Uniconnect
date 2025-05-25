@@ -1,6 +1,5 @@
 import { query } from "@/lib/db";
 import { createPostInstance } from "@/lib/models/Posts";
-import { createInteractionInstance } from "@/lib/models/Interactions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -14,6 +13,12 @@ export async function GET(request, { params }) {
   // conditions
   const conditions = ['posts.is_deleted = 0', 'posts.user_id = ?'];
   const sqlParams = [userId,userId]; // one to get the posts of the user, and one to get the current user's reaction
+
+  // page 
+  const { searchParams } = new URL(request.url);
+  const page = parseInt(searchParams.get("page")) || 1;
+  const pageSize = 8; // Assuming a default page size
+  const offset = (page - 1) * pageSize; // Calculate the offset for pagination
 
   const additional_attributes = {
     tutor: `
@@ -71,7 +76,8 @@ export async function GET(request, { params }) {
     FROM ${joins.join(' ')}
     WHERE ${conditions.join(' AND ')}
     GROUP BY posts.id, posts.content, posts.category, posts.created_at, users.id, users.first_name, users.last_name, users.major
-    ORDER BY posts.created_at DESC;
+    ORDER BY posts.created_at DESC
+    LIMIT ${pageSize} OFFSET ${offset};
   `;
 
   try {
