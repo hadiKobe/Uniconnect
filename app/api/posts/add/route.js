@@ -37,18 +37,19 @@ export async function POST(req) {
     }
 
     if (cat === "market" && details) {
-      const { price, location, type } = details;
+      const { price, location, type, product_name } = details;
       await query(
-        `INSERT INTO product_details (post_id, price, location, type) VALUES (?, ?, ?, ?)`,
-        [postId, price ?? null, location ?? null, type ?? null]
+        `INSERT INTO product_details (post_id, price, location, type, product_name) VALUES (?, ?, ?, ?, ?)`,
+        [postId, price ?? null, location ?? null, type ?? null, product_name ?? null]
       );
     }
 
     if (cat === "job" && details) {
-      const { type, location, salary } = details;
+      const { type, location, salary, position } = details;
+      console.log(position);
       await query(
-        `INSERT INTO jobs_details (post_id, job_type, location, salary) VALUES (?, ?, ?, ?)`,
-        [postId, type ?? null, location ?? null, salary ?? null]
+        `INSERT INTO jobs_details (post_id, job_type, location, salary, position) VALUES (?, ?, ?, ?, ?)`,
+        [postId, type ?? null, location ?? null, salary ?? null, position ?? null]
       );
     }
 

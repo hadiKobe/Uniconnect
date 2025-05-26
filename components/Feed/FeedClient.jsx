@@ -266,7 +266,7 @@ export default function FeedClient({ section }) {
 
           {/* Desktop sidebar for filters */}
           {section !== "home" && (
-            <div className="w-full lg:w-1/4 lg:sticky lg:top-6 lg:self-start">
+            <div className="hidden lg:block lg:w-1/4 lg:sticky lg:top-6 lg:self-start">
               <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
 
                 <div className="flex items-center gap-2 mb-4">
@@ -275,6 +275,7 @@ export default function FeedClient({ section }) {
                 </div>
 
                 <div className="space-y-3">
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       {section.charAt(0).toUpperCase() + section.slice(1)} Type
@@ -307,7 +308,6 @@ export default function FeedClient({ section }) {
                       Reset Filters
                     </Button>
                   </div>
-
 
                 </div>
 
