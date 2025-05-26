@@ -35,7 +35,7 @@ export function useGetUserInfo() {
                joined_in: userInfo.joined_in ? userInfo.joined_in.split("T")[0] : "",
                bio: userInfo.bio || "",
                address: userInfo.address || "",
-               phone_number: userInfo.phone_number || "",
+               phone: userInfo.phone || "",
                expected_graduation_date: userInfo.expected_graduation_date
                   ? userInfo.expected_graduation_date.split("T")[0]
                   : "",
