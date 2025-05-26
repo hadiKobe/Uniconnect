@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,6 +27,10 @@ import { useFriendRequestsCount } from "@/hooks/Friends/request/countRequests";
 export default function LeftSide({ onSettingsClick }) {
   const { data: session, status } = useSession();
  
+  const pathname = usePathname()
+  const isActive = (href) => pathname === href;
+  const { count } = useUnreadNotifications(); // Fetch unread notifications count
+
   const userId = session?.user?.id;
 
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
@@ -35,6 +41,72 @@ export default function LeftSide({ onSettingsClick }) {
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id);
   const { count: notfcount } = useUnreadNotifications(10000, !!session?.user?.id);// Fetch unread notifications count
 
+
+  const linkStyle = {
+    selected: "bg-black text-white hover:bg-amber-950",
+    notSelected: "text-gray-800 hover:bg-gray-100"
+  };
+
+  const list = [
+    {
+      href: "/Feed",
+      icon: Home,
+      label: "Home"
+    },
+    {
+      href: "/Feed/Tutoring",
+      icon: GraduationCap,
+      label: "Tutor Section"
+    },
+    {
+      href: "/Feed/JobOffers",
+      icon: FileText,
+      label: "Job Section"
+    },
+    {
+      href: "/Feed/MarketPlace",
+      icon: ShoppingBag,
+      label: "Market"
+    },
+    {
+      href: "/Friends",
+      icon: Users,
+      label: "Friends",
+      badge: requestCount > 0 ? requestCount : null
+    },
+    {
+      href: "/Messages",
+      icon: MessageSquare,
+      label: "Messages",
+      badge: totalUnread > 0 ? totalUnread : null
+    },
+    {
+      href: "/notifications",
+      icon: Bell,
+      label: "Notifications",
+      badge: count > 0 ? count : null
+    }
+  ];
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const res = await fetch("/api/Friends/Requests/count");
+
+        if (!res.ok) {
+          console.error("Error fetching request count:", res.statusText);
+          return;
+        }
+
+        const data = await res.json();
+        setRequestCount(data.count || 0);
+      } catch (err) {
+        console.error("Failed to load request count", err);
+      }
+    };
+
+    fetchCount();
+  }, []);
 
   if (status === "loading") return null; // or a loader, skeleton, etc.
   return (
@@ -107,6 +179,25 @@ export default function LeftSide({ onSettingsClick }) {
               )}
             </Link>
           </li>
+          {list.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium ",
+                  isActive(item.href) ? linkStyle.selected : linkStyle.notSelected
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+                {item.badge && (
+                  <Badge className="ml-auto shrink-0 bg-primary text-xs">
+                    {item.badge}
+                  </Badge>
+                )}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
 

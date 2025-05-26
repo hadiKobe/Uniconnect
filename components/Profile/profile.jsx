@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ProfileHeader } from "@/components/Profile/header";
 import Posts from "./posts";
 import { FriendsCard } from "./friends";
@@ -16,21 +16,41 @@ import { useCancelFriendRequest } from "@/hooks/Friends/request/cancel";
 import { useBulkFriendCheck } from "@/hooks/Friends/bulkCheckFriends";
 import { useUnFriend } from "@/hooks/Friends/useUnFriend";
 import { AddPost } from "../Posts/AddPost";
-import { Dialog, DialogTrigger,DialogContent,DialogHeader,DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import{ Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
 
+
+
 const Profile = ({ userID }) => {
+  const [page, setPage] = useState(1)
+  const triggerRef = useRef()
+
   const [student, setStudent] = useState(null);
   const [posts, setPosts] = useState([]);
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingPosts, setLoadingPosts] = useState(false);
   const [currentLoadingFriendId, setCurrentLoadingFriendId] = useState(null);
-  const [showAddPost, setShowAddPost] = useState(false);  
+  const [showAddPost, setShowAddPost] = useState(false);
   const { sendFriendRequest } = useSendFriendRequest();
   const { cancelFriendRequest } = useCancelFriendRequest();
-  const { removeFriend } = useUnFriend ();
+  const { removeFriend } = useUnFriend();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading) {
+          setPage((prev) => prev + 1)
+        }
+      },
+      { threshold: 1.0 }
+    )
+
+    if (triggerRef.current) observer.observe(triggerRef.current)
+    return () => observer.disconnect()
+  }, [loading, posts])
 
   const allRelevantIds = student
     ? [...new Set([student.id, ...friends.map((friend) => friend.id)])]
@@ -38,7 +58,7 @@ const Profile = ({ userID }) => {
   const { statuses, setStatuses } = useBulkFriendCheck(allRelevantIds);
   const { data: session } = useSession();
 
-  const isCurrentUser = Number(userID) === Number( session?.user?.id);
+  const isCurrentUser = Number(userID) === Number(session?.user?.id);
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   useEffect(() => {
@@ -46,22 +66,37 @@ const Profile = ({ userID }) => {
       try {
         const [studentData, postData, friendsData] = await Promise.all([
           fetchStudent(userID),
-          fetchPosts(userID),
+          fetchPosts(userID, 1),
           fetchFriends(userID),
         ]);
         setStudent(studentData);
         setPosts(postData);
         setFriends(friendsData);
-        await sleep(1000); 
+        await sleep(1000);
       } catch (error) {
         console.error("Error loading profile data:", error);
       } finally {
         setLoading(false);
       }
     };
-
     if (userID) fetchAllData();
   }, [userID]);
+
+  useEffect(() => {
+    const fetchMorePosts = async () => {
+      if (loading) return; // Prevent fetching if already loading
+      try {
+        setLoadingPosts(true);
+        const newPosts = await fetchPosts(userID, page);
+        setPosts((prev) => [...prev, ...newPosts]);
+      } catch (error) {
+        console.error("Error fetching more posts:", error);
+      }finally {
+        setLoadingPosts(false);
+      }
+    };
+    if (userID && page > 1) fetchMorePosts();
+  }, [page]);
 
   const handleSendRequest = async (friendId) => {
     setCurrentLoadingFriendId(friendId);
@@ -98,7 +133,7 @@ const Profile = ({ userID }) => {
         ...prev,
         [friendId]: { isFriend: false, pendingRequest: false },
       }));
-      
+
     } catch (err) {
       alert(err.message || "Failed to remove friend.");
     } finally {
@@ -106,11 +141,11 @@ const Profile = ({ userID }) => {
     }
   };
   const handlePostAdded = async () => {
-    const newPosts = await fetchPosts(userID); 
-    setPosts(newPosts);                       
-    setShowAddPost(false);                     
+    const newPosts = await fetchPosts(userID);
+    setPosts(newPosts);
+    setShowAddPost(false);
   };
-  
+
 
 
   if (loading) return <p>Loading profile info...</p>;
@@ -142,35 +177,35 @@ const Profile = ({ userID }) => {
           />
         </div>
         <Card className="w-full">
-  <CardHeader className="flex flex-row items-center justify-between">
-  <CardTitle className="text-2xl font-extrabold">Posts</CardTitle>
-    <Dialog open={showAddPost} onOpenChange={setShowAddPost}>
-      {isCurrentUser && (
-        <DialogTrigger asChild>
-          <Button
-            variant="default"
-            size="sm"
-            className="rounded-full text-sm font-medium flex items-center gap-2 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            New Post
-          </Button>
-        </DialogTrigger>
-      )}
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-2xl font-extrabold">Posts</CardTitle>
+            <Dialog open={showAddPost} onOpenChange={setShowAddPost}>
+              {isCurrentUser && (
+                <DialogTrigger asChild>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="rounded-full text-sm font-medium flex items-center gap-2 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    New Post
+                  </Button>
+                </DialogTrigger>
+              )}
 
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Create a New Post</DialogTitle>
-        </DialogHeader>
-        <AddPost onPostAdded={handlePostAdded} />
-      </DialogContent>
-    </Dialog>
-  </CardHeader>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Create a New Post</DialogTitle>
+                </DialogHeader>
+                <AddPost onPostAdded={handlePostAdded} />
+              </DialogContent>
+            </Dialog>
+          </CardHeader>
 
-  <CardContent className="w-full min-h-[400px]">
-    <Posts posts={posts} />
-  </CardContent>
-</Card>
+          <CardContent className="w-full min-h-[400px]">
+            <Posts posts={posts} triggerRef={triggerRef} page={page} loading={loadingPosts} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

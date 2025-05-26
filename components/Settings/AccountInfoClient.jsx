@@ -35,7 +35,7 @@ const AccountInfo = () => {
       },
       bio: "",
       address: "",
-      phone_number: "",
+      phone: "",
       expected_graduation_date: {
          year: "",
          month: "",
@@ -95,7 +95,7 @@ const AccountInfo = () => {
             },
             bio: userInfo.bio || "",
             address: userInfo.address || "",
-            phone_number: userInfo.phone_number || "",
+            phone: userInfo.phone || "",
             expected_graduation_date: {
                year: graduation_year || "",
                month: graduation_month || "",
@@ -269,11 +269,11 @@ const AccountInfo = () => {
                               </div>
 
                               <div className="space-y-2">
-                                 <Label htmlFor="phone_number">Phone Number</Label>
+                                 <Label htmlFor="phone">Phone Number</Label>
                                  <Input
-                                    id="phone_number"
-                                    name="phone_number"
-                                    value={formData.phone_number || ""}
+                                    id="phone"
+                                    name="phone"
+                                    value={formData.phone || ""}
                                     onChange={handleInputChange}
                                  />
                               </div>

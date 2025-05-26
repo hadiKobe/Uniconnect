@@ -35,6 +35,19 @@ export default function Footer({ bottomInfo, singlePost = false }) {
       }
    }, [userReaction])
 
+   useEffect(() => {
+      if (singlePost) {
+         // Fetch comments only if it's a single post view
+         fetchComments(post_id).catch(error => {
+            console.error("Error fetching comments:", error);
+            toast.error("Failed to load comments. Please try again.");
+         });
+      } else {
+         // Reset comments when not in single post view
+         setCommentsNum(commentsCount);
+      }
+   },[singlePost])
+
    const handleInteraction = async (e, type) => {
       e.preventDefault()
       const reactions = { like: liked, dislike: disliked }

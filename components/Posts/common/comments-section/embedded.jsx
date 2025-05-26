@@ -57,63 +57,63 @@ useEffect(() => {
 
   return (
     <div className="w-full bg-background rounded-xl border mt-6">
-  <div className="p-6 font-semibold text-lg flex items-center gap-2">
-    <MessageCircle className="h-5 w-5" />
-    <span>Comments {isLoading ? "..." : commentsArray.length}</span>
-  </div>
-
-  <div className="p-6 space-y-6">
-    {isLoading ? (
-      <div className="flex flex-col items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-        <p className="text-muted-foreground text-lg">Loading comments...</p>
+      <div className="p-6 font-semibold text-lg flex items-center gap-2">
+        <MessageCircle className="h-5 w-5" />
+        <span>Comments {isLoading ? "..." : commentsArray.length}</span>
       </div>
-    ) : commentsArray && commentsArray.length > 0 ? (
-      commentsArray.map((comment, index) => (
-        <CommentItem
-          key={comment.id || index}
-          comment={comment}
-          author_id={author_id}
-          onDeleteComment={handleDeleteComment}
-          isLast={index === commentsArray.length - 1}
-          setIsDropdownOpen={() => {}}
-        />
-      ))
-    ) : (
-      <div className="text-muted-foreground text-center py-8 text-lg">
-        No comments yet. Be the first to comment!
-      </div>
-    )}
-  </div>
 
-  <form onSubmit={handleSubmit} className="flex items-start gap-4 p-6 border-t">
-    <Avatar className="h-10 w-10">
-      <AvatarImage src={null || "/placeholder.svg"} alt={currentUser.name} />
-      <AvatarFallback>{currentUser.name?.charAt(0) || "U"}</AvatarFallback>
-    </Avatar>
-    <div className="relative flex-1">
-      <Textarea
-        ref={commentInputRef}
-        placeholder="Add a comment..."
-        className="min-h-[50px] resize-none pr-12 text-base"
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        rows={2}
-        disabled={isLoading}
-      />
-      <Button
-        type="submit"
-        size="sm"
-        disabled={loading || !newComment.trim() || isLoading}
-        className="absolute right-3 top-1/2 -translate-y-1/2 h-8 px-3"
-        variant="ghost"
-      >
-        <Send className="h-5 w-5" />
-        <span className="sr-only">Send comment</span>
-      </Button>
+      <div className="p-6 space-y-6">
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+            <p className="text-muted-foreground text-lg">Loading comments...</p>
+          </div>
+        ) : commentsArray && commentsArray.length > 0 ? (
+          commentsArray.map((comment, index) => (
+            <CommentItem
+              key={comment.id || index}
+              comment={comment}
+              author_id={author_id}
+              onDeleteComment={handleDeleteComment}
+              isLast={index === commentsArray.length - 1}
+              setIsDropdownOpen={() => { }}
+            />
+          ))
+        ) : (
+          <div className="text-muted-foreground text-center py-8 text-lg">
+            No comments yet. Be the first to comment!
+          </div>
+        )}
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex items-start gap-4 p-6 border-t">
+        <Avatar className="h-10 w-10">
+          <AvatarImage src={null || "/placeholder.svg"} alt={currentUser.name} />
+          <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+        </Avatar>
+        <div className="relative flex-1">
+          <Textarea
+            ref={commentInputRef}
+            placeholder="Add a comment..."
+            className="min-h-[50px] resize-none pr-12 text-base"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            rows={2}
+            disabled={isLoading}
+          />
+          <Button
+            type="submit"
+            size="sm"
+            disabled={loading || !newComment.trim() || isLoading}
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-8 px-3"
+            variant="ghost"
+          >
+            <Send className="h-5 w-5" />
+            <span className="sr-only">Send comment</span>
+          </Button>
+        </div>
+      </form>
     </div>
-  </form>
-</div>
 
   );
 }

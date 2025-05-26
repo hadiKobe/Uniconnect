@@ -49,6 +49,8 @@ const Post = ({ post, onDelete, section }) => {
       categoryDetails = {
         price: post.price,
         location: post.location,
+        type: post.type,
+        product_name: post.product_name,
       };
       break;
 
@@ -57,6 +59,7 @@ const Post = ({ post, onDelete, section }) => {
         job_type: post.job_type,
         salary: post.salary,
         location: post.location,
+        position: post.position,
       };
       break;
 
