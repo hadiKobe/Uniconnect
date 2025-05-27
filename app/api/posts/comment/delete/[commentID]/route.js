@@ -1,13 +1,17 @@
 import { query } from "@/lib/db";
 
-export async function DELETE(request,{params}) {
+export async function DELETE(request, { params }) {
+   const session = await getServerSession(authOptions);
+   if (!session) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+   }
    const { commentID } = await params;
    const sqlQuery = `UPDATE comments SET is_deleted = 1 WHERE id = ?`;
    try {
-      const result = await query(sqlQuery,[commentID]);
+      const result = await query(sqlQuery, [commentID]);
 
       return Response.json({ message: "Comment deleted successfully!" });
    } catch (error) {
-      return Response.json({ error: "Failed to delete comment",error }, { status: 500 });
+      return Response.json({ error: "Failed to delete comment", error }, { status: 500 });
    }
 }

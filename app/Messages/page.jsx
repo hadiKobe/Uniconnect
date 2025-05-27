@@ -3,7 +3,12 @@ import { MessagesPage } from "@/components/messages/message-page";
 import Navbar from "@/components/navbar/navbar";
 import { Suspense } from "react";
 
-const Page = () => {
+const Page = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/SignIn");
+  }
   return (
     <>
       {/* Navbar */}

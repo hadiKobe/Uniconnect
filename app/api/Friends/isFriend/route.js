@@ -10,7 +10,7 @@ export async function GET(request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const friendId = searchParams.get("userId"); 
+    const friendId = searchParams.get("userId");
 
     if (!friendId) {
       return Response.json({ error: "Missing userId" }, { status: 400 });

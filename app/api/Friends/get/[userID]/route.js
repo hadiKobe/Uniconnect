@@ -9,7 +9,7 @@ export async function GET(request, { params }) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { userID } =await params;
+    const { userID } = await params;
 
     const sqlQuery = `
       SELECT 

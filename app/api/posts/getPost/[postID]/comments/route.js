@@ -1,7 +1,11 @@
 import { query } from '@/lib/db';
 import { createInteractionInstance } from '@/lib/models/Interactions';
 
-export async function GET(request,{ params }) {
+export async function GET(request, { params }) {
+   const session = await getServerSession(authOptions);
+   if (!session) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+   }
    const { postID } = await params;
    const sqlQuery = `
       SELECT comments.*, users.first_name, users.last_name 
@@ -11,7 +15,7 @@ export async function GET(request,{ params }) {
     `;
    try {
       const commentsRaw = await query(sqlQuery, [postID]);
-      const comments =  createInteractionInstance(commentsRaw);
+      const comments = createInteractionInstance(commentsRaw);
       return Response.json(comments);
    } catch (error) {
       console.error(error);

@@ -4,12 +4,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function GET(req) {
-   const session = await getServerSession(authOptions);
-    const userId = session?.user?.id;
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const userId = session?.user?.id;
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const { searchParams } = new URL(req.url);
   const chatId = searchParams.get("chatId");
   const limit = parseInt(searchParams.get("limit")) || 100;
@@ -23,7 +26,7 @@ export async function GET(req) {
     await connectToDB(); // ✅ Ensure DB is connected before querying
 
     const result = await getMessages(chatId, limit, skip);
-  
+
     return Response.json(result);
   } catch (error) {
     console.error("❌ Failed to fetch messages:", error);

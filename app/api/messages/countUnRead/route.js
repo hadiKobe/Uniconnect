@@ -5,8 +5,11 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 import { getUnreadCountsByChat } from "@/server/controllers/messageController";
 
 export async function GET(req) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
-    const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
     if (!userId) {

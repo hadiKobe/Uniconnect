@@ -4,10 +4,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function GET(req) {
-   const session = await getServerSession(authOptions);
-      if (!session) {
-        return Response.json({ error: "Unauthorized" }, { status: 401 });
-      }
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const { searchParams } = new URL(req.url);
   const userA = searchParams.get("userA");
   const userB = searchParams.get("userB");
@@ -17,7 +17,7 @@ export async function GET(req) {
   }
 
   try {
-    await connectToDB(); 
+    await connectToDB();
     const chat = await getOrCreateChat(userA, userB); // This should ONLY return a Chat document
     return Response.json(chat);
   } catch (error) {

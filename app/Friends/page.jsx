@@ -1,10 +1,16 @@
 'use client';
-import { FriendsContent } from "@/components/Friends/friends"; 
+import { FriendsContent } from "@/components/Friends/friends";
 import LeftBarShell from "@/components/Left/LeftBarShell";
 
 import Navbar from "@/components/navbar/navbar";
 
-export default function FriendsPage() {
+export default async function FriendsPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/SignIn");
+  }
+
   return (
     <>
       {/* Sticky Top Navbar */}
@@ -14,7 +20,7 @@ export default function FriendsPage() {
 
       {/* Fixed Sidebar (desktop only) */}
       <div className="hidden md:block fixed top-[64px] left-0 h-[calc(100vh-64px)] w-64 border-r bg-background z-40">
-        <LeftBarShell/>
+        <LeftBarShell />
       </div>
 
       {/* Main Content */}
