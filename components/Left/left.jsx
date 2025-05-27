@@ -133,7 +133,7 @@ export default function LeftSide({ onSettingsClick }) {
       {/* Navigation with scroll if needed */}
       <nav className="flex-1 overflow-y-auto p-1">
         <ul className="space-y-1">
-          <li>
+          {/* <li>
             <Link href="/Feed" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
               <Home className="h-4 w-4" /> Home
             </Link>
@@ -178,7 +178,7 @@ export default function LeftSide({ onSettingsClick }) {
                 <Badge className="ml-auto  shrink-0 bg-primary text-xs">{notfcount}</Badge>
               )}
             </Link>
-          </li>
+          </li> */}
           {list.map((item) => (
             <li key={item.href}>
               <Link
