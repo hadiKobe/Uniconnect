@@ -1,8 +1,7 @@
-'use client';
+
 import SinglePost from "@/components/Posts/SinglePost";
 import Navbar from "@/components/navbar/navbar";
 import LeftBarShell from "@/components/Left/LeftBarShell";
-import { use } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
@@ -13,7 +12,7 @@ const Page = async ({ params }) => {
   if (!session) {
     redirect("/SignIn");
   }
-  const resolvedParams = use(params); // Unwrap the Promise
+  const resolvedParams = params; // Unwrap the Promise
   const postId = resolvedParams.postId;
 
   return (
