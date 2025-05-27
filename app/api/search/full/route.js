@@ -1,5 +1,7 @@
 import { query } from "@/lib/db";
 import { createPostInstance } from "@/lib/models/Posts";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(request) {
    const session = await getServerSession(authOptions);

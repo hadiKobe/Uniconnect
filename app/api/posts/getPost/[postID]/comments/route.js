@@ -1,11 +1,14 @@
 import { query } from '@/lib/db';
 import { createInteractionInstance } from '@/lib/models/Interactions';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(request, { params }) {
    const session = await getServerSession(authOptions);
    if (!session) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
    }
+
    const { postID } = await params;
    const sqlQuery = `
       SELECT comments.*, users.first_name, users.last_name 

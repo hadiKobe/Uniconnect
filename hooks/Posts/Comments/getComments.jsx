@@ -18,7 +18,7 @@ export default function useGetComments(post_id) {
             headers: { "Content-Type": "application/json" }
          });
 
-         if (!res.ok) throw new Error("Failed to fetch posts");
+         if (!res.ok) throw new Error("Failed to fetch comments");
 
          const data = await res.json();
          setComments(data);
