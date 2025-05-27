@@ -1,5 +1,8 @@
 import { NotificationsPage } from "@/components/notifications/notification-page"
 import LeftBarShell from "@/components/Left/LeftBarShell";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 import Navbar from "@/components/navbar/navbar";
 const Page = async () => {

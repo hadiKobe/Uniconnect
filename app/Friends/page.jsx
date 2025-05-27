@@ -1,4 +1,7 @@
 'use client';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 import { FriendsContent } from "@/components/Friends/friends";
 import LeftBarShell from "@/components/Left/LeftBarShell";
 

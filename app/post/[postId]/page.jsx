@@ -3,6 +3,9 @@ import SinglePost from "@/components/Posts/SinglePost";
 import Navbar from "@/components/navbar/navbar";
 import LeftBarShell from "@/components/Left/LeftBarShell";
 import { use } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 const Page = async ({ params }) => {
   const session = await getServerSession(authOptions);

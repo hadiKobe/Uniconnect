@@ -2,6 +2,9 @@ import LeftBarShell from "@/components/Left/LeftBarShell";
 import { MessagesPage } from "@/components/messages/message-page";
 import Navbar from "@/components/navbar/navbar";
 import { Suspense } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 const Page = async () => {
   const session = await getServerSession(authOptions);
