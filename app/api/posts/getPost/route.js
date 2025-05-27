@@ -135,6 +135,11 @@ export async function GET(request) {
   // console.log(sqlQuery, params);
 
   try {
+    console.log("DB ENV:", {
+  user: process.env.DB_USER,
+  pass: process.env.DB_PASS ? "✓" : "❌ undefined",
+});
+
     const result = await query(sqlQuery, params);
     //console.log(result);
     const posts = result.map((post) => {

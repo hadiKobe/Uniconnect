@@ -1,6 +1,7 @@
+require("dotenv").config(); // ⬅️ Load environment variables
 const mongoose = require("mongoose");
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/chatdb";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 async function connectToDB() {
   try {
@@ -11,7 +12,7 @@ async function connectToDB() {
     console.log("✅ MongoDB Connected");
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error);
-    process.exit(1); // Exit the app if DB connection fails
+    process.exit(1);
   }
 }
 
