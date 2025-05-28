@@ -38,7 +38,7 @@ export function SocketProvider() {
       socket.emit("login", { userId: session.user.id });
 
       socket.on("connect", () => {
-        console.log("🟢 Socket connected:", socket.id);
+       // console.log("🟢 Socket connected:", socket.id);
       });
 
       socket.on("newMessageNotification", ({ chatId }) => {

@@ -6,6 +6,7 @@ import { NotificationGroup } from "./notification-Group";
 import { NotificationItem } from "./notification-Card";
 import { useMarkNotificationsAsRead } from "@/hooks/notifications/useMarkAsRead";
 import {  useEffect } from "react";
+import LoadingPage from "../Loading/LoadingPage";
 
 export function NotificationsPage() {
   const { notifications, loading, error } = useNotifications();
@@ -15,7 +16,7 @@ export function NotificationsPage() {
   }, []); 
   
   if (loading) {
-    return <div className="text-center py-12">Loading notifications...</div>;
+    return <div className="text-center py-12"><LoadingPage/></div>;
   }
 
   if (error) {

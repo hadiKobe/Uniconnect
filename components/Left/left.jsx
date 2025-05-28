@@ -88,25 +88,6 @@ export default function LeftSide({ onSettingsClick }) {
     }
   ];
 
-  // useEffect(() => {
-  //   const fetchCount = async () => {
-  //     try {
-  //       const res = await fetch("/api/Friends/Requests/count");
-
-  //       if (!res.ok) {
-  //         console.error("Error fetching request count:", res.statusText);
-  //         return;
-  //       }
-
-  //       const data = await res.json();
-  //       setRequestCount(data.count || 0);
-  //     } catch (err) {
-  //       console.error("Failed to load request count", err);
-  //     }
-  //   };
-
-  //   fetchCount();
-  // }, []);
 
   if (status === "loading") return null; // or a loader, skeleton, etc.
   return (

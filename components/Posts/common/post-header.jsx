@@ -1,5 +1,10 @@
 "use client"
-import { formatDistanceToNow } from "date-fns"
+import {
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+} from "date-fns";
 import { toast } from "sonner";
 import { MoreHorizontal } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -17,6 +22,7 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
+
 
 // Function to get badge variant based on post type
 const getPostTypeBadgeVariant = (type) => {
@@ -52,11 +58,27 @@ const postTypeEmoji = {
    market: "🛒",
    general: ''
 }
+function getShortTimeAgo(date) {
+  const now = new Date();
 
+  const days = differenceInDays(now, date);
+  if (days > 0) return `${days}d`;
+
+  const hours = differenceInHours(now, date);
+  if (hours > 0) return `${hours}h`;
+
+  const minutes = differenceInMinutes(now, date);
+  if (minutes > 0) return `${minutes}m`;
+
+  const seconds = differenceInSeconds(now, date);
+  return `${seconds}s`;
+}
 export default function Header({ headerInfo }) {
+   
    const { post_id, user_id, first_name, last_name, major, created_at, post_type = "general", onDelete, profile_picture } = headerInfo;
-   const publishedAt = new Date(created_at);
-   const timeAgo = formatDistanceToNow(publishedAt, { addSuffix: true })
+    const publishedAt = new Date(created_at); // ✅ must be here first
+      const timeAgo = getShortTimeAgo(publishedAt); // ✅ now this works
+   
 
    const { data: session } = useSession()
    const currentUserId = parseInt(session?.user?.id)

@@ -5,7 +5,7 @@ export default function FeedLayout({ children }) {
   return (
     <div>
       {/* Sticky Top Navbar */}
-      <div className="sticky top-0 z-500 w-full bg-white">
+      <div className="sticky top-0 z-50 w-full bg-white">
         <Navbar />
       </div>
 
