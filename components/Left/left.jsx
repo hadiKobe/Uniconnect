@@ -37,6 +37,8 @@ export default function LeftSide({ onSettingsClick }) {
   const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
   const userName =session?.user?.name || `${session?.user?.first_name ?? "User"}`;
   const userMajor = session?.user?.major || "Unknown Major";
+  const userImage = session?.user?.profile_picture || "/placeholder.svg?height=64&width=64";
+  const userGraduationProgress = session?.user?.graduation_progress;
  
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id);
   const { count: notfcount } = useUnreadNotifications(10000, !!session?.user?.id);// Fetch unread notifications count
@@ -97,7 +99,8 @@ export default function LeftSide({ onSettingsClick }) {
         <Card className="p-4 bg-muted/50">
           <div className="flex flex-col items-center space-y-2">
             <Avatar className="h-16 w-16">
-              <AvatarImage src="/placeholder.svg?height=64&width=64" alt="Profile" />
+             <AvatarImage src={userImage} alt="Profile" />  
+
               <AvatarFallback>{userName?.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="text-center">
@@ -105,7 +108,7 @@ export default function LeftSide({ onSettingsClick }) {
                 <h3 className="font-medium">{userName}</h3>
               </Link>
               <p className="text-xs text-muted-foreground">{userMajor}</p>
-              <Badge variant="outline" className="mt-1 text-xs">Student</Badge>
+              <Badge variant="outline" className="mt-1 text-xs">{userGraduationProgress}</Badge>
             </div>
           </div>
         </Card>

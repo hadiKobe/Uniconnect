@@ -6,7 +6,7 @@ import { AddPost } from "../Posts/AddPost"
 import { useState } from "react"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { Plus,GraduationCap } from "lucide-react"
 
 
 export default function Navbar() {
@@ -22,8 +22,8 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link href="#" className="flex items-center gap-2 font-semibold">
-
-          <span className="hidden md:inline-block">UNI-CONNECT</span>
+          <GraduationCap className="h-8 w-8 text-blue-600" />
+          <span className="ml-2 text-xl font-bold text-gray-900">Uni Connect</span>
         </Link>
 
         {/* Search bar */}

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,11 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MajorSelector from "./MajorSelector";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap ,User, Lock, Mail, CheckCircle, AlertCircle  } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
 import Link from "next/link";
+import { useState } from "react";
+import { Progress } from "@/components/ui/progress";
+
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -31,6 +34,11 @@ const formSchema = z.object({
 
 const SignUp = ({ setLoading }) => {
   const router = useRouter();
+  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -44,6 +52,41 @@ const SignUp = ({ setLoading }) => {
       confirmPassword: ""
     }
   });
+   const calculatePasswordStrength = (password) => {
+    if (!password) return 0
+
+    let strength = 0
+    // Length check
+    if (password.length >= 8) strength += 25
+    // Contains uppercase
+    if (/[A-Z]/.test(password)) strength += 25
+    // Contains lowercase
+    if (/[a-z]/.test(password)) strength += 25
+    // Contains number or special char
+    if (/[0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) strength += 25
+
+    return strength
+  }
+
+  const onPasswordChange = (value) => {
+    setPasswordStrength(calculatePasswordStrength(value))
+  }
+
+
+
+  const getPasswordStrengthColor = () => {
+    if (passwordStrength <= 25) return "bg-red-500"
+    if (passwordStrength <= 50) return "bg-orange-500"
+    if (passwordStrength <= 75) return "bg-yellow-500"
+    return "bg-green-500"
+  }
+
+  const getPasswordStrengthText = () => {
+    if (passwordStrength <= 25) return "Weak"
+    if (passwordStrength <= 50) return "Fair"
+    if (passwordStrength <= 75) return "Good"
+    return "Strong"
+  }
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -75,34 +118,41 @@ const SignUp = ({ setLoading }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-full max-w-md shadow-lg border-slate-200 overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-2">
-            <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center">
-              <GraduationCap className="h-6 w-6 text-slate-700" />
+            <div className="h-14 w-14 rounded-full bg-slate-100 flex items-center justify-center shadow-inner">
+              <GraduationCap className="h-7 w-7 text-slate-700" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Join Us Today!</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl font-bold text-slate-800">Join Us Today!</CardTitle>
+          <CardDescription className="text-slate-600">
             Create an account to access exclusive university resources.
           </CardDescription>
         </CardHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-6 pb-4">
-
+            <CardContent className="space-y-6 pb-4">
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel className="text-slate-700 font-medium">First Name</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="First name" />
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Input
+                            {...field}
+                            placeholder="First name"
+                            className="pl-10 h-11 border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                          />
+                        </div>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm font-medium" />
                     </FormItem>
                   )}
                 />
@@ -111,11 +161,18 @@ const SignUp = ({ setLoading }) => {
                   name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Last Name</FormLabel>
+                      <FormLabel className="text-slate-700 font-medium">Last Name</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Last name" />
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Input
+                            {...field}
+                            placeholder="Last name"
+                            className="pl-10 h-11 border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                          />
+                        </div>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm font-medium" />
                     </FormItem>
                   )}
                 />
@@ -126,11 +183,19 @@ const SignUp = ({ setLoading }) => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Email</FormLabel>
                     <FormControl>
-                      <Input {...field} type="email" placeholder="12214@students.liu.edu.lb" />
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="12214@students.liu.edu.lb"
+                          className="pl-10 h-11 border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                        />
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-sm font-medium" />
                   </FormItem>
                 )}
               />
@@ -140,11 +205,54 @@ const SignUp = ({ setLoading }) => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Password</FormLabel>
                     <FormControl>
-                      <Input {...field} type="password" />
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Create a strong password"
+                          className="pl-10 h-11 border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                          onChange={(e) => {
+                            field.onChange(e)
+                            onPasswordChange(e.target.value)
+                          }}
+                        />
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    {field.value && (
+                      <div className="mt-2 space-y-1">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-slate-600">Password strength:</span>
+                          <span
+                            className={`font-medium ${
+                              passwordStrength <= 25
+                                ? "text-red-500"
+                                : passwordStrength <= 50
+                                  ? "text-orange-500"
+                                  : passwordStrength <= 75
+                                    ? "text-yellow-600"
+                                    : "text-green-600"
+                            }`}
+                          >
+                            {getPasswordStrengthText()}
+                          </span>
+                        </div>
+                        <Progress
+                        value={passwordStrength}
+                        className="h-1"
+                      >
+                        <div
+                          className={`h-1 ${getPasswordStrengthColor()} transition-all duration-300`}
+                          data-slot="indicator"
+                          style={{ width: `${passwordStrength}%` }}
+                        />
+                      </Progress>
+
+                      </div>
+                    )}
+                    <FormMessage className="text-sm font-medium" />
                   </FormItem>
                 )}
               />
@@ -154,11 +262,25 @@ const SignUp = ({ setLoading }) => {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Confirm Password</FormLabel>
                     <FormControl>
-                      <Input {...field} type="password" />
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Confirm your password"
+                          className="pl-10 h-11 border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                        />
+                        {field.value && field.value === form.watch("password") && (
+                          <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
+                        {field.value && field.value !== form.watch("password") && (
+                          <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-500" />
+                        )}
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-sm font-medium" />
                   </FormItem>
                 )}
               />
@@ -168,26 +290,32 @@ const SignUp = ({ setLoading }) => {
                 name="major"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Major</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Major</FormLabel>
                     <FormControl>
-                      <MajorSelector
-                        selectedMajor={field.value}
-                        onSelectMajor={(major) => field.onChange(major)}
-                      />
+                      <div className="relative">
+                        <MajorSelector selectedMajor={field.value} onSelectMajor={(major) => field.onChange(major)} />
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-sm font-medium" />
                   </FormItem>
                 )}
               />
             </CardContent>
 
-            <CardFooter className="flex flex-col space-y-4">
+            <CardFooter className="flex flex-col space-y-4 pt-2 pb-6">
               <Button
                 type="submit"
-                className="w-full"
-                disabled={!form.formState.isValid}
+                className="w-full h-11 bg-slate-800 hover:bg-slate-700 text-white font-medium transition-all duration-200"
+                disabled={!form.formState.isValid || form.formState.isSubmitting}
               >
-                Continue to Verify
+                {form.formState.isSubmitting ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Processing...
+                  </div>
+                ) : (
+                  "Continue to Verify"
+                )}
               </Button>
               <div className="text-center text-sm">
                 Already have an account?{" "}
@@ -200,7 +328,7 @@ const SignUp = ({ setLoading }) => {
         </Form>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default SignUp;
+export default SignUp
