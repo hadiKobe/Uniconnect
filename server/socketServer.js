@@ -18,26 +18,26 @@ const io = new Server(server, {
 });
 
 app.use(helmet());
-io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
+
+  io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
 
 
-  if (typeof token === "object" && token?.sub) {
-  //  console.log("Socket token is already decoded:", token);
-    // ✅ Already decoded
-    socket.user = token;
-    return next();
-  }
+    if (typeof token === "object" && token?.sub) {
+    //  console.log("Socket token is already decoded:", token);
+      socket.user = token;
+      return next();
+    }
 
-  // Optional fallback for raw JWT string
-  try {
-    const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET);
-    socket.user = decoded;
-    return next();
-  } catch (err) {
-    return next(new Error("Unauthorized: Invalid token"));
-  }
-});
+    // Optional fallback for raw JWT string
+    try {
+      const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET);
+      socket.user = decoded;
+      return next();
+    } catch (err) {
+      return next(new Error("Unauthorized: Invalid token"));
+    }
+  });
 
 // 🔁 Store active socket connections
 const sessions = {};
@@ -66,43 +66,53 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("sendPrivateMessage", ({ toUserId, fromUserId, message, media = [], chatId }) => {
-    const tempId = `${fromUserId}-${Date.now()}`;
+socket.on("sendPrivateMessage", ({ toUserId, fromUserId, message, media = [], chatId }) => {
+  // Generate a temporary client-side ID to track the message before it is saved
+  const tempId = `${fromUserId}-${Date.now()}`;
 
-    const newMessage = {
+  // Construct the message object to be sent and/or saved
+  const newMessage = {
+    fromUserId,
+    toUserId,
+    message,
+    media,
+    chatId,
+    timestamp: new Date().toISOString(),
+    isRead: false,
+    tempId,
+  };
+
+  // Find the recipient's socket ID if they are currently connected
+  const targetSocketId = sessions[toUserId];
+
+  // If the recipient is online, emit message events to their socket
+  if (targetSocketId) {
+    // Notify the recipient about a new message (for alerts or UI indicators)
+    io.to(targetSocketId).emit("newMessageNotification", {
       fromUserId,
-      toUserId,
       message,
-      media,
       chatId,
-      timestamp: new Date().toISOString(),
-      isRead: false,
-      tempId,
-    };
+    });
 
-    const targetSocketId = sessions[toUserId];
+    // Deliver the actual message to the recipient in real time
+    io.to(targetSocketId).emit("receivePrivateMessage", newMessage);
+  }
 
-    if (targetSocketId) {
-      io.to(targetSocketId).emit("newMessageNotification", {
-        fromUserId,
-        message,
-        chatId,
-      });
+  // Echo the message back to the sender to update their UI instantly
+  socket.emit("messageSent", newMessage);
 
-      io.to(targetSocketId).emit("receivePrivateMessage", newMessage);
-    }
+  // Save the message in the database
+  saveMessage({ toUserId, fromUserId, message, media, chatId, tempId })
+    .then((savedMessage) => {
+      // Acknowledge the save operation with the finalized DB message
+      socket.emit("messageSaved", { ...savedMessage.toObject(), tempId });
+    })
+    .catch((error) => {
+      // Send an error message to the sender if saving fails
+      socket.emit("errorMessage", { error: "Message delivery failed to save in DB." });
+    });
+});
 
-    socket.emit("messageSent", newMessage);
-
-    saveMessage({ toUserId, fromUserId, message, media, chatId, tempId })
-      .then((savedMessage) => {
-        socket.emit("messageSaved", { ...savedMessage.toObject(), tempId });
-      })
-      .catch((error) => {
-      //console.error("Failed to save message:", error);
-        socket.emit("errorMessage", { error: "Message delivery failed to save in DB." });
-      });
-  });
 
   socket.on("disconnect", () => {
     for (const userId in sessions) {

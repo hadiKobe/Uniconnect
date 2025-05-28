@@ -34,7 +34,6 @@ export function SocketProvider() {
       const socket = await getSocket();
       if (!socket.connected) socket.connect();
 
-      console.log("✅ Socket connected for unread tracking");
 
       socket.emit("login", { userId: session.user.id });
 
@@ -43,7 +42,7 @@ export function SocketProvider() {
       });
 
       socket.on("newMessageNotification", ({ chatId }) => {
-        console.log("📨 Received newMessageNotification:", chatId);
+      //  console.log("📨 Received newMessageNotification:", chatId);
         incrementUnread(chatId); // This must log, or it’s not firing
       });
 
