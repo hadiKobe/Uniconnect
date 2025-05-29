@@ -10,14 +10,12 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescri
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
-import { useUnreadNotifications } from "@/hooks/notifications/UseCountUnRead";
 import { useMessageStore } from "@/lib/store/messageStore";
 import { useFriendRequestsCount } from "@/hooks/Friends/request/countRequests";
 
 export default function MobileMenu() {
   const { data: session } = useSession();
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id);
-  const { count: notfcount } = useUnreadNotifications(10000, !!session?.user?.id);
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
   const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
 
@@ -31,7 +29,6 @@ export default function MobileMenu() {
   const others = [
     { name: "Friends", icon: <Users className="h-4 w-4" />, href: "/Friends", badge: requestCount > 0 ? requestCount : null },
     { name: "Messages", icon: <MessageSquare className="h-4 w-4" />, href: "/Messages", badge: totalUnread > 0 ? totalUnread : null },
-    { name: "Notifications", icon: <Bell className="h-4 w-4" />, href: "/notifications", badge: notfcount > 0 ? notfcount : null },
   ];
 
   const [open, setOpen] = useState(false);

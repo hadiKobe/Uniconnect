@@ -32,12 +32,43 @@ import {
 import { uploadMedia } from "@/lib/supaBase/storage";
 import useAddPost from "@/hooks/Posts/addPost";
 
+function capitalizeEachWord(str) {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+
 export function AddPost({ onPostAdded }) {
   const [postType, setPostType] = useState("general");
   const [mediaFiles, setMediaFiles] = useState([]);
   const [mediaPreviews, setMediaPreviews] = useState([]);
   const fileInputRef = useRef(null);
   const { loading, error, success, fetchAddPost } = useAddPost();
+
+  const [value, setValue] = useState("");
+  const handleChange = (e) => {
+    const text = e.target.value;
+    if (text.length <= 10000) {
+      setValue(text);
+    }
+  };
+
+  const tabs = [
+    { name: 'General', icon: FileText },
+    { name: 'Tutor', icon: GraduationCap },
+    { name: 'Market', icon: ShoppingBag },
+    { name: 'Job', icon: Briefcase }
+  ];
+
+  const commonInputs = ['location']
+  const inputs = {
+    Market: ['product_name', 'price', 'type'],
+    Tutor: ['subject', 'rate'],
+    Job: ['position', 'salary', 'type'],
+  }
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -141,159 +172,93 @@ export function AddPost({ onPostAdded }) {
       <CardContent className="p-4">
         <Tabs defaultValue="general" onValueChange={(value) => setPostType(value)}>
           <TabsList className="grid grid-cols-4 mb-4">
-            <TabsTrigger value="general" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span >General</span>
-            </TabsTrigger>
-            <TabsTrigger value="tutor" className="flex items-center gap-2">
-              <GraduationCap className="h-4 w-4" />
-              <span >Tutor</span>
-            </TabsTrigger>
-            <TabsTrigger value="market" className="flex items-center gap-2">
-              <ShoppingBag className="h-4 w-4" />
-              <span >Market</span>
-            </TabsTrigger>
-            <TabsTrigger value="job" className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4" />
-              <span >Job</span>
-            </TabsTrigger>
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.name.toLowerCase()} value={tab.name.toLowerCase()} className="flex items-center gap-2">
+                <tab.icon className="h-4 w-4" />
+                <span className="font-bold">{tab.name}</span>
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <form onSubmit={handleSubmit}>
+
             {/* General */}
             <TabsContent value="general">
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="general-description">Description</Label>
+                <div className="mb-2">
+                  <Label
+                    htmlFor="general-description"
+                    className="block mb-1 ml-1 text-sm font-bold text-gray-700"
+                  >
+                    Description
+                  </Label>
                   <Textarea
                     id="general-description"
-                    placeholder="Share something with your university community..."
-                    className="min-h-[120px]"
+                    placeholder="What's on your mind..?"
                     required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm min-h-[120px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 break-all"
                   />
                 </div>
               </div>
+
             </TabsContent>
 
-            {/* Tutor */}
-            <TabsContent value="tutor">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="tutor-subject">Subject</Label>
-                  <Select required>
-                    <SelectTrigger id="tutor-subject">
-                      <SelectValue placeholder="Select subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="math">Mathematics</SelectItem>
-                      <SelectItem value="cs">Computer Science</SelectItem>
-                      <SelectItem value="physics">Physics</SelectItem>
-                      <SelectItem value="chemistry">Chemistry</SelectItem>
-                      <SelectItem value="biology">Biology</SelectItem>
-                      <SelectItem value="english">English</SelectItem>
-                      <SelectItem value="history">History</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="tutor-rate">Hourly Rate ($)</Label>
-                    <Input id="tutor-rate" type="number" min="0" placeholder="25" required />
-                  </div>
-                  <div>
-                    <Label htmlFor="tutor-location">Location</Label>
-                    <Input id="tutor-location" placeholder="Library, Online, etc." required />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="tutor-description">Description</Label>
-                  <Textarea
-                    id="tutor-description"
-                    placeholder="Describe your tutoring service..."
-                    className="min-h-[100px]"
-                    required
-                  />
-                </div>
-              </div>
-            </TabsContent>
+            {Object.entries(inputs).map(([name, inputs]) => (
+              <TabsContent key={name} value={name.toLowerCase()}>
+                <div className="grid grid-cols-2 gap-2">
 
-            {/* Market */}
-            <TabsContent value="market">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="market-product_name">Name</Label>
-                    <Input id="market-product_name" placeholder="English Book, Lab Coat" required />
-                  </div>
-                  <div>
-                    <Label htmlFor="market-price">Price ($)</Label>
-                    <Input id="market-price" type="number" min="0" placeholder="50" required />
-                  </div>
-                  <div>
-                    <Label htmlFor="market-type">Type</Label>
-                    <Input id="market-type" placeholder="Choose Type" required />
-                  </div>
-                  <div>
-                    <Label htmlFor="market-location">Location</Label>
-                    <Input id="market-location" placeholder="Pickup location" required />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="market-description">Description</Label>
-                  <Textarea
-                    id="market-description"
-                    placeholder="Describe your item in detail..."
-                    className="min-h-[100px]"
-                    required
-                  />
-                </div>
-              </div>
-            </TabsContent>
+                  {inputs.map((input) => (
+                    <div key={input} className="mb-2">
+                      <Label
+                        htmlFor={`${name.toLowerCase()}-${input}`}
+                        className="block mb-1 ml-1 text-sm font-bold text-gray-700"
+                      >
+                        {capitalizeEachWord(input.replace('_', ' '))}
+                      </Label>
+                      <Input
+                        id={`${name.toLowerCase()}-${input}`}
+                        required
+                        className="w-full px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  ))}
 
-            {/* Job */}
-            <TabsContent value="job">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="job-type">Job Type</Label>
-                    <Select required>
-                      <SelectTrigger id="job-type">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="full-time">Full-time</SelectItem>
-                        <SelectItem value="part-time">Part-time</SelectItem>
-                        <SelectItem value="internship">Internship</SelectItem>
-                        <SelectItem value="contract">Contract</SelectItem>
-                        <SelectItem value="volunteer">Volunteer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="job-location">Location</Label>
-                    <Input id="job-location" placeholder="Remote or on-campus" required />
-                  </div>
+                  {commonInputs.map((input) => (
+                    <div key={input} className="mb-4">
+                      <Label
+                        htmlFor={`${name.toLowerCase()}-${input}`}
+                        className="block mb-1 ml-1 text-sm font-bold text-gray-700"
+                      >
+                        {capitalizeEachWord(input.replace('_', ' '))}
+                      </Label>
+                      <Input
+                        id={`${name.toLowerCase()}-${input}`}
+                        required
+                        className="w-full px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  ))}
+
                 </div>
-                <div>
-                  <Label htmlFor="job-position">Position</Label>
-                  <Input id="job-position" placeholder="Intern, Entry-level, Senior" required />
-                </div>
-                <div>
-                  <Label htmlFor="job-salary">Salary/Compensation</Label>
-                  <Input id="job-salary" placeholder="$XX-$XX per hour or $XXk per year" required />
-                </div>
-                <div>
-                  <Label htmlFor="job-description">Description</Label>
+
+                <div className="mb-4">
+                  <Label
+                    htmlFor={`${name.toLowerCase()}-description`}
+                    className="block mb-1 ml-1 text-sm font-bold text-gray-700"
+                  >
+                    Description
+                  </Label>
                   <Textarea
-                    id="job-description"
-                    placeholder="Describe the job responsibilities and requirements..."
-                    className="min-h-[120px]"
+                    id={`${name.toLowerCase()}-description`}
+                    placeholder="What do you offer..?"
                     required
+                    value={value}
+                    onChange={handleChange}
+                    className="w-full px-3 break-all py-2 border border-gray-300 rounded-md shadow-sm min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-              </div>
-            </TabsContent>
+              </TabsContent>
+            ))}
 
             {/* Media Upload */}
             <div className="mt-4">
@@ -348,6 +313,6 @@ export function AddPost({ onPostAdded }) {
           </form>
         </Tabs>
       </CardContent>
-    </Card>
+    </Card >
   );
 }
