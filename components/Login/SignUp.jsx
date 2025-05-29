@@ -117,15 +117,11 @@ const SignUp = ({ setLoading }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+    <div className="min-h-screen flex items-center ">
       <Card className="w-full max-w-md shadow-lg border-slate-200 overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+
         <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-2">
-            <div className="h-14 w-14 rounded-full bg-slate-100 flex items-center justify-center shadow-inner">
-              <GraduationCap className="h-7 w-7 text-slate-700" />
-            </div>
-          </div>
+
           <CardTitle className="text-2xl font-bold text-slate-800">Join Us Today!</CardTitle>
           <CardDescription className="text-slate-600">
             Create an account to access exclusive university resources.

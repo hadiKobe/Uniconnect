@@ -87,7 +87,8 @@ const SignupPage = () => {
 
           {/* Right Side - Form */}
           <div className="relative">
-            <SignUp setLoading={loading} />
+            <SignUp setLoading={setLoading} />
+
           </div>
         </div>
       </main>
@@ -107,17 +108,12 @@ const SignupPage = () => {
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-gray-900">{loadingStep || "Processing Registration"}</h3>
-                <p className="text-sm text-gray-600">
-                  {loadingStep === "Sending OTP..."
-                    ? "We're sending a verification code to your university email"
-                    : loadingStep === "Verifying Email..."
-                      ? "Checking your university email domain"
-                      : loadingStep === "Creating Account..."
-                        ? "Setting up your UniConnect profile"
-                        : "Please wait while we process your information"}
-                </p>
-              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Sending OTP...</h3>
+              <p className="text-sm text-gray-600">
+                We're sending a verification code to your university email.
+              </p>
+            </div>
+
 
               <div className="mt-6">
                 <div className="flex justify-center space-x-1">
