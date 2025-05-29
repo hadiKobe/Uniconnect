@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Plus, GraduationCap, MessageSquare, Bell } from "lucide-react"
 import { useUnreadNotifications } from "@/hooks/notifications/UseCountUnRead";
 import { useMessageStore } from "@/lib/store/messageStore";
+import { Badge } from "@/components/ui/badge";
+
 
 export default function Navbar() {
   const [showAddPost, setShowAddPost] = useState(false)

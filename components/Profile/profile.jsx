@@ -20,6 +20,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
+import LoadingPage from "../Loading/LoadingPage";
 
 
 
@@ -148,7 +149,7 @@ const Profile = ({ userID }) => {
 
 
 
-  if (loading) return <p>Loading profile info...</p>;
+  if (loading) return <LoadingPage />;
   if (!student) return <p>No student data found.</p>;
 
   return (

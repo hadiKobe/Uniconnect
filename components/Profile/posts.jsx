@@ -12,21 +12,26 @@ const Posts = ({ posts, triggerRef, page, loading }) => {
   const triggerIndex = PRELOAD_TRIGGER_INDEX + (page - 1) * PAGE_SIZE
 
   return (
-    <>
-      {posts.map((post, idx) => (
-        <div key={`profile-${post.id}`} ref={idx === triggerIndex ? triggerRef : null}>
-          <Post post={post} />
-        </div>
-      ))}
+  <>
+    {posts.map((post, idx) => (
+      <div
+        key={`profile-${post.id}`}
+        ref={idx === triggerIndex ? triggerRef : null}
+        className="my-4" // 👈 Adds spacing above and below each post
+      >
+        <Post post={post} />
+      </div>
+    ))}
 
-      {loading && (
-        <div className="flex justify-center py-6">
-          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-sm text-muted-foreground">Loading more...</span>
-        </div>
-      )}
-    </>
-  )
+    {loading && (
+      <div className="flex justify-center py-6">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        <span className="ml-2 text-sm text-muted-foreground">Loading more...</span>
+      </div>
+    )}
+  </>
+);
+  
 }
 
 export default Posts
