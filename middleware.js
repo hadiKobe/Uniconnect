@@ -9,6 +9,6 @@ export default withAuth({
 
 export const config = {
   matcher: [
-    "/", // protect homepage
+    // protect homepage
   ],
 };
