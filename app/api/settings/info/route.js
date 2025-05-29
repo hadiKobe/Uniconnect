@@ -57,7 +57,7 @@ export async function PATCH(req) {
    params.push(userId);
 
    const sqlQuery = `UPDATE users SET ${changedFields} WHERE id = ?`;
-   console.log(sqlQuery, params);
+   //console.log(sqlQuery, params);
 
    let result;
    try { result = await query(sqlQuery, params); }
