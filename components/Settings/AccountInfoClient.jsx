@@ -15,6 +15,7 @@ import { toast } from "sonner"
 import { PhotoUploadDialog } from "./PhotoUpload"
 import DateSelector from "./DateSelector"
 import LoadingPage from "../Loading/LoadingPage"
+import MajorSelector from "../Login/MajorSelector"
 
 const AccountInfo = () => {
    const { userInfo, loading, error } = useGetUserInfo()
@@ -111,9 +112,9 @@ const AccountInfo = () => {
 
    }, [userInfo])
 
-   // useEffect(() => {
-   //    console.log("changed fields :", changedFields)
-   // }, [changedFields])
+   useEffect(() => {
+      console.log("changed fields :", changedFields)
+   }, [changedFields])
 
    // useEffect(() => {
    //    console.log("form data :", formData)
@@ -259,13 +260,14 @@ const AccountInfo = () => {
                                  <Label htmlFor="major">
                                     Major <span className="text-destructive">*</span>
                                  </Label>
-                                 <Input
-                                    id="major"
-                                    name="major"
-                                    value={formData.major || ""}
-                                    onChange={handleInputChange}
-                                    required
-                                 />
+                                 <MajorSelector selectedMajor={formData.major} onSelectMajor={(value) => {
+                                    handleInputChange({
+                                       target: {
+                                          name: 'major',
+                                          value
+                                       }
+                                    })
+                                 }} />
                               </div>
 
                               <div className="space-y-2">
