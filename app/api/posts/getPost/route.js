@@ -97,17 +97,18 @@ export async function GET(request) {
     joins.push(`JOIN ${sections[section]} ON ${sections[section]}.post_id = posts.id`);
 
     if (location) {
-      conditions.push(`${sections[section]}.location = ?`);
-      params.push(location);
+      conditions.push(`LOWER(${sections[section]}.location) LIKE LOWER(?)`);
+      params.push(`%${location}%`);
     }
 
     if (specific) {
       switch (section) {
-        case 'job': conditions.push(`jobs_details.job_type = ?`); break;
-        case 'tutor': conditions.push('tutoring_details.subject = ?'); break;
-        case 'market': conditions.push('product_details.type = ?'); break;
+        case 'job': conditions.push(`LOWER(jobs_details.job_type) LIKE LOWER(?)`); break;
+        case 'tutor': conditions.push(`LOWER(tutoring_details.subject) LIKE LOWER(?)`); break;
+        case 'market': conditions.push(`LOWER(product_details.type) LIKE LOWER(?)`); break;
       }
-      params.push(specific);
+      params.push(`%${specific}%`);
+
     }
   }
 

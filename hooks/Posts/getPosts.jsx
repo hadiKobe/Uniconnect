@@ -9,48 +9,46 @@ export function useGetPosts(filter = '', section = 'home', specific = '', locati
 
    const lastContextRef = useRef({ filter, section, specific, location })
 
-   const isSameContext = (
+   const isSameContext =
       lastContextRef.current.filter === filter &&
       lastContextRef.current.section === section &&
       lastContextRef.current.specific === specific &&
       lastContextRef.current.location === location
-   )
 
-   useEffect(() => {
-      const fetchPosts = async () => {
-         setLoading(true)
-         setError(null)
+   // 🧠 fetchPosts uses current closure values of filter, section, etc.
+   const fetchPosts = async () => {
+      setLoading(true)
+      setError(null)
 
-         const path = `/api/posts/getPost?`
-         const queryParams = { filter, section, specific, location, page }
-         const params = Object.entries(queryParams)
-            .map(([key, value]) => value ? `${key}=${value}` : null)
-            .filter(Boolean)
-         const finalPath = path + params.join("&")
-         console.log(finalPath);
+      const queryParams = { filter, section, specific, location, page }
+      const params = Object.entries(queryParams)
+         .map(([key, value]) => value ? `${key}=${encodeURIComponent(value)}` : null)
+         .filter(Boolean)
+         .join("&")
 
-         try {
-            const response = await fetch(finalPath)
-            if (!response.ok) throw new Error("Failed to fetch posts")
-            const data = await response.json()
+      const finalPath = `/api/posts/getPost?${params}`
+      console.log("Fetching:", finalPath)
 
-            setPosts(prev =>
-               isSameContext && page > 1
-                  ? [...prev, ...data] // ✅ append
-                  : data               // ✅ reset
-            )
+      try {
+         const response = await fetch(finalPath)
+         if (!response.ok) throw new Error("Failed to fetch posts")
+         const data = await response.json()
 
-            // update the last context
-            lastContextRef.current = { filter, section, specific, location }
+         setPosts(prev =>
+            isSameContext && page > 1 ? [...prev, ...data] : data
+         )
 
-         } catch (err) {
-            console.error(err)
-            setError(err.message || "Unknown error")
-         } finally {
-            setLoading(false)
-         }
+         lastContextRef.current = { filter, section, specific, location }
+      } catch (err) {
+         console.error(err)
+         setError(err.message || "Unknown error")
+      } finally {
+         setLoading(false)
       }
+   }
 
+   // 👇 Trigger fetch automatically on state change
+   useEffect(() => {
       fetchPosts()
    }, [filter, section, specific, location, page])
 

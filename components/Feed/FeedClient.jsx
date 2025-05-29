@@ -10,42 +10,49 @@ import { Button } from "../ui/button"
 import { List, GraduationCap, User, Plus, Briefcase, BookOpen, ShoppingBag, Filter } from "lucide-react"
 import { AddPost } from "../Posts/AddPost"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 
 const PAGE_SIZE = 20
 const PRELOAD_TRIGGER_INDEX = 15
 
-function DropDownMenu({ initial, name, filters, onChange }) {
-  const isArray = Array.isArray(filters)
+
+function SearchBar({ initial, placeholder, onChange }) {
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      onChange(e.target.value.trim()); // ✅ Trim only on enter
+    }
+  };
+
+  const handleChange = (e) => {
+    onChange(e.target.value); // ❌ Don't trim here — let user type spaces
+  };
 
   return (
-    <Select value={initial} onValueChange={onChange}>
-      <SelectTrigger className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150">
-        <SelectValue placeholder={`Choose ${name} Type`} />
-      </SelectTrigger>
-
-      <SelectContent className="border border-gray-200 shadow-lg rounded-md bg-white">
-        <SelectItem value=" " className="cursor-pointer px-3 py-2 text-sm hover:bg-blue-50 transition rounded">
-          All
-        </SelectItem>
-
-        {isArray &&
-          filters.map((value, index) => (
-            <SelectItem
-              key={index}
-              value={value}
-              className="cursor-pointer px-3 py-2 text-sm hover:bg-blue-50 transition rounded"
-            >
-              {value}
-            </SelectItem>
-          ))}
-      </SelectContent>
-    </Select>
-  )
+    <input
+      type="text"
+      value={initial}
+      onChange={handleChange}
+      onKeyDown={handleKeyPress}
+      placeholder={placeholder}
+      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+    />
+  );
 }
 
 export default function FeedClient({ section }) {
+
+  const labels = {
+    job: "Type",
+    tutor: "Subject",
+    market: "Type"
+  }
+  const placeholders = {
+    job: "e.g. Full-Time, Internship...",
+    tutor: "e.g. CENG380, Translation...",
+    market: "e.g. Book, Lab Coat...",
+    default: "Search...",
+  };
+
 
   const [page, setPage] = useState(1)
   const triggerRef = useRef()
@@ -57,6 +64,9 @@ export default function FeedClient({ section }) {
   const specific = useFilterStore((state) => state.filters[pathname]?.specific || '');
   const setFilters = useFilterStore((state) => state.setFilters); // extract the function
   const resetFilters = useFilterStore((state) => state.resetFilters);
+
+  const [specificForm, setSpecificForm] = useState(specific || '');
+  const [locationForm, setLocationForm] = useState(location || '');
 
   const set = (updates) => setFilters(pathname, updates);
 
@@ -81,7 +91,7 @@ export default function FeedClient({ section }) {
 
   useEffect(() => {
     if (page > 1) setLoadingMorePosts(loading); // ✅ true when loading, false when done
-    
+
   }, [loading, page]);
 
   const handlePostAdded = () => {
@@ -92,13 +102,6 @@ export default function FeedClient({ section }) {
 
   const handlePostDeleted = (post_id) => {
     onDeletePost(post_id)
-  }
-
-  const filters = {
-    job: ["Full-Time", "Part-Time", "Internship"],
-    location: ["Beirut", "Bekaa", "Rayak", "Tripoli", "Nabatyeh", "Campus A"],
-    tutor: ["Computer Science", "Maths", "Physics"],
-    market: ["Book", "Course", "Lab Coat"],
   }
 
   // Get section icon
@@ -167,8 +170,9 @@ export default function FeedClient({ section }) {
             <Button
               variant={filter === "" ? "default" : "ghost"}
               size="sm"
-              className="rounded-md text-sm font-medium"
-              onClick={() => set({ filter: "" })}
+              disabled={filter === ""}
+              className="rounded-md text-sm font-medium disabled:opacity-100 disabled:pointer-events-auto"
+              onClick={() => { set({ filter: "" }) }}
             >
               <List className="w-4 h-4 mr-1.5" />
               All
@@ -177,8 +181,9 @@ export default function FeedClient({ section }) {
             <Button
               variant={filter === "major" ? "default" : "ghost"}
               size="sm"
-              className="rounded-md text-sm font-medium"
-              onClick={() => set({ filter: "major" })}
+              disabled={filter === "major"}
+              className="rounded-md text-sm font-medium disabled:opacity-100 disabled:pointer-events-auto"
+              onClick={() => { set({ filter: "major" }) }}
             >
               <GraduationCap className="w-4 h-4 mr-1.5" />
               MyMajor
@@ -187,8 +192,9 @@ export default function FeedClient({ section }) {
             <Button
               variant={filter === "friends" ? "default" : "ghost"}
               size="sm"
-              className="rounded-md text-sm font-medium"
-              onClick={() => set({ filter: "friends" })}
+              disabled={filter === "friends"}
+              className="rounded-md text-sm font-medium disabled:opacity-100 disabled:pointer-events-auto"
+              onClick={() => { set({ filter: "friends" }) }}
             >
               <User className="w-4 h-4 mr-1.5" />
               MyFeed
@@ -224,19 +230,17 @@ export default function FeedClient({ section }) {
           <div className="lg:hidden overflow-x-auto pb-2 ">
             <div className="flex items-center gap-1">
               <div className="flex-shrink-0">
-                <DropDownMenu
-                  initial={specific}
+                <SearchBar
+                  initial={specificForm}
                   name={section.charAt(0).toUpperCase() + section.slice(1)}
-                  filters={filters[section]}
-                  onChange={(value) => set({ specific: value.trim() })}
+                  onChange={setSpecificForm}
                 />
               </div>
               <div className="flex-shrink-0">
-                <DropDownMenu
-                  initial={location}
-                  name="Location"
-                  filters={filters.location}
-                  onChange={(value) => set({ location: value.trim() })}
+                <SearchBar
+                  initial={locationForm}
+                  name={section.charAt(0).toUpperCase() + section.slice(1)}
+                  onChange={setLocationForm}
                 />
               </div>
             </div>
@@ -313,39 +317,55 @@ export default function FeedClient({ section }) {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {section.charAt(0).toUpperCase() + section.slice(1)} Type
+                      {labels[section]}
                     </label>
-                    <DropDownMenu
-                      initial={specific}
-                      name={section.charAt(0).toUpperCase() + section.slice(1)}
-                      filters={filters[section]}
-                      onChange={(value) => set({ specific: value.trim() })}
+                    <SearchBar
+                      initial={specificForm}
+                      placeholder={placeholders[section] || placeholders.default}
+                      onChange={setSpecificForm}
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                    <DropDownMenu
-                      initial={location}
-                      name="Location"
-                      filters={filters.location}
-                      onChange={(value) => set({ location: value.trim() })}
+                    <SearchBar
+                      initial={locationForm}
+                      placeholder="e.g. Beirut, Campus Sour..."
+                      onChange={setLocationForm}
                     />
                   </div>
 
-                  <div className="flex items-center justify-center rounded-lg p-3">
+
+                  <div className="flex items-center justify-between gap-2 rounded-lg p-3">
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => resetFilters(pathname)}
+                      onClick={() => {
+                        setPage(1); // Reset page to 1
+                        resetFilters(pathname)
+                        setSpecificForm(''); // Clear specific form
+                        setLocationForm(''); // Clear location form
+                      }}
                       className="text-sm"
                     >
                       Reset Filters
                     </Button>
+
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        setPage(1);
+                        set({ specific: specificForm, location: locationForm });
+                      }}
+                      className="text-sm"
+                      disabled={!specificForm && !locationForm}
+                    >
+                      Search
+                    </Button>
                   </div>
 
                 </div>
-
               </div>
             </div>
           )}
@@ -354,6 +374,6 @@ export default function FeedClient({ section }) {
 
       {loadingMorePosts && <div className="text-center py-4 text-muted">Loading more...</div>}
 
-    </div>
+    </div >
   )
 }
