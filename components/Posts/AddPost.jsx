@@ -167,9 +167,10 @@ export function AddPost({ onPostAdded }) {
 
 
   return (
-    <Card className="w-full max-w-3xl mx-auto border-0 shadow-none">
+    <Card className="w-full max-w-screen-lg lg:px-6 mx-auto border-0 shadow-none">
 
-      <CardContent className="p-4">
+
+      <CardContent className="p-4 ">
         <Tabs defaultValue="general" onValueChange={(value) => setPostType(value)}>
           <TabsList className="grid grid-cols-4 mb-4">
             {tabs.map((tab) => (

@@ -75,6 +75,7 @@ session: {
       // Add extra fields to session
       if (session.user) {
         session.user.id = token.sub;
+        session.user.name = token.name || "";
         session.user.major = token.major || "";
         session.user.joined_in = token.joined_in || "";
         session.user.profile_picture = token.profile_picture || null; // ✅ Add this
@@ -88,6 +89,7 @@ session: {
       // Add extra fields to JWT
       if (user) {
         token.sub = user.id;
+        token.name = user.name;
         token.major = user.major;
         token.joined_in = user.joined_in;
         token.profile_picture = user.profile_picture; 

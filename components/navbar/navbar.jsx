@@ -73,7 +73,9 @@ export default function Navbar() {
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="max-w-2xl w-full">
+          <DialogContent className="w-full max-w-4xl px-0 py-4">
+
+
               <DialogHeader>
                 <DialogTitle>Create a New Post</DialogTitle>
               </DialogHeader>
