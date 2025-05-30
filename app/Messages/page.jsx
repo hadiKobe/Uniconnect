@@ -25,7 +25,7 @@ const Page = async () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="pt-1 px-0 md:pl-64 w-full h-[calc(100vh-64px)] ">
+      <main className="pt-1 px-0 md:pl-64 w-full h-[calc(100vh-64px)] overflow-hidden ">
         <Suspense fallback={<div className="p-4">Loading messages...</div>}>
           <MessagesPage />
         </Suspense>

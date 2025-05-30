@@ -135,7 +135,7 @@ export default function FeedClient({ section }) {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4">
+    <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 overflow-x-hidden">
 
       {/* Main container */}
       <div className="flex flex-col gap-4">

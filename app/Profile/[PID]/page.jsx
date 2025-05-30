@@ -27,7 +27,7 @@ export default async function Page({ params }) {
       </div>
 
       {/* Main Content */}
-      <main className="pt-6 px-4 md:pl-72 max-w-[1600px] w-full mx-auto">
+      <main className="pt-6 px-4 md:pl-72 max-w-[1600px] w-full mx-auto overflow-x-hidden">
         <Profile userID={userID} /> {/* ✅ correct prop usage */}
       </main>
     </>

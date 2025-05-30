@@ -203,7 +203,7 @@ const AccountInfo = () => {
                            <CardTitle>Profile Picture</CardTitle>
                            <CardDescription>Upload a profile picture to personalize your account</CardDescription>
                         </CardHeader>
-                        <CardContent className="flex flex-col items-center space-y-4">
+                        <CardContent className="flex flex-col items-center space-y-4 ">
                            <Avatar className="h-32 w-32 rounded-full overflow-hidden">
                               <AvatarImage src={formData.profile_picture} alt="Profile" />
                               <AvatarFallback className="text-4xl">
@@ -366,7 +366,10 @@ const AccountInfo = () => {
                                  }}
                                  className="mb-2"
                               />
+                              <div className="relative w-full overflow-hidden rounded">
                               <Progress value={formData.graduation_progress} className="h-2" />
+                              </div>
+                             
                               <p className="text-sm text-muted-foreground">Percentage of credits completed</p>
                            </div>
                         </CardContent>

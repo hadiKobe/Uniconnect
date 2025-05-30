@@ -35,15 +35,12 @@ export default function Navbar() {
         <div className="md:hidden">
           <MobileMenu />
         </div>
-
+    
         {/* Logo */}
-        <Link
-          href="/"
-          className="hidden md:flex items-center gap-2 font-semibold"
-        >
+ 
           <GraduationCap className="h-8 w-8 text-blue-600" />
           <span className="ml-2 text-xl font-bold text-gray-900">UniConnect</span>
-        </Link>
+      
 
 
         {/* Search bar */}

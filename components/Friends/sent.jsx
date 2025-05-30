@@ -40,7 +40,7 @@ export function SentRequestsSection({ requests, loading }) {
         <CardDescription>Friend Requests sent by you</CardDescription>
       </CardHeader>
 
-      <CardContent className="max-h-[200px]  pr-1">
+      <CardContent className="max-h-[200px]  pr-1 overflow-y-auto">
         {loading ? (
           <div className="flex justify-center py-6">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />

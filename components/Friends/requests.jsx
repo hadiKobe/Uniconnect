@@ -79,7 +79,7 @@ export function FriendRequestsSection({ requests, loading }) {
         <CardDescription>People who want to connect with you</CardDescription>
       </CardHeader>
 
-      <CardContent className="max-h-[300px] ">{loading ? (
+      <CardContent className="max-h-[300px] overflow-y-auto">{loading ? (
         <div className="flex justify-center py-6">
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>

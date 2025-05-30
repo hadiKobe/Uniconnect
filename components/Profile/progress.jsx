@@ -5,7 +5,14 @@ import { Progress } from "@/components/ui/progress"
 
 export function GraduationProgressCard({ progress, graduationYear }) {
   const year = graduationYear ? graduationYear.split(" ")[1] : "soon"; // 👈 fallback if missing
-
+  const getProgressMessage = (value) => {
+    if (value === 0) return "Just getting started. Every step counts!";
+    if (value < 25) return "Solid foundation being built. Keep the momentum.";
+    if (value < 50) return "Progress is visible. Halfway point in sight.";
+    if (value < 75) return "More than halfway there. Stay focused.";
+    if (value < 100) return "Almost done. Graduation is around the corner.";
+    return "All requirements completed. Graduation ready.";
+  };
   return (
     <Card>
       <CardHeader>
@@ -17,10 +24,13 @@ export function GraduationProgressCard({ progress, graduationYear }) {
             <span>Progress toward degree</span>
             <span className="font-medium">{progress ?? 0}%</span> {/* 👈 default to 0% */}
           </div>
-          <Progress value={progress ?? 0} className="h-2" /> {/* 👈 default if progress missing */}
+         <div className="relative w-full overflow-hidden rounded">
+        <Progress value={Math.min(progress ?? 0, 100)} className="h-2" />
+      </div>
+ {/* 👈 default if progress missing */}
         </div>
         <p className="text-sm text-muted-foreground">
-          You're on track to graduate {year !== "soon" ? `in ${year}` : "soon"}. Keep up the good work!
+          {getProgressMessage(progress)} 
         </p>
       </CardContent>
     </Card>

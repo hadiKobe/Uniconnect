@@ -46,7 +46,7 @@ export function MyFriendsSection({ friends, loading }) {
         <CardTitle>My Friends</CardTitle>
         <CardDescription>People you are connected with</CardDescription>
       </CardHeader>
-      <CardContent className="max-h-[300px] ">
+      <CardContent className="max-h-[300px] overflow-y-auto">
         {loading ? (
           <div className="flex justify-center py-6">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />

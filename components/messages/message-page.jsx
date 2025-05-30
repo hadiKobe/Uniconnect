@@ -214,7 +214,7 @@ export function MessagesPage() {
 
 
   return (
-    <div className="flex h-[calc(100vh-64px)] w-full ">
+    <div className="flex h-[calc(100vh-64px)] w-full overflow-hidden relative">
       {/* LEFT - Conversation List */}
       <div className={cn(
         "transition-all duration-300 ease-in-out",

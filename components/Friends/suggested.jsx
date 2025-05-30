@@ -40,7 +40,7 @@ export function SuggestedFriendsSection({ suggestions, loading }) {
 
       <CardContent className="max-h-[300px] ">
         {loading ? (
-          <div className="flex justify-center py-6">
+          <div className="flex justify-center py-6 overflow-y-auto">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
         ) :

@@ -67,7 +67,7 @@ export function MediaGallery({ media }) {
          {media.length > 1 && (
             <>
                {/* Media counter */}
-               <div className="absolute z-1000 top-2 right-2 bg-black/50 text-white px-2 py-1 rounded-md text-xs">
+               <div className="absolute z-30 top-2 right-2 bg-black/50 text-white px-2 py-1 rounded-md text-xs">
                   {currentIndex + 1} / {media.length}
                </div>
 
