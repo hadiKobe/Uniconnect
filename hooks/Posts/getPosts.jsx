@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 
-export function useGetPosts(filter = '', section = 'home', specific = '', location = '', page = 1) {
+export function useGetPosts(filter = '', section = 'home', specific = '', location = '', page = 1, refetchTrigger = 0) {
    const [posts, setPosts] = useState([])
    const [loading, setLoading] = useState(true)
    const [error, setError] = useState(null)
@@ -50,7 +50,7 @@ export function useGetPosts(filter = '', section = 'home', specific = '', locati
    // 👇 Trigger fetch automatically on state change
    useEffect(() => {
       fetchPosts()
-   }, [filter, section, specific, location, page])
+   }, [filter, section, specific, location, page, refetchTrigger])
 
    const onDeletePost = (postId) => {
       setPosts(prev => prev.filter(post => post.id !== postId))

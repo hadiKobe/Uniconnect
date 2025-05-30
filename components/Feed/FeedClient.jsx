@@ -68,12 +68,14 @@ export default function FeedClient({ section }) {
   const [specificForm, setSpecificForm] = useState(specific || '');
   const [locationForm, setLocationForm] = useState(location || '');
 
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
+
   const set = (updates) => setFilters(pathname, updates);
 
   const [showAddPost, setShowAddPost] = useState(false);
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
 
-  const { posts, onDeletePost, loading, error } = useGetPosts(filter, section, specific, location, page);
+  const { posts, onDeletePost, loading, error } = useGetPosts(filter, section, specific, location, page, refetchTrigger);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -96,7 +98,7 @@ export default function FeedClient({ section }) {
 
   const handlePostAdded = () => {
     // Changing filter state will auto-trigger refetch via hook
-    set((prev) => ({ filter: prev.filter + " " })); // trigger small change to re-run hook
+    setRefetchTrigger(prev => prev + 1) // trigger small change to re-run hook
     setShowAddPost(false)
   }
 
