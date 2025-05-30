@@ -39,7 +39,7 @@ const JobPost = ({ post, onDelete }) => {
             {/* LinkedIn-style header with company logo on left */}
             <div className="flex p-4">
                <div className="mr-4">
-                  <Avatar className="h-16 w-16 rounded-md cursor-pointer border border-gray-200" onClick={handleProfileClick}>
+                  <Avatar className="h-16 w-16 overflow-hidden rounded-md cursor-pointer border border-gray-200" onClick={handleProfileClick}>
                      <AvatarImage
                         src={post.profile_picture || "/placeholder.svg"}
                         alt={`${post.user_first_name} ${post.user_last_name}`}

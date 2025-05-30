@@ -30,6 +30,7 @@ export default function InstagramStyleCommentSection({
 
   const { fetchAddComment, error, success, loading } = useAddComment();
   const { data: session } = useSession();
+  const userImage = session?.user?.profile_picture || null;
 
   const currentUser = {
     id: Number.parseInt(session?.user?.id, 10),
@@ -161,8 +162,8 @@ export default function InstagramStyleCommentSection({
         {/* Input */}
         <div className="border-t p-3 bg-background sticky bottom-0">
           <form className="flex items-center gap-2" onSubmit={handleSubmit}>
-            <Avatar className="h-8 w-8 flex-shrink-0">
-              <AvatarImage src={null || "/placeholder.svg"} alt={currentUser.name} />
+            <Avatar className="relative h-8 w-8 flex-shrink-0 rounded-full overflow-hidden">
+              <AvatarImage src={userImage || "/placeholder.svg"} alt={currentUser.name} />
               <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="relative flex-1">

@@ -27,6 +27,7 @@ export default function CommentItem({
   const [isDeleting, setIsDeleting] = useState(false);
   const { data: session } = useSession();
   const currentUserId = Number.parseInt(session?.user?.id, 10);
+  const userImage = session?.user?.profile_picture || null;
   const { id: commentId, content, created_at, user } = comment;
   const timeAgo = formatDistanceToNow(new Date(created_at), { addSuffix: true });
 
@@ -56,8 +57,8 @@ export default function CommentItem({
 
   return (
     <div className={`flex gap-3 py-3 ${!isLast ? "border-b border-border/60" : ""}`}>
-      <Avatar className="h-8 w-8 flex-shrink-0">
-        <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.first_name} />
+      <Avatar className="relative h-8 w-8 flex-shrink-0 rounded-full overflow-hidden">
+        <AvatarImage src={userImage} alt={user.first_name} />
         <AvatarFallback>{user?.first_name?.charAt(0) ?? "?"}</AvatarFallback>
       </Avatar>
 

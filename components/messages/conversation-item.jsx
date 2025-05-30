@@ -25,30 +25,30 @@ export function ConversationItem({ conversation, isActive, onClick }) {
   const profilePicUrl = profile_picture || "/placeholder.svg";
 
 
-let formattedTime = "";
-if (lastMessageTime) {
-  const date = parseISO(lastMessageTime);
-  if (isValid(date)) {
-    const full = formatDistanceToNowStrict(date, { addSuffix: false }); // e.g., "5 minutes"
-    const [value, unit] = full.split(" "); 
+  let formattedTime = "";
+  if (lastMessageTime) {
+    const date = parseISO(lastMessageTime);
+    if (isValid(date)) {
+      const full = formatDistanceToNowStrict(date, { addSuffix: false }); // e.g., "5 minutes"
+      const [value, unit] = full.split(" ");
 
-    const unitMap = {
-      second: "s",
-      seconds: "s",
-      minute: "m",
-      minutes: "m",
-      hour: "h",
-      hours: "h",
-      day: "d",
-      days: "d",
-      month: "mo",
-      months: "mo",
-      year: "y",
-      years: "y",
-    };
+      const unitMap = {
+        second: "s",
+        seconds: "s",
+        minute: "m",
+        minutes: "m",
+        hour: "h",
+        hours: "h",
+        day: "d",
+        days: "d",
+        month: "mo",
+        months: "mo",
+        year: "y",
+        years: "y",
+      };
 
-    formattedTime = `${value}${unitMap[unit] || ""}`;
-  }
+      formattedTime = `${value}${unitMap[unit] || ""}`;
+    }
 
 
 
@@ -63,7 +63,7 @@ if (lastMessageTime) {
       onClick={onClick}
     >
       <div className="relative">
-        <Avatar>
+        <Avatar className="relative rounded-full overflow-hidden">
           <AvatarImage src={profilePicUrl} alt={`${first_name} ${last_name}`} />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>

@@ -63,7 +63,7 @@ export default function MobileMenu() {
             onClick={() => setOpen(false)}
             className="flex items-center gap-2.5 px-2.5 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
           >
-            <Avatar className="h-5 w-5">
+            <Avatar className="relative h-5 w-5 rounded-full overflow-hidden">
               <AvatarImage src={userImage} alt="Profile" />
               <AvatarFallback>{userName?.charAt(0)}</AvatarFallback>
             </Avatar>

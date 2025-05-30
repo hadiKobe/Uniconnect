@@ -57,7 +57,7 @@ export function ProfileHeader({
         <div className="flex flex-col md:flex-row gap-6 items-start">
           {/* Avatar */}
           <div className="flex-shrink-0">
-            <Avatar className="h-24 w-24 md:h-32 md:w-32">
+            <Avatar className="h-24 w-24 md:h-32 md:w-32 rounded-full overflow-hidden">
               <AvatarImage
                 src={student.profile_picture || "/placeholder.svg"}
                 alt={student.first_name}

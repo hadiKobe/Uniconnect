@@ -24,9 +24,9 @@ export default function MarketPost({ post }) {
          <div className="p-5">
             {/* User info section */}
             <div className="flex items-center mb-4">
-               <Avatar className="h-10 w-10 mr-3">
+               <Avatar className="h-10 w-10 mr-3 rounded-full overflow-hidden">
                   <AvatarImage
-                     src={post.profile_picture || "/placeholder.svg"}
+                     src={post.profile_picture}
                      alt={`${post.user_first_name} ${post.user_last_name}`}
                   />
                   <AvatarFallback className="bg-gray-200 text-gray-500">

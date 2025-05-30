@@ -15,7 +15,7 @@ export function NotificationItem({ link, message, created_at, is_read, name, pro
 
         {/* Avatar */}
         <div className="flex-shrink-0">
-          <Avatar className="h-10 w-10">
+          <Avatar className="relative h-10 w-10 rounded-full overflow-hidden">
             <AvatarImage src={profile_picture || "/placeholder.svg"} alt={name || "User"} />
             <AvatarFallback>{name?.charAt(0) || "U"}</AvatarFallback>
           </Avatar>
@@ -23,7 +23,7 @@ export function NotificationItem({ link, message, created_at, is_read, name, pro
 
         {/* Content */}
         <div className="flex flex-col flex-1 min-w-0">
-         
+
           <p className={cn(
             "text-sm font-medium break-words",  // ✅ break words instead of truncate
             !is_read && "text-foreground"

@@ -12,7 +12,7 @@ const UserCard = ({ user }) => {
       <Link href={`/Profile/${user.id}`}>
          <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
             <CardContent className="px-2 flex items-center gap-4">
-               <Avatar className="h-12 w-12">
+               <Avatar className="h-12 w-12 rounded-full overflow-hidden">
                   <AvatarImage src={user.profile_picture} alt={user.name} />
                   <AvatarFallback>
                      <User className="h-6 w-6" />

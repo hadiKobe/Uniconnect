@@ -108,17 +108,15 @@ export default function Header({ headerInfo }) {
    return (
       <div className="flex items-center justify-between">
          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 rounded-full overflow-hidden border border-gray-200 shadow-sm">
+            <Avatar className="relative h-10 w-10 rounded-full overflow-hidden">
                <AvatarImage
                   src={profile_picture || "/placeholder.svg"}
                   alt={first_name}
-                  className="h-full w-full object-cover"
                />
-               <AvatarFallback className="text-base font-medium text-gray-600 bg-gray-100">
+               <AvatarFallback className="h-full w-full flex items-center justify-center bg-gray-100 text-gray-600 font-medium text-base">
                   {first_name?.charAt(0)}
                </AvatarFallback>
             </Avatar>
-
 
             <div>
                <div className="flex items-center gap-2">

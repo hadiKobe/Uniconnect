@@ -38,9 +38,9 @@ export default function TutorPost({ post, onDelete }) {
             {/* Header with user info and actions */}
             <div className="flex items-center justify-between mb-3">
                <div className="flex items-center" onClick={handleProfileClick}>
-                  <Avatar className="h-10 w-10 mr-3 cursor-pointer">
+                  <Avatar className="h-12 w-12 mr-3 cursor-pointer rounded-full overflow-hidden">
                      <AvatarImage
-                        src={post.profile_picture || "/placeholder.svg"}
+                        src={post.profile_picture}
                         alt={`${post.user_first_name} ${post.user_last_name}`}
                      />
                      <AvatarFallback className="bg-purple-100 text-purple-600">

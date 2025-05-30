@@ -42,8 +42,8 @@ export function AllFriendsDialog({
             return (
               <div key={friend.id} className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={friend.profile_picture || "/placeholder.svg"} alt={friend.first_name} />
+                  <Avatar className="h-8 w-8 rounded-full overflow-hidden">
+                    <AvatarImage src={friend.profile_picture} alt={friend.first_name} />
                     <AvatarFallback>{friend.first_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <Link

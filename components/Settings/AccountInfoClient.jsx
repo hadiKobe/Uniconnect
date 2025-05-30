@@ -113,7 +113,7 @@ const AccountInfo = () => {
    }, [userInfo])
 
    useEffect(() => {
-   //   console.log("changed fields :", changedFields)
+      //   console.log("changed fields :", changedFields)
    }, [changedFields])
 
    // useEffect(() => {
@@ -204,8 +204,8 @@ const AccountInfo = () => {
                            <CardDescription>Upload a profile picture to personalize your account</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center space-y-4">
-                           <Avatar className="h-32 w-32">
-                              <AvatarImage src={formData.profile_picture || "/placeholder.svg"} alt="Profile" />
+                           <Avatar className="h-32 w-32 rounded-full overflow-hidden">
+                              <AvatarImage src={formData.profile_picture} alt="Profile" />
                               <AvatarFallback className="text-4xl">
                                  <User size={64} />
                               </AvatarFallback>

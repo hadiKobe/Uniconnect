@@ -64,7 +64,8 @@ export default function DropdownMenu({ suggestions, loading, onClose, searchQuer
                      className="flex items-center gap-3 p-2 hover:bg-muted rounded-md transition-colors"
                      onClick={onClose}
                   >
-                     <Avatar className="h-8 w-8">
+                     <Avatar className="relative h-8 w-8 rounded-full overflow-hidden">
+
                         <AvatarImage src={suggestion.profile_picture || "/placeholder.svg?height=32&width=32"} alt={suggestion.name} />
                         <AvatarFallback>
                            <User className="h-4 w-4" />

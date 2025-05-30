@@ -98,7 +98,8 @@ export default function LeftSide({ onSettingsClick }) {
       <div className="p-4">
         <Card className="p-4 bg-muted/50">
           <div className="flex flex-col items-center space-y-2">
-            <Avatar className="h-16 w-16">
+            <Avatar className="relative h-16 w-16 rounded-full overflow-hidden">
+
               <AvatarImage src={userImage} alt="Profile" />
 
               <AvatarFallback>{userName?.charAt(0)}</AvatarFallback>

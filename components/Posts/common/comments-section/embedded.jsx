@@ -21,17 +21,18 @@ export default function EmbeddedCommentSection({ commentsInfo, isLoading }) {
 
   const { fetchAddComment, error, success, loading } = useAddComment();
   const { data: session } = useSession();
+  const userImage = session?.user?.profile_picture || null;
 
   const currentUser = {
     id: Number.parseInt(session?.user?.id, 10),
     name: session?.user?.name || `${session?.user?.first_name ?? "User"}`,
   };
 
-useEffect(() => {
-  if (Array.isArray(initialComments)) {
-    setCommentsArray(initialComments);
-  }
-}, [initialComments]);
+  useEffect(() => {
+    if (Array.isArray(initialComments)) {
+      setCommentsArray(initialComments);
+    }
+  }, [initialComments]);
 
 
   const handleSubmit = async (e) => {
@@ -87,8 +88,8 @@ useEffect(() => {
       </div>
 
       <form onSubmit={handleSubmit} className="flex items-start gap-4 p-6 border-t">
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={null || "/placeholder.svg"} alt={currentUser.name} />
+        <Avatar className="relative h-10 w-10 flex-shrink-0 rounded-full overflow-hidden">
+          <AvatarImage src={userImage } alt={currentUser.name} />
           <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="relative flex-1">
