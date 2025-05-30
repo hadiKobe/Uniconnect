@@ -105,7 +105,7 @@ export function AddPost({ onPostAdded }) {
         break;
       case "tutor":
         description = document.getElementById("tutor-description").value;
-        details.subject = document.getElementById("tutor-subject")?.textContent || "";
+        details.subject = document.getElementById("tutor-subject")?.value || "";
         details.rate = document.getElementById("tutor-rate")?.value || "";
         details.location = document.getElementById("tutor-location")?.value || "";
         break;

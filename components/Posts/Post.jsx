@@ -35,7 +35,6 @@ const Post = ({ post, onDelete, section }) => {
     commentsCount: post.commentsCount,
   };
 
-  console.log(body);
   let categoryDetails = {};
   switch (post.category) {
     case "tutor":

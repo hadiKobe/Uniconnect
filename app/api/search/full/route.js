@@ -63,7 +63,7 @@ export async function GET(request) {
    const userQuery = `
    SELECT id, CONCAT(first_name, ' ', last_name) AS name, profile_picture
       FROM users
-      WHERE first_name LIKE ? OR last_name LIKE ?
+      WHERE (first_name LIKE ? OR last_name LIKE ?) AND id != ? 
       LIMIT 5
       `;
 
@@ -72,7 +72,7 @@ export async function GET(request) {
    }
 
    const [users, postsRaw] = await Promise.all([
-      query(userQuery, [`${q}%`, `${q}%`]),
+      query(userQuery, [`${q}%`, `${q}%`, userId]),
       query(postQuery, [userId, `%${q}%`, `${q}%`, `${q}%`])
    ]);
 
