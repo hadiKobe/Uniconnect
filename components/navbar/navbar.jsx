@@ -15,14 +15,18 @@ import { Badge } from "@/components/ui/badge";
 
 export default function Navbar() {
   const [showAddPost, setShowAddPost] = useState(false)
+
   const { data: session } = useSession();
+
   const { count: notfcount } = useUnreadNotifications(10000, !!session?.user?.id);
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
   const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
+
   const notifications = [
     { name: "Messages", icon: <MessageSquare className="h-4 w-4" />, href: "/Messages", badge: totalUnread > 0 ? totalUnread : null },
     { name: "Notifications", icon: <Bell className="h-4 w-4" />, href: "/notifications", badge: notfcount > 0 ? notfcount : null },
   ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-16 items-center px-4 sm:px-6">
@@ -38,7 +42,7 @@ export default function Navbar() {
           className="hidden md:flex items-center gap-2 font-semibold"
         >
           <GraduationCap className="h-8 w-8 text-blue-600" />
-          <span className="ml-2 text-xl font-bold text-gray-900">Uni Connect</span>
+          <span className="ml-2 text-xl font-bold text-gray-900">UniConnect</span>
         </Link>
 
 
@@ -82,6 +86,8 @@ export default function Navbar() {
               <AddPost onPostAdded={() => { setShowAddPost(false) }} />
             </DialogContent>
           </Dialog>
+
+          
         </div>
       </div>
     </header>

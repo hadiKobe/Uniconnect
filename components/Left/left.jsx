@@ -26,7 +26,7 @@ import { useFriendRequestsCount } from "@/hooks/Friends/request/countRequests";
 
 export default function LeftSide({ onSettingsClick }) {
   const { data: session, status } = useSession();
- 
+
   const pathname = usePathname()
   const isActive = (href) => pathname === href;
   const { count } = useUnreadNotifications(); // Fetch unread notifications count
@@ -35,11 +35,11 @@ export default function LeftSide({ onSettingsClick }) {
 
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
   const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
-  const userName =session?.user?.name || `${session?.user?.first_name ?? "User"}`;
+  const userName = session?.user?.name || `${session?.user?.first_name ?? "User"}`;
+  const userImage = session?.user?.profile_picture;
   const userMajor = session?.user?.major || "Unknown Major";
-  const userImage = session?.user?.profile_picture || "/placeholder.svg?height=64&width=64";
   const userGraduationProgress = session?.user?.graduation_progress;
- 
+
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id);
   const { count: notfcount } = useUnreadNotifications(10000, !!session?.user?.id);// Fetch unread notifications count
 
@@ -90,8 +90,8 @@ export default function LeftSide({ onSettingsClick }) {
     }
   ];
 
-
   if (status === "loading") return null; // or a loader, skeleton, etc.
+
   return (
     <div className="w-64 border-r bg-background flex flex-col h-full">
       {/* Profile Section */}
@@ -99,7 +99,7 @@ export default function LeftSide({ onSettingsClick }) {
         <Card className="p-4 bg-muted/50">
           <div className="flex flex-col items-center space-y-2">
             <Avatar className="h-16 w-16">
-             <AvatarImage src={userImage} alt="Profile" />  
+              <AvatarImage src={userImage} alt="Profile" />
 
               <AvatarFallback>{userName?.charAt(0)}</AvatarFallback>
             </Avatar>
@@ -117,52 +117,6 @@ export default function LeftSide({ onSettingsClick }) {
       {/* Navigation with scroll if needed */}
       <nav className="flex-1 overflow-y-auto p-1">
         <ul className="space-y-1">
-          {/* <li>
-            <Link href="/Feed" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <Home className="h-4 w-4" /> Home
-            </Link>
-          </li>
-          <li>
-            <Link href="/Feed/Tutoring" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <GraduationCap className="h-4 w-4" /> Tutor Section
-            </Link>
-          </li>
-          <li>
-            <Link href="/Feed/JobOffers" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <FileText className="h-4 w-4" /> Job Section
-            </Link>
-          </li>
-          <li>
-            <Link href="/Feed/MarketPlace" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <ShoppingBag className="h-4 w-4" /> Market
-            </Link>
-          </li>
-
-          <li>
-            <Link href="/Friends" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <Users className="h-4 w-4" /> friends
-              {requestCount > 0 && (
-                <Badge className="ml-auto  shrink-0 bg-primary text-xs">{requestCount}</Badge>
-              )}
-
-            </Link>
-          </li>
-          <li>
-            <Link href="/Messages" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <MessageSquare className="h-4 w-4" /> Messages
-              {totalUnread > 0 && (
-                <Badge className="ml-auto bg-primary text-xs">{totalUnread}</Badge>
-              )}
-            </Link>
-          </li>
-         <li>
-            <Link href="/notifications" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <Bell className="h-4 w-4" /> Notifications
-              {notfcount > 0 && (
-                <Badge className="ml-auto  shrink-0 bg-primary text-xs">{notfcount}</Badge>
-              )}
-            </Link>
-          </li> */}
           {list.map((item) => (
             <li key={item.href}>
               <Link

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { Bell, BookOpen, Briefcase, Home, LogOut, Menu, Settings, ShoppingBag, Users, MessageSquare } from "lucide-react";
+import { GraduationCap, BookOpen, Briefcase, Home, LogOut, Menu, Settings, ShoppingBag, Users, MessageSquare } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -12,9 +12,15 @@ import { Badge } from "@/components/ui/badge";
 
 import { useMessageStore } from "@/lib/store/messageStore";
 import { useFriendRequestsCount } from "@/hooks/Friends/request/countRequests";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 
 export default function MobileMenu() {
   const { data: session } = useSession();
+  const userId = session?.user?.id;
+  const userName = session?.user?.name || `${session?.user?.first_name ?? "User"}`;
+  const userImage = session?.user?.profile_picture || null;
+
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id);
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
   const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
@@ -43,15 +49,27 @@ export default function MobileMenu() {
       </SheetTrigger>
 
       <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0">
-        <SheetHeader className="px-6 py-4 border-b">
+        <SheetHeader className="px-6 py-3 border-b">
           <SheetTitle className="flex items-center gap-2 text-lg font-semibold">
-            <Users className="h-5 w-5" />
-            <span>SocialApp</span>
+            <GraduationCap className="h-5 w-5 text-blue-600" />
+            <span>UniConnect</span>
           </SheetTitle>
-          <SheetDescription className="sr-only">Navigation menu for SocialApp</SheetDescription>
+          <SheetDescription className="sr-only">Navigation menu for UniConnect</SheetDescription>
         </SheetHeader>
 
         <nav className="flex flex-col px-1">
+          <Link
+            href={`/Profile/${userId}`}
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-2.5 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <Avatar className="h-5 w-5">
+              <AvatarImage src={userImage} alt="Profile" />
+              <AvatarFallback>{userName?.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <span className="truncate font-bold">Profile</span>
+          </Link>
+
           <div className="space-y-1">
             {feeds.map((feed, index) => (
               <Link
