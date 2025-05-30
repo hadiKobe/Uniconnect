@@ -8,6 +8,7 @@ export async function POST(req) {
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const user_id = parseInt(session.user.id, 10); // Ensure user_id is an integer
   const sqlQuery = 'INSERT INTO reports (user_id, post_id, reason, details) VALUES (?, ?, ?, ?)';
 
   // const user_id = 14; // Replace with session.user.id when auth is ready

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { formatDistanceToNow } from "date-fns"
 import { MapPin, Clock, DollarSign, ExternalLink } from "lucide-react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { toast } from "sonner"
 
 export default function MarketPost({ post }) {
    const router = useRouter()

@@ -1,9 +1,9 @@
 "use client"
 import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInSeconds,
+   differenceInDays,
+   differenceInHours,
+   differenceInMinutes,
+   differenceInSeconds,
 } from "date-fns";
 import { toast } from "sonner";
 import { MoreHorizontal } from 'lucide-react'
@@ -59,26 +59,26 @@ const postTypeEmoji = {
    general: ''
 }
 function getShortTimeAgo(date) {
-  const now = new Date();
+   const now = new Date();
 
-  const days = differenceInDays(now, date);
-  if (days > 0) return `${days}d`;
+   const days = differenceInDays(now, date);
+   if (days > 0) return `${days}d`;
 
-  const hours = differenceInHours(now, date);
-  if (hours > 0) return `${hours}h`;
+   const hours = differenceInHours(now, date);
+   if (hours > 0) return `${hours}h`;
 
-  const minutes = differenceInMinutes(now, date);
-  if (minutes > 0) return `${minutes}m`;
+   const minutes = differenceInMinutes(now, date);
+   if (minutes > 0) return `${minutes}m`;
 
-  const seconds = differenceInSeconds(now, date);
-  return `${seconds}s`;
+   const seconds = differenceInSeconds(now, date);
+   return `${seconds}s`;
 }
 export default function Header({ headerInfo }) {
-   
+
    const { post_id, user_id, first_name, last_name, major, created_at, post_type = "general", onDelete, profile_picture } = headerInfo;
-    const publishedAt = new Date(created_at); // ✅ must be here first
-      const timeAgo = getShortTimeAgo(publishedAt); // ✅ now this works
-   
+   const publishedAt = new Date(created_at); // ✅ must be here first
+   const timeAgo = getShortTimeAgo(publishedAt); // ✅ now this works
+
 
    const { data: session } = useSession()
    const currentUserId = parseInt(session?.user?.id)
@@ -131,43 +131,43 @@ export default function Header({ headerInfo }) {
             </div>
          </div>
 
-         <div className="flex items-center gap-2">
+         {(onDelete || !isAuthor) && (
+            <div className="flex items-center gap-2">
+               <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                     <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Open menu</span>
+                     </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
 
-            <DropdownMenu>
-               <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                     <MoreHorizontal className="h-4 w-4" />
-                     <span className="sr-only">Open menu</span>
-                  </Button>
-               </DropdownMenuTrigger>
-               <DropdownMenuContent align="end">
+                     {!isAuthor && (
+                        <>
+                           <DropdownMenuItem
+                              onClick={() => {
+                                 document.activeElement?.blur();        // ✅ close dropdown safely
+                                 setTimeout(() => setIsReportOpen(true), 50); // ✅ slight delay = Radix-safe
+                              }}
+                           >
+                              Report
+                           </DropdownMenuItem>
+                        </>
+                     )}
 
-                  {!isAuthor && (
-                     <>
-                        <DropdownMenuItem
-                           onClick={() => {
-                              document.activeElement?.blur();        // ✅ close dropdown safely
-                              setTimeout(() => setIsReportOpen(true), 50); // ✅ slight delay = Radix-safe
-                           }}
-                        >
-                           Report
-                        </DropdownMenuItem>
-                     </>
-                  )}
-
-                  {isAuthor && (
-                     <>
-                        <DropdownMenuItem
-                           onClick={handleDeletePost}
-                           className="text-destructive focus:text-destructive"
-                        >
-                           Delete post
-                        </DropdownMenuItem>
-                     </>
-                  )}
-               </DropdownMenuContent>
-            </DropdownMenu>
-         </div>
+                     {isAuthor && (
+                        <>
+                           <DropdownMenuItem
+                              onClick={handleDeletePost}
+                              className="text-destructive focus:text-destructive"
+                           >
+                              Delete post
+                           </DropdownMenuItem>
+                        </>
+                     )}
+                  </DropdownMenuContent>
+               </DropdownMenu>
+            </div>)}
 
          <Report
             postId={post_id}

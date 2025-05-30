@@ -17,7 +17,7 @@ export async function GET(request) {
 
    const postQuery = `
    SELECT posts.id,posts.content, posts.created_at, posts.category,
-      users.id AS user_id, users.first_name, users.last_name, users.major,
+      users.id AS user_id, users.first_name, users.last_name, users.major, users.profile_picture,
       COUNT(CASE WHEN reactions.value = 0 THEN 1 END) AS dislikesCount,
       COUNT(CASE WHEN reactions.value = 1 THEN 1 END) AS likesCount,
       COUNT(DISTINCT comments.id) AS commentsCount,

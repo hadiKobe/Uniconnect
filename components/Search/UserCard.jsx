@@ -1,17 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { User } from 'lucide-react';
+import { User, CornerDownRight } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner"
 
 const UserCard = ({ user }) => {
    return (
-      <Link href={`/profile/${user.id}`}>
+      <Link href={`/Profile/${user.id}`}>
          <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
             <CardContent className="px-2 flex items-center gap-4">
                <Avatar className="h-12 w-12">
-                  <AvatarImage src={user.profile_picture || "/placeholder.svg?height=48&width=48"} alt={user.name} />
+                  <AvatarImage src={user.profile_picture} alt={user.name} />
                   <AvatarFallback>
                      <User className="h-6 w-6" />
                   </AvatarFallback>
@@ -23,6 +25,15 @@ const UserCard = ({ user }) => {
                         {user.mutualFriendsCount} mutual friend{user.mutualFriendsCount !== 1 ? 's' : ''}
                      </p>
                   )}
+                  {/* <Button
+                     variant="ghost"
+                     size="sm"
+                     className="flex items-center gap-1 px-2 ml-auto"
+                     onClick={() => toast("This feature is coming soon!")}
+                  >
+                     <CornerDownRight className="h-4 w-4" />
+                     <span className="text-sm text-gray-500">Reply privately</span>
+                  </Button> */}
                </div>
             </CardContent>
          </Card>

@@ -8,11 +8,17 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useSession } from "next-auth/react"
 
 const JobPost = ({ post, onDelete }) => {
+   const { data: session } = useSession();
+   const currentUserId = session?.user?.id;
+   const isAuthor = parseInt(currentUserId) === post.user_id
    const router = useRouter();
    const badgeStyle = "inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer";
-
+   const handleMessageClick = () => {
+      router.push(`/Messages?userA=${currentUserId}&userB=${post.user_id}`);
+   };
    // Format the date to show how long ago the post was created
    const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true })
 
@@ -135,17 +141,14 @@ const JobPost = ({ post, onDelete }) => {
                {/* <div className="text-xs text-gray-500">Job ID: {post.id?.substring(0, 8)}</div> */}
 
                <div className="flex gap-2">
-                  {/* <Button
+                  {!isAuthor && <Button
                      variant="default"
                      size="sm"
                      className="text-sm font-medium bg-black hover:bg-amber-950"
-                     onClick={(e) => {
-                        e.stopPropagation()
-                        
-                     }}
+                     onClick={handleMessageClick}
                   >
                      Apply Now
-                  </Button> */}
+                  </Button>}
 
                   <button
                      onClick={handleClick}

@@ -2,17 +2,24 @@
 
 import { formatDistanceToNow } from "date-fns"
 import { useRouter } from "next/navigation"
-import { MapPin, Clock, GraduationCap, BookOpen, DollarSign, ExternalLink, MoreHorizontal } from 'lucide-react'
+import { MapPin, CornerDownRight, Clock, GraduationCap, BookOpen, DollarSign, ExternalLink, MoreHorizontal } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useSession } from "next-auth/react"
 
 export default function TutorPost({ post, onDelete }) {
+   const { data: session } = useSession();
+   const currentUserId = session?.user?.id;
+   const isAuthor = parseInt(currentUserId) === post.user_id
    const router = useRouter();
    const badgeStyle = "inline-flex items-center gap-1.5 px-3 py-1 rounded-md transition-all duration-200 hover:px-4 cursor-pointer";
-
+   const handleMessageClick = () => {
+      router.push(`/Messages?userA=${currentUserId}&userB=${post.user_id}`);
+   };
    // Format the date to be more readable
    const formattedDate = post.created_at ? formatDistanceToNow(new Date(post.created_at), { addSuffix: true }) : "Recently"
 
@@ -124,6 +131,17 @@ export default function TutorPost({ post, onDelete }) {
                >
                   See More <ExternalLink className="h-3.5 w-3.5 ml-1" />
                </Button>
+
+               {!isAuthor && <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-1 px-2 ml-auto"
+                  onClick={handleMessageClick}
+               >
+                  <CornerDownRight className="h-4 w-4" />
+                  <span className="text-sm text-gray-500">Reply privately</span>
+               </Button>}
+
             </div>
          </CardContent>
       </Card>

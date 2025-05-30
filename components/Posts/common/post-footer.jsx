@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ThumbsUp, ThumbsDown, MessageCircle, Loader2 } from 'lucide-react'
+import { ThumbsUp, ThumbsDown, MessageCircle, Loader2, CornerDownRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import useHandleReaction from "@/hooks/Posts/handleReaction"
@@ -9,8 +9,13 @@ import InstagramStyleCommentSection from "./comments-section/comment-section"
 import useGetComments from "@/hooks/Posts/Comments/getComments"
 import { toast } from "sonner"
 import EmbeddedCommentSection from "./comments-section/embedded"
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Footer({ bottomInfo, singlePost = false }) {
+   const { data: session } = useSession();
+   const currentUserId = session?.user?.id;
+
    const { post_id, user_id, likesCount, dislikesCount, commentsCount, userReaction } = bottomInfo
 
    const { loadingReaction, errorReaction, successReaction, fetchAddReaction, fetchDeleteReaction } = useHandleReaction()
@@ -24,6 +29,12 @@ export default function Footer({ bottomInfo, singlePost = false }) {
 
    const { loadingComments, comments, fetchComments, errorComments, onDeleteComment } = useGetComments(post_id)
    const [isCommentsOpen, setIsCommentsOpen] = useState(false)
+
+   const isAuthor = parseInt(currentUserId) === user_id
+   const router = useRouter();
+   const handleMessageClick = () => {
+      router.push(`/Messages?userA=${currentUserId}&userB=${user_id}`);
+   };
 
    useEffect(() => {
       if (userReaction === 1) {
@@ -46,7 +57,7 @@ export default function Footer({ bottomInfo, singlePost = false }) {
          // Reset comments when not in single post view
          setCommentsNum(commentsCount);
       }
-   },[singlePost])
+   }, [singlePost])
 
    const handleInteraction = async (e, type) => {
       e.preventDefault()
@@ -134,6 +145,16 @@ export default function Footer({ bottomInfo, singlePost = false }) {
                   <span>{commentsNum}</span>
                </Button>
             )}
+
+            {!isAuthor && <Button
+               variant="ghost"
+               size="sm"
+               className="flex items-center gap-1 px-2 ml-auto"
+               onClick={handleMessageClick}
+            >
+               <CornerDownRight className="h-4 w-4" />
+               <span className="text-sm text-gray-500">Reply privately</span>
+            </Button>}
 
          </div>
 

@@ -13,7 +13,7 @@ export function FriendItem({ friend, actions }) {
       <div className="flex items-center gap-3 overflow-hidden">
         <Avatar>
           <AvatarImage
-            src={friend.profile_picture || "/placeholder.svg"}
+            src={friend.profile_picture}
             alt={`${friend.first_name} ${friend.last_name}`}
           />
           <AvatarFallback>{getInitials()}</AvatarFallback>
