@@ -16,117 +16,117 @@ import { useMessageStore } from "@/lib/store/messageStore";
 
 
 export function MessagesPage() {
-const router = useRouter();
+  const router = useRouter();
 
-const socketRef = useRef(null);// to store the socket instance
+  const socketRef = useRef(null);// to store the socket instance
 
-const { data: session } = useSession();
+  const { data: session } = useSession();
 
   const searchParams = useSearchParams();// to gt the query params
   const userA = searchParams.get("userA");
   const userB = searchParams.get("userB");
-  const { chat, loading: chatLoading } = useChat(userA, userB);  
+  const { chat, loading: chatLoading } = useChat(userA, userB);
   const userId = session?.user?.id;
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [showConversationList, setShowConversationList] = useState(!isMobile);
   const [messagesMap, setMessagesMap] = useState({});
-  const { messages: fetchedMessages , hasMore, loadMore } = useGetMessages(activeConversationId);
+  const { messages: fetchedMessages, hasMore, loadMore } = useGetMessages(activeConversationId);
   const resetUnread = useMessageStore.getState().resetUnread;
   const setActiveChatId = useMessageStore((state) => state.setActiveChatId);
-  const { chats = [] ,loading} = useUserChats(userId); 
-  const [conversations, setConversations] = useState([]); 
+  const { chats = [], loading } = useUserChats(userId);
+  const [conversations, setConversations] = useState([]);
 
   // Sync fetched chats to local state
   useEffect(() => {
     setConversations(chats);
   }, [chats]);
 
-useEffect(() => {
-  if (chat && !conversations.some((c) => c._id === chat._id)) {
-    setConversations((prev) => [...prev, chat]);
-  }
+  useEffect(() => {
+    if (chat && !conversations.some((c) => c._id === chat._id)) {
+      setConversations((prev) => [...prev, chat]);
+    }
 
-  if (chat && !messagesMap[chat._id]) {
-    setActiveConversationId(chat._id); // Optionally auto-open it
-  }
-   const url = new URL(window.location.href);
+    if (chat && !messagesMap[chat._id]) {
+      setActiveConversationId(chat._id); // Optionally auto-open it
+    }
+    const url = new URL(window.location.href);
     url.searchParams.delete("userA");
     url.searchParams.delete("userB");
-    router.replace(url.pathname); 
-}, [chat, conversations, messagesMap]);
+    router.replace(url.pathname);
+  }, [chat, conversations, messagesMap]);
 
 
-   useEffect(() => {
+  useEffect(() => {
     if (!userId || socketRef.current) return;
 
 
-      const setupSocket = async () => {
+    const setupSocket = async () => {
       const socket = await getSocket();
       if (!socket.connected) socket.connect();
       socketRef.current = socket;
 
 
 
-    socket.on("receivePrivateMessage", (data) => {
-      const { chatId, toUserId } = data;
+      socket.on("receivePrivateMessage", (data) => {
+        const { chatId, toUserId } = data;
 
-      const isMessageForCurrentUser = toUserId == userId;
-      const isActiveChat = chatId == activeConversationId;
+        const isMessageForCurrentUser = toUserId == userId;
+        const isActiveChat = chatId == activeConversationId;
 
-      setMessagesMap((prev) => ({
-        ...prev,
-            [chatId]: [...(prev[chatId] || []), { ...data, isRead: isActiveChat && isMessageForCurrentUser }],
-          }));
+        setMessagesMap((prev) => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), { ...data, isRead: isActiveChat && isMessageForCurrentUser }],
+        }));
 
-          if (isActiveChat && isMessageForCurrentUser) {
-            socket.emit("markMessagesAsRead", { chatId, userId });
-          }
+        if (isActiveChat && isMessageForCurrentUser) {
+          socket.emit("markMessagesAsRead", { chatId, userId });
+        }
 
-          setConversations((prev) =>
-            prev.map((conv) =>
-              conv._id === chatId
-                ? {
-                    ...conv,
-                    lastMessage: data.message || "Media",
-                    lastUpdated: data.timestamp,
-                  }
-                : conv
-            )
-          );
-        });
+        setConversations((prev) =>
+          prev.map((conv) =>
+            conv._id === chatId
+              ? {
+                ...conv,
+                lastMessage: data.message || "Media",
+                lastUpdated: data.timestamp,
+              }
+              : conv
+          )
+        );
+      });
 
       // ✅ Edit: Handle 'messagesMarkedAsRead' globally for sender
-        socket.on("messagesMarkedAsRead", ({ chatId }) => {
-          setMessagesMap((prev) => ({
-            ...prev,
-            [chatId]: prev[chatId]?.map((msg) => ({ ...msg, isRead: true })),
-          }));
-        });
-        resetUnread(activeConversationId);
+      socket.on("messagesMarkedAsRead", ({ chatId }) => {
+        setMessagesMap((prev) => ({
+          ...prev,
+          [chatId]: prev[chatId]?.map((msg) => ({ ...msg, isRead: true })),
+        }));
+      });
+      resetUnread(activeConversationId);
 
-       };
+    };
 
-  setupSocket();
+    setupSocket();
 
-  return () => {
-    (async () => {
-      const socket = await getSocket();
-      socket.off("receivePrivateMessage");
-      socket.off("messagesMarkedAsRead");
-    })();
-  };
-}, [userId]);
+    return () => {
+      (async () => {
+        const socket = await getSocket();
+        socket.off("receivePrivateMessage");
+        socket.off("messagesMarkedAsRead");
+      })();
+    };
+  }, [userId]);
 
-      // ✅ Keep messages in sync when fetched
-      useEffect(() => {
-        if (activeConversationId && fetchedMessages) {
-          setMessagesMap((prev) => ({
-            ...prev,
-            [activeConversationId]: fetchedMessages,
-          }));
-        }
-      }, [activeConversationId, fetchedMessages]);
+  // ✅ Keep messages in sync when fetched
+  useEffect(() => {
+    if (activeConversationId && fetchedMessages) {
+      setMessagesMap((prev) => ({
+        ...prev,
+        [activeConversationId]: fetchedMessages,
+      }));
+    }
+  }, [activeConversationId, fetchedMessages]);
   useEffect(() => {
     if (!activeConversationId || !userId) return;
 
@@ -163,7 +163,7 @@ useEffect(() => {
 
     if (isMobile) setShowConversationList(false);
   };
-  
+
 
   const handleSendMessage = (text, image) => {
     if (!activeConversationId) return;
@@ -180,32 +180,32 @@ useEffect(() => {
     };
 
     socketRef.current?.emit("sendPrivateMessage", newMessage);
-    
+
 
     // ✅ Optimistic UI update
     setMessagesMap((prev) => ({
       ...prev,
       [activeConversationId]: [...(prev[activeConversationId] || []), newMessage],
     }));
-     setConversations((prev) =>
-  prev.map((conv) =>
-    conv._id === activeConversationId
-      ? {
-          ...conv,
-          lastMessage: newMessage.message || "Media",
-          lastUpdated: newMessage.timestamp,
-        }
-      : conv
-  )
-);
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv._id === activeConversationId
+          ? {
+            ...conv,
+            lastMessage: newMessage.message || "Media",
+            lastUpdated: newMessage.timestamp,
+          }
+          : conv
+      )
+    );
 
   };
   useEffect(() => { // Runs when the component is unmounted (i.e., when leaving the page)
-  return () => {
-    setActiveChatId(null);
-    
-  };
-}, []);
+    return () => {
+      setActiveChatId(null);
+
+    };
+  }, []);
 
 
   const activeConversation = conversations.find((c) => c._id === activeConversationId);
@@ -214,47 +214,47 @@ useEffect(() => {
 
 
   return (
-   <div className="flex h-[calc(100vh-64px)] w-full overflow-hidden">
-  {/* LEFT - Conversation List */}
-  <div className={cn(
-    "transition-all duration-300 ease-in-out",
-    showConversationList ? "block w-full md:w-1/3 h-full border-r" : "hidden md:block md:w-1/3 h-full border-r"
-  )}>
-    <ConversationList
-      conversations={conversations}
-      activeConversationId={activeConversationId}
-      onSelectConversation={handleSelectConversation}
-      loading={loading}
-    />
-  </div>
-
-  {/* RIGHT - Chat Thread */}
-  <div className={cn(
-    "transition-all duration-300 ease-in-out flex-1 h-full",
-    showConversationList && isMobile ? "hidden" : "block"
-  )}>
-    {activeConversation ? (
-      <MessageThread
-        conversation={activeConversation}
-        messages={activeMessages}
-        onSendMessage={handleSendMessage}
-        onBack={() => {
-          setShowConversationList(true);
-          setActiveConversationId(null);
-          setActiveChatId(null);
-        }}
-          onLoadMoreMessages={loadMore}  
-           hasMore={hasMore}  
-
-        loading={!fetchedMessages}
-      />
-    ) : (
-      <div className="h-full flex items-center justify-center text-muted-foreground">
-        Select a conversation to start messaging
+    <div className="flex h-[calc(100vh-64px)] w-full ">
+      {/* LEFT - Conversation List */}
+      <div className={cn(
+        "transition-all duration-300 ease-in-out",
+        showConversationList ? "block w-full md:w-1/3 h-full border-r" : "hidden md:block md:w-1/3 h-full border-r"
+      )}>
+        <ConversationList
+          conversations={conversations}
+          activeConversationId={activeConversationId}
+          onSelectConversation={handleSelectConversation}
+          loading={loading}
+        />
       </div>
-    )}
-  </div>
-</div>
+
+      {/* RIGHT - Chat Thread */}
+      <div className={cn(
+        "transition-all duration-300 ease-in-out flex-1 h-full",
+        showConversationList && isMobile ? "hidden" : "block"
+      )}>
+        {activeConversation ? (
+          <MessageThread
+            conversation={activeConversation}
+            messages={activeMessages}
+            onSendMessage={handleSendMessage}
+            onBack={() => {
+              setShowConversationList(true);
+              setActiveConversationId(null);
+              setActiveChatId(null);
+            }}
+            onLoadMoreMessages={loadMore}
+            hasMore={hasMore}
+
+            loading={!fetchedMessages}
+          />
+        ) : (
+          <div className="h-full flex items-center justify-center text-muted-foreground">
+            Select a conversation to start messaging
+          </div>
+        )}
+      </div>
+    </div>
 
   );
 }

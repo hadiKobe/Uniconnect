@@ -39,12 +39,12 @@ export function FriendRequestsSection({ requests, loading }) {
     } catch (err) {
       alert(err.message || "Failed to accept friend request.");
     } finally {
-      
+
       setLoadingId(null);
       setLoadingAction(null);
     }
   };
-  
+
   const handleDecline = async (requestId) => {
     try {
       setLoadingId(requestId);
@@ -58,13 +58,13 @@ export function FriendRequestsSection({ requests, loading }) {
     } catch (err) {
       alert(err.message || "Failed to decline friend request.");
     } finally {
-    
+
       setLoadingId(null);
       setLoadingAction(null);
     }
   };
-  
-  
+
+
   return (
     <Card>
       <CardHeader className="relative">
@@ -79,11 +79,11 @@ export function FriendRequestsSection({ requests, loading }) {
         <CardDescription>People who want to connect with you</CardDescription>
       </CardHeader>
 
-      <CardContent className="max-h-[300px] overflow-y-auto">{loading ? (
-    <div className="flex justify-center py-6">
-      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-    </div>
-  ) : 
+      <CardContent className="max-h-[300px] ">{loading ? (
+        <div className="flex justify-center py-6">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      ) :
         requests.length > 0 ? (
           <div className="grid gap-4">
             {requests.map((friend) => {
@@ -127,7 +127,7 @@ export function FriendRequestsSection({ requests, loading }) {
                             </>
                           )}
                         </Button>
-                  
+
                         <Button
                           size="sm"
                           disabled={loadingId === friend.request_id && loadingAction === "accept"}
@@ -145,7 +145,7 @@ export function FriendRequestsSection({ requests, loading }) {
                       </div>
                     )
                   }
-                  
+
                 />
               );
             })}

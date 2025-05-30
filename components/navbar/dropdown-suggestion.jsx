@@ -27,7 +27,7 @@ export default function DropdownMenu({ suggestions, loading, onClose, searchQuer
    return (
       <div
          ref={dropdownRef}
-         className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-lg z-50 max-h-[300px] overflow-y-auto"
+         className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-lg z-50 max-h-[300px] "
       >
          {/* Search link as first item - always visible */}
          <Link

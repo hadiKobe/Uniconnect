@@ -20,7 +20,7 @@ export default function MarketPost({ post }) {
    const type = post?.type
 
    return (
-      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300  border border-gray-100">
          <div className="p-5">
             {/* User info section */}
             <div className="flex items-center mb-4">

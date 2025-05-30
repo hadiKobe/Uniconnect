@@ -11,14 +11,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; 
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {GraduationCap, Mail, Lock, Eye, EyeOff, AlertCircle,  ArrowRight} from "lucide-react";
+import { GraduationCap, Mail, Lock, Eye, EyeOff, AlertCircle, ArrowRight } from "lucide-react";
 
 
 const schema = z.object({
@@ -35,7 +35,7 @@ const SignIn = () => {
       password: "",
     },
   });
-    const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, setError } = form;
@@ -43,7 +43,7 @@ const SignIn = () => {
   const onSubmit = async (data) => {
     const result = await signIn("credentials", {
       redirect: false,
-      email: data.email, 
+      email: data.email,
       password: data.password,
     });
 
@@ -56,7 +56,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min- flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -145,7 +145,7 @@ const SignIn = () => {
                   )}
                 />
 
-         
+
 
                 {/* Login Button */}
                 <Button

@@ -34,7 +34,7 @@ const JobPost = ({ post, onDelete }) => {
    }
 
    return (
-      <Card className="hover:shadow-md transition-shadow border-gray-200 overflow-hidden" >
+      <Card className="hover:shadow-md transition-shadow border-gray-200 " >
          <CardContent className="p-0">
             {/* LinkedIn-style header with company logo on left */}
             <div className="flex p-4">

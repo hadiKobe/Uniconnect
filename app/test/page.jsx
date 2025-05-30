@@ -1,6 +1,6 @@
 export default function TestSticky() {
    return (
-      <div className="min-h-screen">
+      <div className="min-">
          {/* Sticky Navbar */}
          <div className="sticky top-0 z-50 bg-white border-b p-4">
             <p className="text-lg font-bold">Sticky Navbar</p>

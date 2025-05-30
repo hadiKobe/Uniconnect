@@ -24,13 +24,13 @@ const MajorSelector = ({ selectedMajor, onSelectMajor }) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-full justify-between overflow-hidden">
+        <Button variant="outline" className="w-full justify-between ">
           <span className="truncate">{selectedMajor || "Select a Major"}</span>
           <span className="ml-2">▼</span>
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-64 p-2 space-y-2 max-h-80 overflow-auto">
+      <PopoverContent className="w-64 p-2 space-y-2 max-h-80 ">
         <Input
           placeholder="Search major..."
           value={searchTerm}

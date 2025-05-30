@@ -32,7 +32,7 @@ export function AllFriendsDialog({
           <DialogTitle>All Friends</DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto">
+        <div className="grid grid-cols-2 gap-4 max-h-[60vh] ">
           {friends.map((friend) => {
             const friendStatus = statuses[friend.id] || { isFriend: false, pendingRequest: false };
             const isFriend = friendStatus.isFriend;

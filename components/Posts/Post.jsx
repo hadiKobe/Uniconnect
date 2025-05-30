@@ -89,7 +89,7 @@ const Post = ({ post, onDelete, section }) => {
 
     default:
       return (
-        <Card className={`overflow-hidden`}>
+        <Card className={``}>
           <div className="px-4">
             <Header headerInfo={header} />
             {SpecificBody}

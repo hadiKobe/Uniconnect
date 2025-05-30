@@ -14,7 +14,7 @@ const SignupPage = () => {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="relative min- bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
       <header className="w-full p-4 lg:p-6 relative z-20">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -108,11 +108,11 @@ const SignupPage = () => {
               </div>
 
               <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-900">Sending OTP...</h3>
-              <p className="text-sm text-gray-600">
-                We're sending a verification code to your university email.
-              </p>
-            </div>
+                <h3 className="text-lg font-semibold text-gray-900">Sending OTP...</h3>
+                <p className="text-sm text-gray-600">
+                  We're sending a verification code to your university email.
+                </p>
+              </div>
 
 
               <div className="mt-6">

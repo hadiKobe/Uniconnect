@@ -26,7 +26,7 @@ export default function HomePage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-">
       {/* Header */}
       <header className="px-4 lg:px-6 h-16 flex items-center border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 sticky top-0 z-50">
         <Link href="#" className="flex items-center gap-2 font-semibold">
@@ -123,7 +123,7 @@ export default function HomePage() {
                     width="600"
                     height="400"
                     alt="Students collaborating"
-                    className="w-full h-auto aspect-video overflow-hidden rounded-xl object-cover shadow-lg"
+                    className="w-full h-auto aspect-video  rounded-xl object-cover shadow-lg"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent rounded-xl" />
                 </div>
@@ -192,7 +192,7 @@ export default function HomePage() {
                   width="600"
                   height="400"
                   alt="Students using UniConnect platform"
-                  className="w-full h-auto aspect-video overflow-hidden rounded-xl object-cover"
+                  className="w-full h-auto aspect-video  rounded-xl object-cover"
                 />
               </div>
             </div>
@@ -293,7 +293,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mx-auto max-w-4xl py-8 sm:py-12">
-              <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 shadow-lg">
+              <div className="relative aspect-video rounded-xl  bg-gray-100 shadow-lg">
                 {!isVideoPlaying ? (
                   <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600">
                     <Button

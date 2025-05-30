@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MajorSelector from "./MajorSelector";
-import { GraduationCap ,User, Lock, Mail, CheckCircle, AlertCircle  } from "lucide-react";
+import { GraduationCap, User, Lock, Mail, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
@@ -52,7 +52,7 @@ const SignUp = ({ setLoading }) => {
       confirmPassword: ""
     }
   });
-   const calculatePasswordStrength = (password) => {
+  const calculatePasswordStrength = (password) => {
     if (!password) return 0
 
     let strength = 0
@@ -117,8 +117,8 @@ const SignUp = ({ setLoading }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center ">
-      <Card className="w-full max-w-md shadow-lg border-slate-200 overflow-hidden">
+    <div className="min- flex items-center ">
+      <Card className="w-full max-w-md shadow-lg border-slate-200 ">
 
         <CardHeader className="space-y-1 text-center">
 
@@ -222,29 +222,28 @@ const SignUp = ({ setLoading }) => {
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-slate-600">Password strength:</span>
                           <span
-                            className={`font-medium ${
-                              passwordStrength <= 25
-                                ? "text-red-500"
-                                : passwordStrength <= 50
-                                  ? "text-orange-500"
-                                  : passwordStrength <= 75
-                                    ? "text-yellow-600"
-                                    : "text-green-600"
-                            }`}
+                            className={`font-medium ${passwordStrength <= 25
+                              ? "text-red-500"
+                              : passwordStrength <= 50
+                                ? "text-orange-500"
+                                : passwordStrength <= 75
+                                  ? "text-yellow-600"
+                                  : "text-green-600"
+                              }`}
                           >
                             {getPasswordStrengthText()}
                           </span>
                         </div>
                         <Progress
-                        value={passwordStrength}
-                        className="h-1"
-                      >
-                        <div
-                          className={`h-1 ${getPasswordStrengthColor()} transition-all duration-300`}
-                          data-slot="indicator"
-                          style={{ width: `${passwordStrength}%` }}
-                        />
-                      </Progress>
+                          value={passwordStrength}
+                          className="h-1"
+                        >
+                          <div
+                            className={`h-1 ${getPasswordStrengthColor()} transition-all duration-300`}
+                            data-slot="indicator"
+                            style={{ width: `${passwordStrength}%` }}
+                          />
+                        </Progress>
 
                       </div>
                     )}

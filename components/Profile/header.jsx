@@ -85,7 +85,7 @@ export function ProfileHeader({
                     <DialogTrigger asChild>
                       <Button onClick={() => setIsDialogOpen(true)}>Edit Profile</Button>
                     </DialogTrigger>
-                    <DialogContent className="w-full max-w-[95vw] sm:max-w-[1100px] px-7 max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="w-full max-w-[95vw] sm:max-w-[1100px] px-7 max-h-[90vh] ">
                       <DialogHeader>
                         <DialogTitle></DialogTitle>
                       </DialogHeader>

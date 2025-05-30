@@ -12,9 +12,9 @@ const MarketPlaceFeed = async () => {
   }
 
   return (
-    <div className="h-screen">
-      <div className="ml-0 md:ml-64 flex-1 overflow-y-auto p-4">
-        <FeedClient section="market"/>
+    <div className="">
+      <div className="ml-0 md:ml-64 flex-1  p-4">
+        <FeedClient section="market" />
       </div>
     </div>
 

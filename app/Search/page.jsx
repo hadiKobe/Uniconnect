@@ -11,7 +11,7 @@ const Search = async () => {
    }
 
    return (
-      <div className="h-screen">
+      <div className="">
          <SearchClient />
       </div>
    )

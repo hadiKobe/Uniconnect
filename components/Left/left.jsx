@@ -115,7 +115,7 @@ export default function LeftSide({ onSettingsClick }) {
       </div>
 
       {/* Navigation with scroll if needed */}
-      <nav className="flex-1 overflow-y-auto p-1">
+      <nav className="flex-1  p-1">
         <ul className="space-y-1">
           {list.map((item) => (
             <li key={item.href}>

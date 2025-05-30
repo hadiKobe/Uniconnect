@@ -27,9 +27,9 @@ const VerifyPage = () => {
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min- items-center justify-center bg-gray-50 px-4">
       <div className="relative bg-white w-full max-w-md rounded-2xl p-6 shadow-md text-center">
-    
+
 
         {loading && (
           <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center rounded-2xl z-50">
@@ -74,7 +74,7 @@ const VerifyPage = () => {
           </InputOTP>
         </div>
 
-     
+
         <Button
           onClick={verifyOtp}
           disabled={otp.length !== 6 || loading || remainingTime === 0}
@@ -99,4 +99,3 @@ const VerifyPage = () => {
 };
 
 export default VerifyPage;
-  

@@ -236,7 +236,7 @@ export function PhotoUploadDialog({ open, onOpenChange, onImageUploaded, initial
                   </div>
                ) : (
                   <div className="relative">
-                     <div className="overflow-hidden rounded-full aspect-square mx-auto w-48 h-48">
+                     <div className=" rounded-full aspect-square mx-auto w-48 h-48">
                         <img src={preview || "/placeholder.svg"} alt="Preview" className="h-full w-full object-cover" />
                      </div>
                      <div className="absolute right-1/4 top-2 flex space-x-2">

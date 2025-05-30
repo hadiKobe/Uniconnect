@@ -131,7 +131,7 @@ export default function InstagramStyleCommentSection({
         </div>
 
         {/* Comments */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1  p-4">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full py-8">
               <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />

@@ -12,7 +12,7 @@ export function FriendItem({ friend, actions }) {
 
   return (
     <div className="flex items-center justify-between h-16 px-3 rounded-lg hover:bg-muted/50">
-      <div className="flex items-center gap-3 overflow-hidden">
+      <div className="flex items-center gap-3 ">
         <Avatar>
           <AvatarImage
             src={friend.profile_picture}

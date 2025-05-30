@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 const SignInPage = () => {
   const router = useRouter();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex flex-col">
+    <div className="min- bg-gradient-to-br from-blue-50 via-white to-purple-50 flex flex-col">
       {/* Header */}
       <header className="w-full p-4 lg:p-6">
         <div className="flex items-center justify-between max-w-7xl mx-auto">

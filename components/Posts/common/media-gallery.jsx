@@ -32,7 +32,7 @@ export function MediaGallery({ media }) {
 
    return (
       <div className="relative w-full mt-2 mb-4">
-         <div className="w-full aspect-video bg-white rounded-md overflow-hidden">
+         <div className="w-full aspect-video bg-white rounded-md ">
             <div
                className="relative w-full h-full"
                style={{

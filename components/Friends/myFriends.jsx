@@ -10,10 +10,10 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
-export function MyFriendsSection({ friends,loading }) {
+export function MyFriendsSection({ friends, loading }) {
   const { data: session } = useSession();
   const currentUserId = session?.user?.id;
- const { removeFriend, loading: unfriendLoading, error } = useUnFriend();
+  const { removeFriend, loading: unfriendLoading, error } = useUnFriend();
 
   const [loadingId, setLoadingId] = useState(null);
   const [statuses, setStatuses] = useState({});
@@ -31,7 +31,7 @@ export function MyFriendsSection({ friends,loading }) {
       await sleep(1000); // wait 1 second
       setStatuses((prev) => ({
         ...prev,
-        [id]: "removed", 
+        [id]: "removed",
       }));
     } catch (err) {
       alert(err.message || "Failed to remove friend.");
@@ -39,64 +39,64 @@ export function MyFriendsSection({ friends,loading }) {
       setLoadingId(null);
     }
   };
-  
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>My Friends</CardTitle>
         <CardDescription>People you are connected with</CardDescription>
       </CardHeader>
-      <CardContent className="max-h-[300px] overflow-y-auto">
-          {loading ? (
-    <div className="flex justify-center py-6">
-      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-    </div>
-  ) :
-        
-        friends.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2">
-            {friends.map((friend) => (
-              <FriendItem
-                key={friend.id}
-                friend={friend}
-                actions={
-                  statuses[friend.id] === "removed" ? (
-                    <Badge variant="default" className="bg-gray-500 hover:bg-gray-600 flex items-center gap-1">
-                      <UserX className="h-4 w-4" />
-                      Removed
-                    </Badge>
-                  ) : (
-                    <div className="flex gap-2">
-                     <Button size="icon" variant="ghost" onClick={() => handleMessageClick(friend.id)}>
+      <CardContent className="max-h-[300px] ">
+        {loading ? (
+          <div className="flex justify-center py-6">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        ) :
 
-                        <MessageSquare className="h-4 w-4" />
-                        <span className="sr-only">Message</span>
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        disabled={loadingId === friend.id}
-                        onClick={() => onRemove(friend.id)}
-                      >
-                        {loadingId === friend.id ? (
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-black" />
-                        ) : (
-                          <UserX className="h-4 w-4" />
-                        )}
-                        <span className="sr-only">Remove friend</span>
-                      </Button>
-                    </div>
-                  )
-                }
-                
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-2">
-            <p className="text-muted-foreground">You don't have any friends yet</p>
-          </div>
-        )}
+          friends.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {friends.map((friend) => (
+                <FriendItem
+                  key={friend.id}
+                  friend={friend}
+                  actions={
+                    statuses[friend.id] === "removed" ? (
+                      <Badge variant="default" className="bg-gray-500 hover:bg-gray-600 flex items-center gap-1">
+                        <UserX className="h-4 w-4" />
+                        Removed
+                      </Badge>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Button size="icon" variant="ghost" onClick={() => handleMessageClick(friend.id)}>
+
+                          <MessageSquare className="h-4 w-4" />
+                          <span className="sr-only">Message</span>
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          disabled={loadingId === friend.id}
+                          onClick={() => onRemove(friend.id)}
+                        >
+                          {loadingId === friend.id ? (
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-black" />
+                          ) : (
+                            <UserX className="h-4 w-4" />
+                          )}
+                          <span className="sr-only">Remove friend</span>
+                        </Button>
+                      </div>
+                    )
+                  }
+
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-2">
+              <p className="text-muted-foreground">You don't have any friends yet</p>
+            </div>
+          )}
       </CardContent>
     </Card>
   );
