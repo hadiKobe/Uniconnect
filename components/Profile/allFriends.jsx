@@ -5,12 +5,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, UserPlus, X } from "lucide-react";
 import {
-    Tooltip,
-    TooltipTrigger,
-    TooltipContent,
-    TooltipProvider,
-  } from "@/components/ui/tooltip";
-  
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
@@ -49,9 +49,16 @@ export function AllFriendsDialog({
                   <Link
                     href={`/Profile/${friend.id}`}
                     prefetch={false}
-                    className="text-sm font-medium hover:underline"
+                    className="text-sm font-medium truncate "
                   >
-                    {friend.first_name} {friend.last_name}
+                    <p className="truncate font-bold hover:underline">
+                      {friend.first_name} {friend.last_name}
+                    </p>
+                    {friend.mutual_friends > 0 && (
+                      <span className="text-sm text-gray-500">
+                        {friend.mutual_friends} mutual friend{friend.mutual_friends > 1 ? "s" : ""}
+                      </span>
+                    )}
                   </Link>
                 </div>
 

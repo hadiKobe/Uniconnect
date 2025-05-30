@@ -24,9 +24,9 @@ export function FriendItem({ friend, actions }) {
           <Link
             href={`/Profile/${friend.id}`}
             prefetch={false}
-            className="text-sm font-medium truncate hover:underline"
+            className="text-sm font-medium truncate "
           >
-            <p className="truncate font-bold">
+            <p className="truncate font-bold hover:underline">
               {friend.first_name} {friend.last_name}
             </p>
             {friend.mutual_friends > 0 && (

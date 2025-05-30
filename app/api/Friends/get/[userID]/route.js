@@ -10,19 +10,28 @@ export async function GET(request, { params }) {
     }
 
     const { userID } = await params;
+    const currentUserID = session.user.id;
 
     const sqlQuery = `
       SELECT 
-        users.id, 
-        users.first_name, 
-        users.last_name, 
-        users.profile_picture
-      FROM connections 
-      JOIN users ON connections.friend_id = users.id
-      WHERE connections.user_id = ?
+        u.id, 
+        u.first_name, 
+        u.last_name, 
+        u.profile_picture,
+        (
+          SELECT COUNT(*) 
+          FROM connections c1
+          JOIN connections c2 ON c1.friend_id = c2.friend_id
+          WHERE c1.user_id = ?        -- current user
+            AND c2.user_id = u.id     -- the friend
+        ) AS mutual_friends
+      FROM connections c
+      JOIN users u ON u.id = c.friend_id
+      WHERE c.user_id = ?
+
     `;
 
-    const friends = await query(sqlQuery, [userID]);
+    const friends = await query(sqlQuery, [currentUserID,userID]);
 
     return Response.json({ friends });
 
