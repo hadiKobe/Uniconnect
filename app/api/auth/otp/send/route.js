@@ -46,7 +46,8 @@ export async function POST(req) {
 
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpToken = jwt.sign({ email, otp }, process.env.JWT_SECRET, { expiresIn: "3m" });
+    const otpToken = jwt.sign({ email, otp }, process.env.JWT_SECRET, { expiresIn: "5m" });
+
 
     // Send email
     const transporter = nodemailer.createTransport({
@@ -61,7 +62,18 @@ export async function POST(req) {
       from: `"LIU Community" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your OTP Code",
-      html: `<div>Use this code: <strong>${otp}</strong>. It expires in 3 minutes.</div>`,
+      html: `
+  <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; padding: 24px; border: 1px solid #eaeaea; border-radius: 8px; background-color: #f9f9f9;">
+    <h2 style="text-align: center; color: #4B0082;">LIU Community Verification</h2>
+    <p>Hello,</p>
+    <p>Thank you for signing up to <strong>LIU Community</strong>. To verify your email address, please use the OTP code below:</p>
+    <div style="font-size: 32px; font-weight: bold; color: #4B0082; text-align: center; margin: 20px 0;">${otp}</div>
+    <p>This code will expire in <strong>5 minutes</strong>. If you did not request this, please ignore this email.</p>
+    <hr style="margin: 24px 0;" />
+    <p style="font-size: 12px; color: #888888;">This is an automated message. Please do not reply.</p>
+    <p style="font-size: 12px; color: #888888;">&copy; ${new Date().getFullYear()} LIU Community</p>
+  </div>
+`
     };
 
     await transporter.sendMail(mailOptions);

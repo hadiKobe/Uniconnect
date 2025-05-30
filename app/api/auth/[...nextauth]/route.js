@@ -37,7 +37,7 @@ export const authOptions = {
           }
 
   
-          const graduationStatus = user.graduation_progress === 100 ? "Graduated" : "UnderGrad";
+         
           return {
             id: user.id.toString(),
             name: `${user.first_name} ${user.last_name}`,
@@ -45,7 +45,7 @@ export const authOptions = {
             major: user.major,
             joined_in: user.joined_in,
             profile_picture: user.profile_picture,
-            graduation_progress:graduationStatus,
+            graduation_progress:user.graduation_progress || 0, // Default to 0 if not set
           };
         } catch (error) {
           console.error("❌ Auth error:", error.message);
@@ -79,7 +79,7 @@ session: {
         session.user.major = token.major || "";
         session.user.joined_in = token.joined_in || "";
         session.user.profile_picture = token.profile_picture || null; // ✅ Add this
-        session.user.graduation_progress = token.graduation_progress || "UnderGrad"; // Default to "Undergraduate"
+        session.user.graduation_progress = token.graduation_progress ||0; 
         
       }
       return session;
@@ -93,7 +93,7 @@ session: {
         token.major = user.major;
         token.joined_in = user.joined_in;
         token.profile_picture = user.profile_picture; 
-        token.graduation_progress = user.graduation_progress || "UnderGrad"; // Default to "Undergraduate"
+        token.graduation_progress = user.graduation_progress ; // Default to "Undergraduate"
       }
       return token;
     },

@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -38,7 +38,9 @@ export default function LeftSide({ onSettingsClick }) {
   const userName = session?.user?.name || `${session?.user?.first_name ?? "User"}`;
   const userImage = session?.user?.profile_picture;
   const userMajor = session?.user?.major || "Unknown Major";
-  const userGraduationProgress = session?.user?.graduation_progress;
+const gradStatus = Number(session?.user?.graduation_progress) === 100 ? "Graduated" : "UnderGrad";
+console.log("Session.profile_picture:", session?.user?.profile_picture);
+
 
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id);
   const { count: notfcount } = useUnreadNotifications(10000, !!session?.user?.id);// Fetch unread notifications count
@@ -86,7 +88,7 @@ export default function LeftSide({ onSettingsClick }) {
       href: "/notifications",
       icon: Bell,
       label: "Notifications",
-      badge: count > 0 ? count : null
+      badge: notfcount > 0 ? count : null
     }
   ];
 
@@ -109,7 +111,7 @@ export default function LeftSide({ onSettingsClick }) {
                 <h3 className="font-medium">{userName}</h3>
               </Link>
               <p className="text-xs text-muted-foreground">{userMajor}</p>
-              <Badge variant="outline" className="mt-1 text-xs">{userGraduationProgress}</Badge>
+              <Badge variant="outline" className="mt-1 text-xs">{gradStatus}</Badge>
             </div>
           </div>
         </Card>
