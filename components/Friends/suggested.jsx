@@ -39,56 +39,56 @@ export function SuggestedFriendsSection({ suggestions, loading }) {
       </CardHeader>
 
       <CardContent className="max-h-[300px] overflow-y-auto">
-          {loading ? (
-    <div className="flex justify-center py-6">
-      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-    </div>
-  ) :
-        suggestions.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2">
-            {suggestions.map((friend) => (
-              <FriendItem
-                key={friend.id}
-                friend={friend}
-                actions={
-                  statuses[friend.id] === "sent" ? (
-                    <Badge
-                    variant="secondary"
-                    className="h-9 px-3 py-2 text-sm font-medium rounded-md flex items-center gap-1 text-blue-600"
-                  >
-                    <Send className="h-4 w-4 mr-1" />
-                    Sent
-                  </Badge>
-
-                  ) : (
-                   <Button
-  size="sm"
-  variant="outline"
-  disabled={loadingId === friend.id}
-  onClick={() => onAdd(friend.id)}
-  className="relative"
->
-  {loadingId === friend.id && (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-black" />
-    </div>
-  )}
-  <span className={loadingId === friend.id ? "invisible" : "flex items-center"}>
-    <UserPlus className="h-4 w-4 mr-1" />
-    Add
-  </span>
-</Button>
-
-                  )
-                }
-              />
-            ))}
+        {loading ? (
+          <div className="flex justify-center py-6">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
-        ) : (
-          <div className="text-center py-2">
-            <p className="text-muted-foreground">No suggestions available at the moment</p>
-          </div>
-        )}
+        ) :
+          suggestions.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {suggestions.map((friend) => (
+                <FriendItem
+                  key={friend.id}
+                  friend={friend}
+                  actions={
+                    statuses[friend.id] === "sent" ? (
+                      <Badge
+                        variant="secondary"
+                        className="h-9 px-3 py-2 text-sm font-medium rounded-md flex items-center gap-1 text-blue-600"
+                      >
+                        <Send className="h-4 w-4 mr-1" />
+                        Sent
+                      </Badge>
+
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={loadingId === friend.id}
+                        onClick={() => onAdd(friend.id)}
+                        className="relative"
+                      >
+                        {loadingId === friend.id && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-black" />
+                          </div>
+                        )}
+                        <span className={loadingId === friend.id ? "invisible" : "flex items-center"}>
+                          <UserPlus className="h-4 w-4 mr-1" />
+                          Add
+                        </span>
+                      </Button>
+
+                    )
+                  }
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-2">
+              <p className="text-muted-foreground">No suggestions available at the moment</p>
+            </div>
+          )}
       </CardContent>
     </Card>
   );
