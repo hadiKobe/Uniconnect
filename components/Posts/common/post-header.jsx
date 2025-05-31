@@ -110,7 +110,7 @@ export default function Header({ headerInfo }) {
          <div className="flex items-center gap-3">
             <Avatar className="relative h-10 w-10 rounded-full overflow-hidden">
                <AvatarImage
-                  src={profile_picture || "/placeholder.svg"}
+                  src={profile_picture || null}
                   alt={first_name}
                />
                <AvatarFallback className="h-full w-full flex items-center justify-center bg-gray-100 text-gray-600 font-medium text-base">

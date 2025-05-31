@@ -47,7 +47,7 @@ export function FriendsCard({
                 {/* Avatar + Name */}
                 <div className="flex items-center gap-3 min-w-0 ">
                   <Avatar className="h-8 w-8 shrink-0 rounded-full overflow-hidden">
-                    <AvatarImage src={friend.profile_picture || "/placeholder.svg"} alt={friend.first_name} />
+                    <AvatarImage src={friend.profile_picture || null} alt={friend.first_name} />
                     <AvatarFallback>{friend.first_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <Link

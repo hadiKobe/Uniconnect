@@ -54,7 +54,7 @@ export function MediaGallery({ media }) {
                         <video src={item.url} className="w-full h-full object-contain" controls poster={item.thumbnail} />
                      ) : (
                         <img
-                           src={item.url || "/placeholder.svg"}
+                           src={item.url || null}
                            alt={`Media ${index + 1}`}
                            className="w-full h-full object-contain"
                         />

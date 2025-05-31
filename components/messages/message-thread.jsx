@@ -62,7 +62,7 @@ export function MessageThread({ conversation = {}, messages = [], onSendMessage,
   } = participant;
 
   const initials = `${first_name[0] || ""}${last_name[0] || ""}`.toUpperCase();
-  const profilePicUrl = profile_picture || "/placeholder.svg";
+  const profilePicUrl = profile_picture || null;
 
   useEffect(() => {
     const container = scrollContainerRef.current;

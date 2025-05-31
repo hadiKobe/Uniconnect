@@ -66,7 +66,7 @@ export default function DropdownMenu({ suggestions, loading, onClose, searchQuer
                   >
                      <Avatar className="relative h-8 w-8 rounded-full overflow-hidden">
 
-                        <AvatarImage src={suggestion.profile_picture || "/placeholder.svg?height=32&width=32"} alt={suggestion.name} />
+                        <AvatarImage src={suggestion.profile_picture || null} alt={suggestion.name} />
                         <AvatarFallback>
                            <User className="h-4 w-4" />
                         </AvatarFallback>

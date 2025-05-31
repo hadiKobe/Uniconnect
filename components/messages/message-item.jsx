@@ -33,7 +33,7 @@ export function MessageItem({ message, isOwnMessage }) {
             {media.map((item, index) => (
               <img
                 key={index}
-                src={item.url || "/placeholder.svg"}
+                src={item.url || null}
                 alt="Message attachment"
                 className={cn(
                   "rounded-md max-h-60 w-auto transition-opacity",

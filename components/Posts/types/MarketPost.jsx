@@ -1,11 +1,32 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { formatDistanceToNow } from "date-fns"
 import { MapPin, Clock, DollarSign, ExternalLink } from "lucide-react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { toast } from "sonner"
 
+import {
+   differenceInDays,
+   differenceInHours,
+   differenceInMinutes,
+   differenceInSeconds,
+} from "date-fns";
+
+
+function getShortTimeAgo(date) {
+   const now = new Date();
+
+   const days = differenceInDays(now, date);
+   if (days > 0) return `${days}d`;
+
+   const hours = differenceInHours(now, date);
+   if (hours > 0) return `${hours}h`;
+
+   const minutes = differenceInMinutes(now, date);
+   if (minutes > 0) return `${minutes}m`;
+
+   const seconds = differenceInSeconds(now, date);
+   return `${seconds}s`;
+}
 export default function MarketPost({ post }) {
    const router = useRouter()
 
@@ -13,7 +34,8 @@ export default function MarketPost({ post }) {
    const handleClick = () => { router.push(`/post/${post.id}`) }
 
    // Format the date to show how long ago the post was created
-   const formattedDate = post.created_at ? formatDistanceToNow(new Date(post.created_at), { addSuffix: true }) : "Recently";
+   const publishedAt = new Date(post.created_at); // ✅ must be here first
+   const timeAgo = getShortTimeAgo(publishedAt); // ✅ now this works
 
    const price = post?.price
    const location = post?.location
@@ -42,7 +64,7 @@ export default function MarketPost({ post }) {
                </div>
                <div className="ml-auto flex items-center text-sm text-gray-500">
                   <Clock className="h-3.5 w-3.5 mr-1" />
-                  {formattedDate}
+                  {timeAgo}
                </div>
             </div>
 

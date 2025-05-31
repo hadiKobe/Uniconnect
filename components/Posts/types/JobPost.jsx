@@ -1,6 +1,5 @@
 "use client"
 
-import { formatDistanceToNow } from "date-fns"
 import { useRouter } from "next/navigation"
 import { Briefcase, DollarSign, MapPin, GraduationCap, Clock, MoreHorizontal, Building, ExternalLink } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -9,6 +8,28 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useSession } from "next-auth/react"
+import {
+   differenceInDays,
+   differenceInHours,
+   differenceInMinutes,
+   differenceInSeconds,
+} from "date-fns";
+
+function getShortTimeAgo(date) {
+   const now = new Date();
+
+   const days = differenceInDays(now, date);
+   if (days > 0) return `${days}d`;
+
+   const hours = differenceInHours(now, date);
+   if (hours > 0) return `${hours}h`;
+
+   const minutes = differenceInMinutes(now, date);
+   if (minutes > 0) return `${minutes}m`;
+
+   const seconds = differenceInSeconds(now, date);
+   return `${seconds}s`;
+}
 
 const JobPost = ({ post, onDelete }) => {
    const { data: session } = useSession();
@@ -20,7 +41,8 @@ const JobPost = ({ post, onDelete }) => {
       router.push(`/Messages?userA=${currentUserId}&userB=${post.user_id}`);
    };
    // Format the date to show how long ago the post was created
-   const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true })
+   const publishedAt = new Date(post.created_at); // ✅ must be here first
+   const timeAgo = getShortTimeAgo(publishedAt); // ✅ now this works
 
    // Handle click to navigate to single post page
    const handleClick = () => {
@@ -41,7 +63,7 @@ const JobPost = ({ post, onDelete }) => {
                <div className="mr-4">
                   <Avatar className="h-16 w-16 overflow-hidden rounded-md cursor-pointer border border-gray-200" onClick={handleProfileClick}>
                      <AvatarImage
-                        src={post.profile_picture || "/placeholder.svg"}
+                        src={post.profile_picture || null}
                         alt={`${post.user_first_name} ${post.user_last_name}`}
                      />
                      <AvatarFallback className="bg-blue-100 text-blue-600 rounded-md">

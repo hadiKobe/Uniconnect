@@ -22,7 +22,7 @@ export function ConversationItem({ conversation, isActive, onClick }) {
   const { lastMessageTime = conversation.lastUpdated || "", lastMessage = "" } = conversation;
 
   // Fallback to placeholder image if profile_picture is null or undefined
-  const profilePicUrl = profile_picture || "/placeholder.svg";
+  const profilePicUrl = profile_picture || null;
 
 
   let formattedTime = "";
