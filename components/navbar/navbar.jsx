@@ -49,32 +49,30 @@ export default function Navbar() {
   }, [info, loading, setUserInfo])
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
-      <div className="container flex h-16 items-center justify-between px-4 sm:px-6">
-        {/* Left section: Mobile menu + Logo */}
-        <div className="flex items-center gap-2">
-          {/* Mobile menu (hamburger icon) */}
-          <div className="md:hidden">
-            <MobileMenu />
-          </div>
+<header className="sticky top-0 z-50 w-full border-b bg-background">
+  <div className="relative flex items-center h-16 px-4 sm:px-6">
+    
+    {/* Left: Mobile Menu + Logo */}
+    <div className="flex items-center gap-2">
+      <div className="md:hidden">
+        <MobileMenu />
+      </div>
+      <div className="flex items-center gap-2 font-semibold">
+        <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
+        <span className="text-lg sm:text-xl font-bold text-gray-900">
+          <span className="hidden sm:inline">UniConnect</span>
+        </span>
+      </div>
+    </div>
 
-          {/* Logo */}
-          <div className="flex items-center gap-2 font-semibold">
-            <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-            <span className="text-lg sm:text-xl font-bold text-gray-900">
-              <span className="hidden sm:inline">UniConnect</span>
-             
-            </span>
-          </div>
-        </div>
-
-        {/* Center section: Search bar */}
-        <div className="flex-1 max-w-md mx-4">
-          <SearchBar />
-        </div>
+    {/* Center: SearchBar (always centered) */}
+<div className="flex-1 max-w-md mx-4">
+  <SearchBar />
+</div>
 
         {/* Right section: Notifications + Add Post */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 sm:hidden">
+
           {/* Notifications - visible on all screen sizes */}
           {notifications.map((feed, index) => (
             <Link
