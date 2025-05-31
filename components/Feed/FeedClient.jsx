@@ -222,7 +222,7 @@ export default function FeedClient({ section }) {
                   >
                     <SheetHeader className="px-0 py-0 ">
                       <SheetTitle className="text-xl px-5 flex items-center gap-2">
-                        Filter Options
+                        Filter
                         <Filter className="h-4 w-4" />
                       </SheetTitle>
                       <Separator className="w-24 h-[1.5px] rounded-full mt-3 mb-2 mx-auto" />
