@@ -16,7 +16,7 @@ const SignInPage = () => {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <Button
             variant="ghost"
-            onClick={() => router.back()}
+            onClick={() => router.push("/")}
             className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

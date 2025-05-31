@@ -20,7 +20,7 @@ const SignupPage = () => {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <Button
             variant="ghost"
-            onClick={() => router.back()}
+            onClick={() => router.push("/SignIn")}
             className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
             disabled={loading}
           >
