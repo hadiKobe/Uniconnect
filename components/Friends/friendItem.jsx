@@ -8,7 +8,7 @@ export function FriendItem({ friend, actions }) {
     return first + last;
   };
 
-  console.log(friend.mutual_friends, actions);
+  // console.log(friend.mutual_friends, actions);
 
   return (
     <div className="flex items-center justify-between h-16 px-3 rounded-lg hover:bg-muted/50">

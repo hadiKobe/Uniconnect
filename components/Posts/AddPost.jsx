@@ -122,7 +122,7 @@ export function AddPost({ onPostAdded }) {
         details.location = document.getElementById("job-location")?.value || "";
         details.type = document.getElementById("job-type")?.textContent || "";
         details.position = document.getElementById("job-position")?.value || "";
-        console.log(details.position);
+        // console.log(details.position);
         break;
       default:
         return;

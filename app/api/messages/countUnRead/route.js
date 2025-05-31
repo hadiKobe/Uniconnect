@@ -17,7 +17,7 @@ export async function GET(req) {
     }
 
     const counts = await getUnreadCountsByChat(userId);
-    console.log("Unread counts:", counts);
+    // console.log("Unread counts:", counts);
 
     return NextResponse.json(counts, { status: 200 }); // ✅ Correct way
   } catch (error) {

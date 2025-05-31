@@ -63,7 +63,7 @@ export async function PATCH(req) {
    try { result = await query(sqlQuery, params); }
 
    catch (error) {
-      console.log(result);
+      // console.log(result);
       return Response.json({ error, message: 'Internal Server Error', params }, { status: 500 });
    }
 

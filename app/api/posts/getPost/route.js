@@ -148,7 +148,7 @@ export async function GET(request) {
     // console.log(posts);
     return Response.json(posts);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return Response.json({ error: "Internal Server Error", }, { status: 500 });
   }
 }

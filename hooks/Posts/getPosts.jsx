@@ -27,7 +27,7 @@ export function useGetPosts(filter = '', section = 'home', specific = '', locati
          .join("&")
 
       const finalPath = `/api/posts/getPost?${params}`
-      console.log("Fetching:", finalPath)
+      // console.log("Fetching:", finalPath)
 
       try {
          const response = await fetch(finalPath)

@@ -31,11 +31,10 @@ export default function MobileMenu() {
   const { data: session } = useSession();
   const userInfo = useUserStore((state) => state.userInfo);
   const userId = session?.user?.id;
+  const userName = `${userInfo?.first_name} ${userInfo?.last_name}` || "Guest User";
+  const userImage = userInfo?.profile_picture || null;
 
-  const userName = userInfo?.name || "Guest User";
-  const userImage = userInfo?.profile_picture ||  null;
 
-  
 
 
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id)
@@ -96,8 +95,8 @@ export default function MobileMenu() {
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors group"
             >
-              <Avatar className="h-10 w-10 ring-2 ring-blue-100">
-                <AvatarImage src={userImage || "/placeholder.svg"} alt="Profile" />
+              <Avatar className="h-10 w-10 ring-2 rounded-full overflow-hidden ring-blue-100">
+                <AvatarImage src={userImage} alt="Profile" />
                 <AvatarFallback className="bg-blue-600 text-white font-semibold">{userName?.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
