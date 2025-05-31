@@ -57,18 +57,21 @@ export default function Navbar() {
       <div className="md:hidden">
         <MobileMenu />
       </div>
-      <div className="flex items-center gap-2 font-semibold">
-        <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-        <span className="text-lg sm:text-xl font-bold text-gray-900">
-          <span className="hidden sm:inline">UniConnect</span>
-        </span>
+<div className="hidden sm:flex items-center gap-2 font-semibold">
+  <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
+  <span className="text-lg sm:text-xl font-bold text-gray-900">UniConnect</span>
+
+
       </div>
     </div>
 
     {/* Center: SearchBar (always centered) */}
-<div className="flex-1 max-w-md mx-4">
+{/* Center: SearchBar (always centered) */}
+<div className="w-full sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:max-w-md sm:w-full px-2">
   <SearchBar />
 </div>
+
+
 
         {/* Right section: Notifications + Add Post */}
         <div className="flex items-center gap-1 sm:gap-2 sm:hidden">
