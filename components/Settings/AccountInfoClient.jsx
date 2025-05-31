@@ -234,7 +234,7 @@ const AccountInfo = () => {
                         </CardHeader>
                         <CardContent className="flex flex-col items-center space-y-4 ">
                            <Avatar className="h-32 w-32 rounded-full overflow-hidden">
-                              <AvatarImage src={formData.profile_picture} alt="Profile" />
+                              <AvatarImage src={formData.profile_picture || null} alt="Profile" />
                               <AvatarFallback className="text-4xl">
                                  <User size={64} />
                               </AvatarFallback>
