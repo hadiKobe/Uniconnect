@@ -78,7 +78,7 @@ export function ProfileHeader({
           <div className="flex-shrink-0 mx-auto">
             <Avatar className="h-24 w-24 md:h-32 md:w-32 rounded-full overflow-hidden">
               <AvatarImage
-                src={student.profile_picture || "/placeholder.svg"}
+                src={student.profile_picture || null}
                 alt={student.first_name}
               />
               <AvatarFallback className="text-2xl">

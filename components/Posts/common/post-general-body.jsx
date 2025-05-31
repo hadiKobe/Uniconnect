@@ -47,7 +47,7 @@ export default function GeneralBody({ bodyInfo, maxLength = 280 }) {
     media_urls?.map((url) => ({
       url: url,
       type: isVideo(url) ? "video" : "image",
-      thumbnail: isVideo(url) ? "/placeholder.svg" : url, // Use a placeholder for video thumbnails
+      thumbnail: isVideo(url) ? null : url, // Use a placeholder for video thumbnails
     })) || []
 
   return (

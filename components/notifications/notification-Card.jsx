@@ -16,7 +16,7 @@ export function NotificationItem({ link, message, created_at, is_read, name, pro
         {/* Avatar */}
         <div className="flex-shrink-0">
           <Avatar className="relative h-10 w-10 rounded-full overflow-hidden">
-            <AvatarImage src={profile_picture || "/placeholder.svg"} alt={name || "User"} />
+            <AvatarImage src={profile_picture ||null} alt={name || "User"} />
             <AvatarFallback>{name?.charAt(0) || "U"}</AvatarFallback>
           </Avatar>
         </div>

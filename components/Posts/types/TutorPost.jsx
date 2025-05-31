@@ -7,9 +7,31 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useSession } from "next-auth/react"
+
+import {
+   differenceInDays,
+   differenceInHours,
+   differenceInMinutes,
+   differenceInSeconds,
+} from "date-fns";
+
+function getShortTimeAgo(date) {
+   const now = new Date();
+
+   const days = differenceInDays(now, date);
+   if (days > 0) return `${days}d`;
+
+   const hours = differenceInHours(now, date);
+   if (hours > 0) return `${hours}h`;
+
+   const minutes = differenceInMinutes(now, date);
+   if (minutes > 0) return `${minutes}m`;
+
+   const seconds = differenceInSeconds(now, date);
+   return `${seconds}s`;
+}
 
 export default function TutorPost({ post, onDelete }) {
    const { data: session } = useSession();
@@ -21,7 +43,8 @@ export default function TutorPost({ post, onDelete }) {
       router.push(`/Messages?userA=${currentUserId}&userB=${post.user_id}`);
    };
    // Format the date to be more readable
-   const formattedDate = post.created_at ? formatDistanceToNow(new Date(post.created_at), { addSuffix: true }) : "Recently"
+   const publishedAt = new Date(post.created_at); // ✅ must be here first
+   const timeAgo = getShortTimeAgo(publishedAt); // ✅ now this works
 
    // Handle click to navigate to single post page
    const handleClick = () => { router.push(`/post/${post.id}`) }
@@ -117,7 +140,7 @@ export default function TutorPost({ post, onDelete }) {
             <div className="flex items-center justify-between pt-3 border-t border-gray-200">
                <div className="flex items-center text-xs text-gray-500">
                   <Clock className="h-3.5 w-3.5 mr-1" />
-                  {formattedDate}
+                  {timeAgo}
                </div>
 
                <Button

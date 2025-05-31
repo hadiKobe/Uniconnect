@@ -174,7 +174,7 @@ export default function FeedClient({ section }) {
 
         {/* Filters + New Post - Sticky header */}
         <div className=" py-2 px-3">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1">
             <Button
               variant={filter === "" ? "default" : "ghost"}
               size="sm"

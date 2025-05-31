@@ -277,7 +277,7 @@ export function AddPost({ onPostAdded }) {
                   {mediaPreviews.map((preview, index) => (
                     <div key={index} className="relative group">
                       <img
-                        src={preview || "/placeholder.svg"}
+                        src={preview || null}
                         alt={`Preview ${index}`}
                         className="h-24 w-full object-cover rounded-md"
                       />

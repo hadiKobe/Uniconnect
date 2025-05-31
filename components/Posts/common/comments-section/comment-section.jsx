@@ -164,7 +164,7 @@ const{userInfo}= useUserStore();
         <div className="border-t p-3 bg-background sticky bottom-0">
           <form className="flex items-center gap-2" onSubmit={handleSubmit}>
             <Avatar className="relative h-8 w-8 flex-shrink-0 rounded-full overflow-hidden">
-              <AvatarImage src={userImage || "/placeholder.svg"} alt={currentUser.name} />
+              <AvatarImage src={userImage || null} alt={currentUser.name} />
               <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="relative flex-1">
