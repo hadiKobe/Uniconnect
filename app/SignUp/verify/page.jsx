@@ -16,8 +16,10 @@ const VerifyPage = () => {
   })
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-4 py-8">
-      <div className="relative bg-white w-full max-w-md rounded-3xl p-8 shadow-xl border border-gray-100 text-center">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-4 sm:px-6 py-6 sm:py-10">
+
+      <div className="relative bg-white w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-xl border border-gray-100 text-center">
+
         {loading && (
           <div className="absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center rounded-3xl z-50">
             <div className="bg-blue-50 p-4 rounded-full mb-4">
@@ -59,19 +61,20 @@ const VerifyPage = () => {
         </div>
 
         {/* OTP Input */}
-        <div className="mb-8 flex justify-center">
+        <div className="mb-8 flex justify-center overflow-x-hidden">
           <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-            <InputOTPGroup className="gap-3">
+            <InputOTPGroup className="gap-2 flex-nowrap justify-center max-w-full">
               {[...Array(6)].map((_, i) => (
                 <InputOTPSlot
                   key={i}
                   index={i}
-                  className="w-12 h-12 text-xl font-bold border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 rounded-xl transition-all duration-200 hover:border-gray-300"
+                  className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 min-w-0 flex-shrink text-xl font-bold border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 rounded-xl transition-all duration-200 hover:border-gray-300"
                 />
               ))}
             </InputOTPGroup>
           </InputOTP>
         </div>
+
 
         {/* Verify Button */}
         <Button
