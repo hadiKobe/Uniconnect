@@ -1,7 +1,12 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDistanceToNow } from "date-fns";
+import {
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+} from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -17,6 +22,22 @@ import {
 import { MoreHorizontal, Trash } from "lucide-react";
 import useDeleteComment from "@/hooks/Posts/Comments/deleteComment";
 
+function getShortTimeAgo(date) {
+  const now = new Date();
+
+  const days = differenceInDays(now, date);
+  if (days > 0) return `${days}d`;
+
+  const hours = differenceInHours(now, date);
+  if (hours > 0) return `${hours}h`;
+
+  const minutes = differenceInMinutes(now, date);
+  if (minutes > 0) return `${minutes}m`;
+
+  const seconds = differenceInSeconds(now, date);
+  return `${seconds}s`;
+}
+
 export default function CommentItem({
   comment,
   author_id,
@@ -27,10 +48,11 @@ export default function CommentItem({
   const [isDeleting, setIsDeleting] = useState(false);
   const { data: session } = useSession();
   const currentUserId = Number.parseInt(session?.user?.id, 10);
-  
+
   const { id: commentId, content, created_at, user } = comment;
   const userImage = user.profile_picture || null;
-  const timeAgo = formatDistanceToNow(new Date(created_at), { addSuffix: true });
+  const publishedAt = new Date(created_at); // ✅ must be here first
+  const timeAgo = getShortTimeAgo(publishedAt); // ✅ now this works
 
   const { loading, error, success, fetchDeleteComment } = useDeleteComment();
 

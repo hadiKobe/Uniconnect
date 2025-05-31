@@ -3,9 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const patchDate = (date) => {
-   const dateFormat = new Date(parseInt(date.year), parseInt(date.month));
-   return dateFormat;
-}
+   const year = parseInt(date.year);
+   const month = parseInt(date.month);
+
+   if (isNaN(year) || isNaN(month)) return null; // or return undefined
+
+   return new Date(year, month); // Month is 0-indexed in JS
+};
+
 
 // user can change his name, major, joined_in, bio, profile_picture, address, phone, expected_graduation_date, graduation process, and gpa
 export async function PATCH(req) {
@@ -67,29 +72,29 @@ export async function PATCH(req) {
       return Response.json({ error, message: 'Internal Server Error', params }, { status: 500 });
    }
 
-  if (result.affectedRows === 0) {
-  return Response.json({ error: "Failed to update user info" }, { status: 500 });
-}
+   if (result.affectedRows === 0) {
+      return Response.json({ error: "Failed to update user info" }, { status: 500 });
+   }
 
-// ✅ Fetch updated user info
+   // ✅ Fetch updated user info
 
- // ✅ Fetch updated user info safely
-try {
-  const [updatedUser] = await query(`
+   // ✅ Fetch updated user info safely
+   try {
+      const [updatedUser] = await query(`
     SELECT id, first_name, last_name, major, joined_in, bio, profile_picture,
            address, phone, expected_graduation_date, graduation_progress, gpa
     FROM users
     WHERE id = ?
   `, [userId]);
 
-  return Response.json(
-    { message: "User info updated successfully", updatedUser },
-    { status: 200 }
-  );
-} catch (error) {
-  return Response.json(
-    { error: "Failed to fetch updated user", details: error },
-    { status: 500 }
-  );
-}
+      return Response.json(
+         { message: "User info updated successfully", updatedUser },
+         { status: 200 }
+      );
+   } catch (error) {
+      return Response.json(
+         { error: "Failed to fetch updated user", details: error },
+         { status: 500 }
+      );
+   }
 }

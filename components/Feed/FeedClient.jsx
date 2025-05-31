@@ -6,11 +6,13 @@ import LoadingPage from "@/components/Loading/LoadingPage"
 import { useFilterStore } from "@/hooks/Filters/useFilterStore"
 import { usePathname } from "next/navigation"
 
+import { Separator } from "@/components/ui/separator";
 import { Button } from "../ui/button"
-import { List, GraduationCap, User, Plus, Briefcase, BookOpen, ShoppingBag, Filter } from "lucide-react"
+import { List, GraduationCap, User, Plus, Briefcase, BookOpen, ShoppingBag, Filter, MapPin } from "lucide-react"
 import { AddPost } from "../Posts/AddPost"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 
 const PAGE_SIZE = 20
 const PRELOAD_TRIGGER_INDEX = 15
@@ -53,6 +55,7 @@ export default function FeedClient({ section }) {
     default: "Search...",
   };
 
+  const [open, setOpen] = useState(false)
 
   const [page, setPage] = useState(1)
   const triggerRef = useRef()
@@ -150,16 +153,19 @@ export default function FeedClient({ section }) {
           <div className="flex items-center gap-1 ">
             {specific && (
               <Badge variant="secondary" className="flex items-center gap-1">
+                {getSectionIcon()}
                 {specific}
               </Badge>
             )}
             {location && (
               <Badge variant="secondary" className="flex items-center gap-1">
+                <MapPin className="w-4 h-4" />
                 {location}
               </Badge>
             )}
             {filter &&
               <Badge variant="secondary" className="flex items-center gap-1">
+                {filter === "major" ? <GraduationCap className="w-4 h-4" /> : <User className="w-4 h-4" />}
                 {filter}
               </Badge>
             }
@@ -202,6 +208,89 @@ export default function FeedClient({ section }) {
               MyFeed
             </Button>
 
+            {section !== 'home' &&
+              <div className="lg:hidden">
+                <Sheet open={open} onOpenChange={setOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Filter className="h-4 w-4" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="top"
+                    className="bg-white p-0 pt-4 rounded-b-2xl"
+                  >
+                    <SheetHeader className="px-0 py-0 ">
+                      <SheetTitle className="text-xl px-5 flex items-center gap-2">
+                        Filter Options
+                        <Filter className="h-4 w-4" />
+                      </SheetTitle>
+                      <Separator className="w-24 h-[1.5px] rounded-full mt-3 mb-2 mx-auto" />
+
+                    </SheetHeader>
+                    <div className="flex flex-col gap-4 pt-1 pb-5 px-3">
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm font-bold text-gray-700 min-w-[60px] flex-1 flex items-center">
+                          {labels[section]}:
+                        </label>
+                        <div className="flex-4">
+                          <SearchBar
+                            initial={specificForm}
+                            placeholder={placeholders[section] || placeholders.default}
+                            onChange={setSpecificForm}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm font-bold text-gray-700 min-w-[60px] flex-1 flex items-center">
+                          Location:
+                        </label>
+                        <div className="flex-4">
+                          <SearchBar
+                            initial={locationForm}
+                            placeholder="e.g. Beirut, Campus Sour..."
+                            onChange={setLocationForm}
+                          />
+                        </div>
+                      </div>
+
+
+                      <div className="flex gap-2 pt-2 justify-end">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            setPage(1); // Reset page to 1
+                            resetFilters(pathname)
+                            setSpecificForm(''); // Clear specific form
+                            setLocationForm(''); // Clear location form
+                            setOpen(false); // Close sheet if open
+                          }}
+                          className="text-sm"
+                        >
+                          Reset Filters
+                        </Button>
+
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() => {
+                            setPage(1);
+                            set({ specific: specificForm, location: locationForm });
+                            setOpen(false); // Close sheet if open
+                          }}
+                          className="text-sm"
+                          disabled={!specificForm && !locationForm}
+                        >
+                          Search
+                        </Button>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>}
+
             <div className="hidden sm:block">
               <Dialog open={showAddPost} onOpenChange={setShowAddPost}>
                 <DialogTrigger asChild>
@@ -226,28 +315,6 @@ export default function FeedClient({ section }) {
             </div>
           </div>
         </div>
-
-        {/* Mobile filters - horizontal scrollable row */}
-        {section !== "home" && (
-          <div className="lg:hidden overflow-x-auto pb-2 ">
-            <div className="flex items-center gap-1">
-              <div className="flex-shrink-0">
-                <SearchBar
-                  initial={specificForm}
-                  name={section.charAt(0).toUpperCase() + section.slice(1)}
-                  onChange={setSpecificForm}
-                />
-              </div>
-              <div className="flex-shrink-0">
-                <SearchBar
-                  initial={locationForm}
-                  name={section.charAt(0).toUpperCase() + section.slice(1)}
-                  onChange={setLocationForm}
-                />
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Main content area */}

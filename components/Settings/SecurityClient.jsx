@@ -128,7 +128,7 @@ export default function SecurityClient() {
                <div className="text-sm text-muted-foreground mb-2">
                   Did you forget your password Again, Reallyy? Reset it here
                </div>
-               <Button variant="outline" className="w-full" disabled={loading}>
+               <Button variant="outline" className="w-full" disabled={loading} onClick={() => {toast.info("Feature coming soon!")}}>
                   Forgot Password
                </Button>
             </CardFooter>

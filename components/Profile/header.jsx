@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import { useState ,useEffect,useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 export function ProfileHeader({
   student,
@@ -50,23 +50,23 @@ export function ProfileHeader({
   const handleMessageClick = (id) => {
     router.push(`/Messages?userA=${userID}&userB=${id}`);
   };
- useEffect(() => {
-  if (isCurrentUser && !hasShownToast.current) {
-    const missingFields = [];
+  useEffect(() => {
+    if (isCurrentUser && !hasShownToast.current) {
+      const missingFields = [];
 
-    if (!student.bio) missingFields.push("bio");
-    if (!student.major) missingFields.push("major");
-    if (!student.graduation_progress) missingFields.push("graduation progress");
-    if (!student.gpa) missingFields.push("GPA");
-    if (!student.expected_graduation_date) missingFields.push("expected graduation date");
-    if (!student.address) missingFields.push("address");
+      if (!student.bio) missingFields.push("bio");
+      if (!student.major) missingFields.push("major");
+      if (!student.graduation_progress) missingFields.push("graduation progress");
+      if (!student.gpa) missingFields.push("GPA");
+      if (!student.joined_in) missingFields.push("expected graduation date");
+      if (!student.address) missingFields.push("address");
 
-    if (missingFields.length >= 2) {
-      toast.info("Complete your profile for a better experience ✨");
-      hasShownToast.current = true; // ✅ only update *after* toast shown
+      if (missingFields.length >= 2) {
+        toast.info("Complete your profile for a better experience ✨");
+        hasShownToast.current = true; // ✅ only update *after* toast shown
+      }
     }
-  }
-}, [student, isCurrentUser]);
+  }, [student, isCurrentUser]);
 
 
   return (
@@ -75,7 +75,7 @@ export function ProfileHeader({
       <CardContent className="p-6">
         <div className="flex flex-col md:flex-row gap-6 items-start">
           {/* Avatar */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 mx-auto">
             <Avatar className="h-24 w-24 md:h-32 md:w-32 rounded-full overflow-hidden">
               <AvatarImage
                 src={student.profile_picture || "/placeholder.svg"}
@@ -90,8 +90,8 @@ export function ProfileHeader({
           {/* Profile Info */}
           <div className="flex-1 space-y-4">
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="w-full flex items-center justify-between gap-7">
+                <div className="flex-1">
                   <h1 className="text-2xl font-bold">
                     {student.first_name} {student.last_name}
                   </h1>
@@ -100,17 +100,19 @@ export function ProfileHeader({
 
                 {/* Right Side Buttons */}
                 {isCurrentUser ? (
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button onClick={() => setIsDialogOpen(true)}>Edit Profile</Button>
-                    </DialogTrigger>
-                    <DialogContent className="w-full max-w-[95vw] sm:max-w-[1100px] px-7 max-h-[90vh] overflow-y-auto ">
-                      <DialogHeader>
-                        <DialogTitle></DialogTitle>
-                      </DialogHeader>
-                      <AccountInfo />
-                    </DialogContent>
-                  </Dialog>
+                  <div>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button className="whitespace-nowrap">Edit Profile</Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-full max-w-[95vw] sm:max-w-[1100px] px-7 max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle>Edit Profile</DialogTitle>
+                        </DialogHeader>
+                        <AccountInfo />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 ) : (
                   <div className="flex gap-2 flex-wrap">
                     <Button
@@ -171,18 +173,18 @@ export function ProfileHeader({
               <div className="flex items-center gap-2">
                 <GraduationCap className="h-4 w-4" />
                 <span>
-                  {student.major || "Undeclared"} •{" "}
-                  {student.graduation_progress ?? "N/A"} • GPA:{" "}
+                  {student.major || "Undeclared"} • {" "}
+                  {student.graduation_progress ?? "N/A"}% • GPA:{" "}
                   {student.gpa !== null && student.gpa !== undefined
                     ? student.gpa
                     : "I prefer not to share my GPA"}
                 </span>
               </div>
 
-              {student.expected_graduation_date &&
+              {student.joined_in &&
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span>{student.expected_graduation_date}</span>
+                  <span>{student.joined_in.split('T')[0]}</span>
                 </div>}
 
               {student.address &&

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 
-export default function DateSelector({ startYear, year, month, onChange,name }) {
+export default function DateSelector({ startYear, year, month, onChange }) {
 
    // Get current year and calculate year range
    const currentYear = new Date().getFullYear()

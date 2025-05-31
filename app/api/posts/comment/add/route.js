@@ -38,7 +38,7 @@ export async function POST(request) {
       const commentId = result.insertId;
       // Fetch full comment with user info
       const [newComment] = await query(
-        `SELECT c.id, c.content, c.created_at, u.id AS user_id, u.first_name, u.last_name
+        `SELECT c.id, c.content, c.created_at, u.id AS user_id, u.first_name, u.last_name, u.profile_picture
          FROM comments c
          JOIN users u ON c.user_id = u.id
          WHERE c.id = ?`,

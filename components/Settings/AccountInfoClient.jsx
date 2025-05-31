@@ -45,11 +45,6 @@ const AccountInfo = () => {
       gpa: "",
    })
 
-   const handleImageUploaded = (imageUrl) => {
-      handleInputChange({ target: { name: "profile_picture", value: imageUrl } })
-      setOpenUploadPhoto(false)
-   }
-
    const handleInputChange = (e) => {
       const { name, value } = e.target;
 
@@ -79,6 +74,11 @@ const AccountInfo = () => {
       }
    };
 
+   const handleImageUploaded = (imageUrl) => {
+      handleInputChange({ target: { name: "profile_picture", value: imageUrl } })
+      setOpenUploadPhoto(false)
+   }
+
    useEffect(() => {
       if (userInfo) {
          const { joined_in = "", expected_graduation_date = "" } = userInfo
@@ -107,61 +107,83 @@ const AccountInfo = () => {
          }
          setFormData(sanitizedUserInfo)
          setOriginalData(sanitizedUserInfo)
-         setJoinedInYear(sanitizedUserInfo.joined_in.year || "0")
+         setJoinedInYear(sanitizedUserInfo.joined_in.year || 0)
       }
 
    }, [userInfo])
 
    useEffect(() => {
-      //   console.log("changed fields :", changedFields)
+      console.log("changed fields :", changedFields)
    }, [changedFields])
 
-   // useEffect(() => {
-   //    console.log("form data :", formData)
-   // }, [formData])
+   useEffect(() => {
+      console.log("form data :", formData)
+   }, [formData])
 
    // useEffect(() => {
    //    console.log("original data :", originalData)
    // }, [originalData])
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+   useEffect(() => {
+      const joinedYear = parseInt(formData.joined_in?.year);
+      const expectedYear = parseInt(formData.expected_graduation_date?.year);
 
-  if (
-    changedFields.first_name === "" ||
-    changedFields.last_name === "" ||
-    changedFields.major === ""
-  ) {
-    toast.error("Please fill in all required fields");
-    return;
-  }
+      if (
+         formData.joined_in.year !== '' &&
+         expectedYear &&
+         expectedYear < joinedYear
+      ) {
+         handleInputChange({
+            target: {
+               name: 'expected_graduation_date',
+               value: {year: '', month: ''}
+            }
+         })
 
-  const result = await fetchChangeInfo(changedFields);
+         setFormData((prev) => ({
+            ...prev,
+            expected_graduation_date: { year: '', month: '' }
+         }));
+      }
+   }, [formData.expected_graduation_date.year, formData.joined_in.year]);
 
-  if (!result.infoChanged) {
-    if (result?.notAllowedChangeMajor !== undefined)
-      toast.error("Major changed in the last 5 months");
-    else toast.error(result.msg || "Update failed");
-    return;
-  }
+   const handleSubmit = async (e) => {
+      e.preventDefault();
 
-  toast.success("Info changed successfully");
+      if (
+         changedFields.first_name === "" ||
+         changedFields.last_name === "" ||
+         changedFields.major === ""
+      ) {
+         toast.error("Please fill in all required fields");
+         return;
+      }
 
-  // Clear changes and wait 1 second before reload
-  setChangedFields({});
-  setOriginalData({ ...formData });
+      const result = await fetchChangeInfo(changedFields);
 
-  setTimeout(() => {
-    window.location.reload();
-  }, 1000); // 1000ms = 1 second
-};
+      if (!result.infoChanged) {
+         if (result?.notAllowedChangeMajor !== undefined)
+            toast.error("Major changed in the last 5 months");
+         else toast.error(result.msg || "Update failed");
+         return;
+      }
+
+      toast.success("Info changed successfully");
+
+      // Clear changes and wait 1 second before reload
+      setChangedFields({});
+      setOriginalData({ ...formData });
+
+      setTimeout(() => {
+         window.location.reload();
+      }, 1000); // 1000ms = 1 second
+   };
 
 
    const handleCancel = () => {
-      if (originalData) {
-         const originalFormData = JSON.parse(originalData)
-         setFormData(originalFormData)
-      }
+      if (originalData) setFormData(originalData)
+      setChangedFields({});
+      setJoinedInYear(originalData.joined_in.year || 0);
    }
 
    const isModified = originalData ? JSON.stringify(formData) !== JSON.stringify(originalData) : false
@@ -189,20 +211,20 @@ const handleSubmit = async (e) => {
             <LoadingPage />
             :
             <div className="container mx-auto py-6 max-w-3xl">
-               <div className="flex items-center justify-between mb-6">
-                  <h1 className="text-3xl font-bold">Account Settings</h1>
-
-                  <div className="hidden md:flex justify-end gap-4">
-                     <Button type="button" variant="outline" onClick={handleCancel}>
-                        Cancel
-                     </Button>
-                     <Button type="submit" form="account-form" disabled={!isModified || loadingChange}>
-                        Save Changes
-                     </Button>
-                  </div>
-               </div>
 
                <form id="account-form" onSubmit={handleSubmit}>
+                  <div className="flex items-center justify-between mb-6">
+                     <h1 className="text-3xl font-bold">Account Settings</h1>
+
+                     <div className="hidden md:flex justify-end gap-4">
+                        <Button type="button" variant="outline" onClick={handleCancel} disabled={!isModified || loadingChange}>
+                           Cancel
+                        </Button>
+                        <Button type="submit" form="account-form" disabled={!isModified || loadingChange}>
+                           Save Changes
+                        </Button>
+                     </div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                      {/* Profile Picture Section */}
                      <Card>
@@ -318,8 +340,8 @@ const handleSubmit = async (e) => {
                                  <Label>Joined In</Label>
                                  <DateSelector
                                     name="joined"
-                                    year={originalData.joined_in.year || 'none'}
-                                    month={originalData.joined_in.month}
+                                    year={formData.joined_in.year || 'none'}
+                                    month={formData.joined_in.month}
                                     onChange={(value) => {
                                        handleInputChange({
                                           target: {
@@ -335,9 +357,9 @@ const handleSubmit = async (e) => {
                                  <Label>Expected Graduation</Label>
                                  <DateSelector
                                     name="expected"
-                                    startYear={joinedInYear}
-                                    year={originalData.expected_graduation_date.year || 'none'}
-                                    month={originalData.expected_graduation_date.month}
+                                    startYear={joinedInYear || 2005}
+                                    year={formData.expected_graduation_date.year || 'none'}
+                                    month={formData.expected_graduation_date.month}
                                     onChange={(value) => {
                                        handleInputChange({
                                           target: {
@@ -374,9 +396,9 @@ const handleSubmit = async (e) => {
                                  className="mb-2"
                               />
                               <div className="relative w-full overflow-hidden rounded">
-                              <Progress value={formData.graduation_progress} className="h-2" />
+                                 <Progress value={formData.graduation_progress} className="h-2" />
                               </div>
-                             
+
                               <p className="text-sm text-muted-foreground">Percentage of credits completed</p>
                            </div>
                         </CardContent>
@@ -385,10 +407,10 @@ const handleSubmit = async (e) => {
                </form >
 
                <div className="flex md:hidden justify-end gap-4 mt-6">
-                  <Button type="button" variant="outline" onClick={handleCancel}>
+                  <Button type="button" variant="outline" onClick={handleCancel} disabled={!isModified || loadingChange}>
                      Cancel
                   </Button>
-                  <Button type="submit" form="account-form" disabled={!isModified}>
+                  <Button type="submit" form="account-form" disabled={!isModified || loadingChange}>
                      Save Changes
                   </Button>
                </div>
