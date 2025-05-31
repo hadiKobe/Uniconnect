@@ -7,11 +7,45 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 
 const majors = [
-  "Electronics Engineering", "Computer Engineering", "Mechanical Engineering", "Electrical Engineering",
-  "Biomedical Engineering", "Surveying Engineering", "Communication Engineering", "Industrial Engineering",
-  "Pharmacy", "Teacher Education", "Teaching English", "Translation", "Accounting", "Economics", "Banking & Finance",
-  "Hospitality Management", "Business Management", "Marketing", "MIS", "Freshman", "Radio & TV"
+  // Engineering Majors
+  "Computer Engineering",
+  "Communication Engineering",
+  "Electronics Engineering",
+  "Electrical Engineering",
+  "Mechanical Engineering",
+  "Biomedical Engineering",
+  "Surveying Engineering",
+  "Industrial Engineering",
+  "Civil Engineering", // ✅ added
+  "Mechatronics Engineering", // ✅ added
+
+  // Business & Economics
+  "Accounting",
+  "Economics",
+  "Banking & Finance",
+  "Business Management",
+  "Marketing",
+  "MIS",
+  "Hospitality Management",
+
+  // Education & Languages
+  "Teacher Education",
+  "Teaching English",
+  "Translation",
+  "Radio & TV",
+
+  // Science & Health
+  "Pharmacy",
+  "Biology", // ✅ added
+  "Chemistry", // ✅ added
+  "Mathematics", // ✅ added
+  "Nursing", // ✅ added
+  "Public Health", // ✅ added
+
+  // General
+  "Freshman"
 ];
+
 
 const MajorSelector = ({ selectedMajor, onSelectMajor }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,7 +64,7 @@ const MajorSelector = ({ selectedMajor, onSelectMajor }) => {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-64 p-2 space-y-2 max-h-80 ">
+      <PopoverContent className="w-64 p-2 space-y-2 max-h-80 overflow-y-auto ">
         <Input
           placeholder="Search major..."
           value={searchTerm}
