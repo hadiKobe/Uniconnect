@@ -59,29 +59,29 @@ export function FriendsContent() {
   <div className="mx-auto py-6 space-y-6 max-w-7xl px-4">
     <h1 className="text-3xl font-bold">Friends</h1>
 
-    {/* Mobile: stacked in order | Desktop: grid */}
     <div className="flex flex-col gap-6 lg:flex-row">
-      {/* On mobile, stack all sections in order; on desktop, split into left/right */}
-      <div className="flex flex-col space-y-6 order-1 lg:order-none w-full lg:w-3/4">
-        <div >
-          <FriendRequestsSection requests={friendRequests} loading={loading} />
-        </div>
-        <div >
+      {/* Main Column */}
+      <div className="flex flex-col space-y-6 w-full lg:w-3/4">
+        {/* Friend Requests */}
+        <FriendRequestsSection requests={friendRequests} loading={loading} />
+
+        {/* Sent Requests - Mobile only */}
+        <div className="lg:hidden">
           <SentRequestsSection requests={sentRes} loading={loading} />
         </div>
-        <div >
-          <MyFriendsSection friends={myFriends} loading={loading} />
-        </div>
-        <div >
-          <SuggestedFriendsSection suggestions={suggestedFriends} loading={loading} />
-        </div>
+
+        {/* My Friends */}
+        <MyFriendsSection friends={myFriends} loading={loading} />
+
+        {/* Suggested Friends */}
+        <SuggestedFriendsSection suggestions={suggestedFriends} loading={loading} />
       </div>
 
-      {/* Sent Requests - desktop only */}
+      {/* Sidebar - Desktop only */}
       <div className="hidden lg:block w-full lg:w-1/4">
         <SentRequestsSection requests={sentRes} loading={loading} />
       </div>
     </div>
   </div>
 );
-}   
+}
