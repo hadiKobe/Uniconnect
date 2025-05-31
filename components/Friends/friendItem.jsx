@@ -13,13 +13,14 @@ export function FriendItem({ friend, actions }) {
   return (
     <div className="flex items-center justify-between h-16 px-3 rounded-lg hover:bg-muted/50">
       <div className="flex items-center gap-3 ">
-        <Avatar>
-          <AvatarImage
-            src={friend.profile_picture}
-            alt={`${friend.first_name} ${friend.last_name}`}
-          />
-          <AvatarFallback>{getInitials()}</AvatarFallback>
-        </Avatar>
+        <Avatar className="h-9 w-9 rounded-full">
+        <AvatarImage
+          className="rounded-full object-cover"
+          src={friend.profile_picture}
+          alt={`${friend.first_name} ${friend.last_name}`}
+        />
+        <AvatarFallback>{getInitials()}</AvatarFallback>
+      </Avatar>
         <div className="truncate">
           <Link
             href={`/Profile/${friend.id}`}

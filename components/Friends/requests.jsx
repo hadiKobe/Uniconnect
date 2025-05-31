@@ -66,7 +66,7 @@ export function FriendRequestsSection({ requests, loading }) {
 
 
   return (
-    <Card>
+    <Card className="w-full max-w-full sm:max-w-md mx-auto">
       <CardHeader className="relative">
         <div className="flex items-center gap-2">
           <CardTitle>Friend Requests</CardTitle>
@@ -79,7 +79,10 @@ export function FriendRequestsSection({ requests, loading }) {
         <CardDescription>People who want to connect with you</CardDescription>
       </CardHeader>
 
-      <CardContent className="max-h-[300px] overflow-y-auto">{loading ? (
+     <CardContent className="max-h-[300px] overflow-y-auto px-2 sm:px-4">
+        <div className="w-full overflow-x-hidden">
+    <div className="grid gap-4">
+      {loading ? (
         <div className="flex justify-center py-6">
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
@@ -123,7 +126,7 @@ export function FriendRequestsSection({ requests, loading }) {
                           ) : (
                             <>
                               <X className="h-4 w-4 mr-1" />
-                              Decline
+                             <span className="hidden sm:inline">Decline</span>
                             </>
                           )}
                         </Button>
@@ -138,7 +141,7 @@ export function FriendRequestsSection({ requests, loading }) {
                           ) : (
                             <>
                               <Check className="h-4 w-4 mr-1" />
-                              Accept
+                             <span className="hidden sm:inline">Accept</span>
                             </>
                           )}
                         </Button>
@@ -155,6 +158,8 @@ export function FriendRequestsSection({ requests, loading }) {
             <p className="text-muted-foreground">You have no pending friend requests</p>
           </div>
         )}
+            </div>
+          </div>
       </CardContent>
     </Card>
   );
