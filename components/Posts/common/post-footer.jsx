@@ -146,15 +146,22 @@ export default function Footer({ bottomInfo, singlePost = false }) {
                </Button>
             )}
 
-            {!isAuthor && <Button
-               variant="ghost"
-               size="sm"
-               className="flex items-center gap-1 px-2 ml-auto"
-               onClick={handleMessageClick}
-            >
-               <CornerDownRight className="h-4 w-4" />
-               <span className="text-sm text-gray-500">Reply privately</span>
-            </Button>}
+            {!isAuthor &&
+               <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-1 px-2 ml-auto min-w-0"
+                  onClick={handleMessageClick}
+               >
+                  <CornerDownRight className="h-4 w-4 flex-shrink-0" />
+                  {/* Full label on normal screens */}
+                  <span className="text-sm text-gray-500 hidden min-[400px]:inline">Reply privately</span>
+
+                  {/* Short label on narrow screens */}
+                  <span className="text-sm text-gray-500 inline min-[400px]:hidden">Reply</span>
+               </Button>
+
+            }
 
          </div>
 
