@@ -10,18 +10,19 @@ import useAddComment from "@/hooks/Posts/Comments/addComment";
 import { toast } from "sonner";
 import CommentItem from "./comment-item";
 import { MessageCircle } from "lucide-react";
+import { useUserStore } from "@/lib/store/userStore";
 
 export default function EmbeddedCommentSection({ commentsInfo, isLoading }) {
   const { user_id: author_id, comments: initialComments, post_id } = commentsInfo;
-
+const{userInfo}= useUserStore();
   const [commentsArray, setCommentsArray] = useState(initialComments || []);
   const [newComment, setNewComment] = useState("");
   const commentInputRef = useRef(null);
   const firstRender = useRef(true);
+  const Image= userInfo?.profile_picture || null;
 
   const { fetchAddComment, error, success, loading } = useAddComment();
   const { data: session } = useSession();
-  const userImage = session?.user?.profile_picture || null;
 
   const currentUser = {
     id: Number.parseInt(session?.user?.id, 10),
@@ -89,7 +90,7 @@ export default function EmbeddedCommentSection({ commentsInfo, isLoading }) {
 
       <form onSubmit={handleSubmit} className="flex items-start gap-4 p-6 border-t">
         <Avatar className="relative h-10 w-10 flex-shrink-0 rounded-full overflow-hidden">
-          <AvatarImage src={userImage } alt={currentUser.name} />
+          <AvatarImage src={Image} alt={currentUser.name} />
           <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="relative flex-1">

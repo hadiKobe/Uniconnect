@@ -24,12 +24,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import { useMessageStore } from "@/lib/store/messageStore"
 import { useFriendRequestsCount } from "@/hooks/Friends/request/countRequests"
+import { useUserStore } from "@/lib/store/userStore";
+
 
 export default function MobileMenu() {
-  const { data: session } = useSession()
-  const userId = session?.user?.id
-  const userName = session?.user?.name || `${session?.user?.first_name ?? "User"}`
-  const userImage = session?.user?.profile_picture || null
+  const { data: session } = useSession();
+  const userInfo = useUserStore((state) => state.userInfo);
+  const userId = session?.user?.id;
+
+  const userName = userInfo?.name || "Guest User";
+  const userImage = userInfo?.profile_picture ||  null;
+
+  
+
 
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id)
   const unreadCounts = useMessageStore((state) => state.unreadCounts)

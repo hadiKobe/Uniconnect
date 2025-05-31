@@ -12,7 +12,7 @@ const Page = async ({ params }) => {
   if (!session) {
     redirect("/SignIn");
   }
-  const resolvedParams = params; // Unwrap the Promise
+  const resolvedParams = await params; // Unwrap the Promise
   const postId = resolvedParams.postId;
 
   return (

@@ -124,31 +124,38 @@ const AccountInfo = () => {
    //    console.log("original data :", originalData)
    // }, [originalData])
 
-   const handleProgressChange = (e) => {
-      const value = Number.parseInt(e.target.value) || 0
-      const clampedValue = Math.min(100, Math.max(0, value))
-      setFormData((prev) => ({ ...prev, graduation_progress: clampedValue }))
-   }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-   const handleSubmit = async (e) => {
-      e.preventDefault()
-      if (changedFields.first_name === "" || changedFields.last_name === "" || changedFields.major === "") {
-         toast.error("Please fill in all required fields")
-         return
-      }
+  if (
+    changedFields.first_name === "" ||
+    changedFields.last_name === "" ||
+    changedFields.major === ""
+  ) {
+    toast.error("Please fill in all required fields");
+    return;
+  }
 
-      const result = await fetchChangeInfo(changedFields)
+  const result = await fetchChangeInfo(changedFields);
 
-      if (!result.infoChanged) {
-         if (result?.notAllowedChangeMajor !== undefined) toast.error("Major changed in the last 5 months")
-         else toast.error(result.msg || "Update failed")
-         return
-      }
+  if (!result.infoChanged) {
+    if (result?.notAllowedChangeMajor !== undefined)
+      toast.error("Major changed in the last 5 months");
+    else toast.error(result.msg || "Update failed");
+    return;
+  }
 
-      toast.success("Info changed successfully")
-      setChangedFields({})
-      setOriginalData({ ...formData })
-   }
+  toast.success("Info changed successfully");
+
+  // Clear changes and wait 1 second before reload
+  setChangedFields({});
+  setOriginalData({ ...formData });
+
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000); // 1000ms = 1 second
+};
+
 
    const handleCancel = () => {
       if (originalData) {

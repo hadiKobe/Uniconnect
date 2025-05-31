@@ -1,6 +1,8 @@
 import { useState } from "react";
-
+import { useUserStore } from "@/lib/store/userStore"; // ✅ This is the correct store
 export function useChangeInfo() {
+
+   const setUserInfo = useUserStore((state) => state.setUserInfo); // ✅ Correct store
    const [loadingChange, setLoadingChange] = useState(false);
    const [errorChange, setErrorChange] = useState(null);
    const path = '/api/settings/info';
@@ -24,6 +26,12 @@ export function useChangeInfo() {
          if (!result.ok) {
             isChanged.infoChanged = false;
             if (msg?.notAllowedChangeMajor !== undefined) isChanged.notAllowedChangeMajor = true;
+         }
+         if(result.ok) {
+            isChanged.infoChanged = true;
+             setUserInfo(msg.updatedUser); // <-- this should be full user data from backend
+
+            
          }
 
       } catch (error) {

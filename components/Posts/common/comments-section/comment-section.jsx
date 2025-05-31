@@ -10,6 +10,7 @@ import useAddComment from "@/hooks/Posts/Comments/addComment";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import CommentItem from "./comment-item";
+import { useUserStore } from "@/lib/store/userStore";
 
 export default function InstagramStyleCommentSection({
   commentsInfo,
@@ -19,7 +20,7 @@ export default function InstagramStyleCommentSection({
   onManageComment
 }) {
   const { user_id: author_id, comments: initialComments, post_id } = commentsInfo;
-
+const{userInfo}= useUserStore();
   const [commentsArray, setCommentsArray] = useState(initialComments || []);
   const [newComment, setNewComment] = useState("");
   const commentInputRef = useRef(null);
@@ -30,7 +31,7 @@ export default function InstagramStyleCommentSection({
 
   const { fetchAddComment, error, success, loading } = useAddComment();
   const { data: session } = useSession();
-  const userImage = session?.user?.profile_picture || null;
+  const userImage= userInfo?.profile_picture || null;
 
   const currentUser = {
     id: Number.parseInt(session?.user?.id, 10),

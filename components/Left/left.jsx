@@ -19,14 +19,14 @@ import {
   GraduationCap,
   ShoppingBag,
 } from "lucide-react";
-import { useState, useEffect } from "react"
+
 import { useUnreadNotifications } from "@/hooks/notifications/UseCountUnRead";
 import { useMessageStore } from "@/lib/store/messageStore";
 import { useFriendRequestsCount } from "@/hooks/Friends/request/countRequests";
-
+import { useUserStore } from "@/lib/store/userStore";
 export default function LeftSide({ onSettingsClick }) {
   const { data: session, status } = useSession();
-
+  const userInfo = useUserStore((state) => state.userInfo);
   const pathname = usePathname()
   const isActive = (href) => pathname === href;
   const { count } = useUnreadNotifications(); // Fetch unread notifications count
@@ -35,11 +35,20 @@ export default function LeftSide({ onSettingsClick }) {
 
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
   const totalUnread = Object.values(unreadCounts).reduce((acc, count) => acc + count, 0);
-  const userName = session?.user?.name || `${session?.user?.first_name ?? "User"}`;
-  const userImage = session?.user?.profile_picture;
-  const userMajor = session?.user?.major || "Unknown Major";
-const gradStatus = Number(session?.user?.graduation_progress) === 100 ? "Graduated" : "UnderGrad";
-console.log("Session.profile_picture:", session?.user?.profile_picture);
+const userName = userInfo?.first_name 
+  ? `${userInfo.first_name} ${userInfo.last_name ?? ""}` 
+  : `${session?.user?.first_name ?? "User"}`;
+
+const userImage = userInfo?.profile_picture ||  null;
+
+const userMajor = userInfo?.major || "Unknown Major";
+
+const gradProgress = userInfo?.graduation_progress ||  0;
+
+const gradStatus = Number(gradProgress) === 100 ? "Graduated" : "UnderGrad";
+
+
+
 
 
   const { count: requestCount } = useFriendRequestsCount(15000, !!session?.user?.id);

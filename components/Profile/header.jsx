@@ -28,8 +28,8 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import { useState } from "react";
-
+import { useState ,useEffect,useRef} from "react";
+import { toast } from "sonner";
 export function ProfileHeader({
   student,
   statuses,
@@ -46,9 +46,28 @@ export function ProfileHeader({
   const friendStatus = statuses?.[student.id] || { isFriend: false, pendingRequest: false };
   const isFriend = friendStatus.isFriend;
   const isRequested = friendStatus.pendingRequest;
+  const hasShownToast = useRef(false);
   const handleMessageClick = (id) => {
     router.push(`/Messages?userA=${userID}&userB=${id}`);
   };
+ useEffect(() => {
+  if (isCurrentUser && !hasShownToast.current) {
+    const missingFields = [];
+
+    if (!student.bio) missingFields.push("bio");
+    if (!student.major) missingFields.push("major");
+    if (!student.graduation_progress) missingFields.push("graduation progress");
+    if (!student.gpa) missingFields.push("GPA");
+    if (!student.expected_graduation_date) missingFields.push("expected graduation date");
+    if (!student.address) missingFields.push("address");
+
+    if (missingFields.length >= 2) {
+      toast.info("Complete your profile for a better experience ✨");
+      hasShownToast.current = true; // ✅ only update *after* toast shown
+    }
+  }
+}, [student, isCurrentUser]);
+
 
   return (
 

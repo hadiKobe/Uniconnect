@@ -118,7 +118,7 @@ const SignUp = ({ setLoading }) => {
 
   return (
     <div className="min- flex items-center ">
-      <Card className="w-full max-w-md shadow-lg border-slate-200 ">
+      <Card className="w-full max-w-md shadow-lg border-slate-200 h-[720px]">
 
         <CardHeader className="space-y-1 text-center">
 
@@ -234,16 +234,19 @@ const SignUp = ({ setLoading }) => {
                             {getPasswordStrengthText()}
                           </span>
                         </div>
+                          <div className="relative w-full overflow-hidden rounded">
                         <Progress
                           value={passwordStrength}
                           className="h-1"
                         >
+                          
                           <div
                             className={`h-1 ${getPasswordStrengthColor()} transition-all duration-300`}
                             data-slot="indicator"
                             style={{ width: `${passwordStrength}%` }}
                           />
                         </Progress>
+                        </div>
 
                       </div>
                     )}

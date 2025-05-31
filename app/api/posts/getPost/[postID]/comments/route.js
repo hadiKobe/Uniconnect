@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
 
    const { postID } = await params;
    const sqlQuery = `
-      SELECT comments.*, users.first_name, users.last_name 
+      SELECT comments.*, users.first_name, users.last_name , users.profile_picture
       FROM comments JOIN users ON comments.user_id = users.id
       WHERE comments.post_id = ? AND comments.is_deleted = 0
       ORDER BY comments.created_at ASC

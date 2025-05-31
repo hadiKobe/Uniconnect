@@ -27,8 +27,9 @@ export default function CommentItem({
   const [isDeleting, setIsDeleting] = useState(false);
   const { data: session } = useSession();
   const currentUserId = Number.parseInt(session?.user?.id, 10);
-  const userImage = session?.user?.profile_picture || null;
+  
   const { id: commentId, content, created_at, user } = comment;
+  const userImage = user.profile_picture || null;
   const timeAgo = formatDistanceToNow(new Date(created_at), { addSuffix: true });
 
   const { loading, error, success, fetchDeleteComment } = useDeleteComment();
