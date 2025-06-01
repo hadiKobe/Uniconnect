@@ -11,10 +11,10 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { friendId } = body;
+    const { receiverId } = body;
     const userId = Number(session.user.id); // Force number type
 
-    if (userId === Number(friendId)) {
+    if (userId === Number(receiverId)) {
       return Response.json({ error: "You cannot send a friend request to yourself." }, { status: 400 });
     }
 
@@ -26,7 +26,7 @@ export async function POST(request) {
         OR (sender_id = ? AND receiver_id = ?)
       ) AND status = 'pending'
     `;
-    const pending = await query(checkPending, [userId, friendId, friendId, userId]);
+    const pending = await query(checkPending, [userId, receiverId, receiverId, userId]);
     if (pending.length > 0) {
       return Response.json({ message: "Friend request already sent or received!" }, { status: 400 });
     }
@@ -39,7 +39,7 @@ export async function POST(request) {
         OR (sender_id = ? AND receiver_id = ?)
       ) AND status = 'declined'
     `;
-    const declined = await query(checkDeclined, [userId, friendId, friendId, userId]);
+    const declined = await query(checkDeclined, [userId, receiverId, receiverId, userId]);
 
     if (declined.length > 0) {
       // If declined exists, update it to pending
@@ -53,7 +53,7 @@ export async function POST(request) {
         // ✅ Send notification after updating
         await createNotification(
           userId,
-          friendId,
+          receiverId,
           "sent you a friend request",
           `/Friends`,
           "friend_request"
@@ -69,13 +69,13 @@ export async function POST(request) {
       INSERT INTO friend_requests (sender_id, receiver_id)
       VALUES (?, ?)
     `;
-    const insertResult = await query(insertQuery, [userId, friendId]);
+    const insertResult = await query(insertQuery, [userId, receiverId]);
 
     if (insertResult && insertResult.affectedRows > 0) {
       // ✅ Send notification after inserting
       await createNotification(
         userId,
-        friendId,
+        receiverId,
         "sent you a friend request",
         `/Friends`,
         "friend_request"

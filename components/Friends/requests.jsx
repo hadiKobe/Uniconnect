@@ -66,7 +66,7 @@ export function FriendRequestsSection({ requests, loading }) {
 
 
   return (
-    <Card className="w-full max-w-full sm:max-w-md mx-auto">
+    <Card >
       <CardHeader className="relative">
         <div className="flex items-center gap-2">
           <CardTitle>Friend Requests</CardTitle>
