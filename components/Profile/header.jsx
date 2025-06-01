@@ -90,7 +90,7 @@ export function ProfileHeader({
           {/* Profile Info */}
           <div className="flex-1 space-y-4">
             <div className="space-y-1">
-              <div className="w-full flex items-center justify-between gap-7">
+              <div className="w-full flex justify-between items-center gap-8">
                 <div className="flex-1">
                   <h1 className="text-2xl font-bold">
                     {student.first_name} {student.last_name}
@@ -99,8 +99,8 @@ export function ProfileHeader({
                 </div>
 
                 {/* Right Side Buttons */}
-                {isCurrentUser ? (
-                  <div>
+                <div>
+                  {isCurrentUser ? (
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                       <DialogTrigger asChild>
                         <Button className="whitespace-nowrap">Edit Profile</Button>
@@ -112,56 +112,64 @@ export function ProfileHeader({
                         <AccountInfo />
                       </DialogContent>
                     </Dialog>
-                  </div>
-                ) : (
-                  <div className="flex gap-2 flex-wrap">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-1"
-                      onClick={() => handleMessageClick(student.id)}
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                      Message
-                    </Button>
+                  ) : (
+                    <div className="flex gap-2 flex-wrap">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1"
+                        onClick={() => handleMessageClick(student.id)}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        <span className="hidden sm:inline">
+                          Message
+                        </span>
+                      </Button>
 
-                    {Number(currentLoadingFriendId) === Number(student.id) ? (
-                      <Button variant="outline" size="sm" disabled className="gap-1">
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-black" />
-                      </Button>
-                    ) : isFriend ? (
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="gap-1"
-                        onClick={() => handleFriendRemove(student.id)}
-                      >
-                        <UserMinus className="h-4 w-4" />
-                        Unfriend
-                      </Button>
-                    ) : isRequested ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-1"
-                        onClick={() => handleCancelRequest(student.id)}
-                      >
-                        <X className="h-4 w-4" />
-                        Cancel Request
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-1"
-                        onClick={() => handleSendRequest(student.id)}
-                      >
-                        <UserPlus className="h-4 w-4" />
-                        Add Friend
-                      </Button>
-                    )}
-                  </div>
-                )}
+                      {Number(currentLoadingFriendId) === Number(student.id) ? (
+                        <Button variant="outline" size="sm" disabled className="gap-1">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent border-black" />
+                        </Button>
+                      ) : isFriend ? (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => handleFriendRemove(student.id)}
+                        >
+                          <UserMinus className="h-4 w-4" />
+                          <span className="hidden sm:inline">
+                            Unfriend
+                          </span>
+                        </Button>
+                      ) : isRequested ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => handleCancelRequest(student.id)}
+                        >
+                          <X className="h-4 w-4" />
+                          <span className="hidden sm:inline">
+                            Cancel Request
+                          </span>
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => handleSendRequest(student.id)}
+                        >
+                          <UserPlus className="h-4 w-4" />
+                          <span className="hidden sm:inline">
+                            Add Friend
+                          </span>
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

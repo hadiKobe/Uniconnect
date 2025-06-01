@@ -137,7 +137,7 @@ export async function GET(request) {
     ORDER BY posts.created_at DESC
     LIMIT ${pageSize} OFFSET ${offset} 
 `;
-  console.log(sqlQuery, params);
+  // console.log(sqlQuery, params);
 
   try {
     const result = await query(sqlQuery, params);
