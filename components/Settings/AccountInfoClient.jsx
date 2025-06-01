@@ -136,7 +136,7 @@ const AccountInfo = () => {
          handleInputChange({
             target: {
                name: 'expected_graduation_date',
-               value: {year: '', month: ''}
+               value: { year: '', month: '' }
             }
          })
 
@@ -389,10 +389,7 @@ const AccountInfo = () => {
                                  min="0"
                                  max="100"
                                  value={formData.graduation_progress}
-                                 onChange={(e) => {
-                                    handleProgressChange(e)
-                                    handleInputChange(e)
-                                 }}
+                                 onChange={handleInputChange}
                                  className="mb-2"
                               />
                               <div className="relative w-full overflow-hidden rounded">

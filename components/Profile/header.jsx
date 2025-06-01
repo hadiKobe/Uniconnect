@@ -181,8 +181,7 @@ export function ProfileHeader({
               <div className="flex items-center gap-2">
                 <GraduationCap className="h-4 w-4" />
                 <span>
-                  {student.major || "Undeclared"} • {" "}
-                  {student.graduation_progress ?? "N/A"}% • GPA:{" "}
+                  {student.graduation_progress ?? "N/A"}% • {" "}
                   {student.gpa !== null && student.gpa !== undefined
                     ? student.gpa
                     : "I prefer not to share my GPA"}
