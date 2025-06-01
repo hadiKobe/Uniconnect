@@ -66,9 +66,11 @@ export default function Navbar() {
         </div>
 
         {/* Center: SearchBar (always centered) */}
-        <div className="flex-1 max-w-md mx-4">
+        {/* Center: SearchBar */}
+        <div className="flex-1 flex justify-center sm:absolute sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md">
           <SearchBar />
         </div>
+
 
         {/* Right section: Notifications + Add Post */}
         <div className="flex items-center gap-1 sm:gap-2 sm:hidden">
