@@ -14,7 +14,7 @@ export function SuggestedFriendsSection({ suggestions, loading }) {
   const [loadingId, setLoadingId] = useState(null);
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
+console.log("suggestions", suggestions);
   const onAdd = async (id) => {
     try {
       setLoadingId(id);
@@ -38,7 +38,7 @@ export function SuggestedFriendsSection({ suggestions, loading }) {
         <CardDescription>People you might know</CardDescription>
       </CardHeader>
 
-      <CardContent className="max-h-[300px] ">
+      <CardContent className="max-h-[300px] overflow-y-auto">
         {loading ? (
           <div className="flex justify-center py-6 overflow-y-auto">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />

@@ -37,6 +37,7 @@ export function FriendsContent() {
         suggestedRes.json(),
         sentRequestsRes.json(),
       ]);
+      console.log({ requestsData, friendsData, suggestedData, sentData });
   
       // 3. Update local state with the parsed data
       setFriendRequests(requestsData.friendRequests || []);
