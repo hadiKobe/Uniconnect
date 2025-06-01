@@ -14,7 +14,7 @@ export function SuggestedFriendsSection({ suggestions, loading }) {
   const [loadingId, setLoadingId] = useState(null);
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-console.log("suggestions", suggestions);
+// console.log("suggestions", suggestions);
   const onAdd = async (id) => {
     try {
       setLoadingId(id);

@@ -18,7 +18,7 @@ export default function Footer({ bottomInfo, singlePost = false }) {
 
    const { post_id, user_id, likesCount, dislikesCount, commentsCount, userReaction } = bottomInfo
 
-   console.log(post_id, likesCount, dislikesCount, userReaction);
+   // console.log(post_id, likesCount, dislikesCount, userReaction);
 
    const { loadingReaction, errorReaction, successReaction, fetchAddReaction, fetchDeleteReaction } = useHandleReaction()
 

@@ -120,9 +120,9 @@ export function AddPost({ onPostAdded }) {
         description = document.getElementById("job-description").value;
         details.salary = document.getElementById("job-salary")?.value || "";
         details.location = document.getElementById("job-location")?.value || "";
-        details.type = document.getElementById("job-type")?.textContent || "";
+        details.job_type = document.getElementById("job-type")?.value || "";
         details.position = document.getElementById("job-position")?.value || "";
-        // console.log(details.position);
+        // console.log(details);
         break;
       default:
         return;

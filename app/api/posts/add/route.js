@@ -45,11 +45,11 @@ export async function POST(req) {
     }
 
     if (cat === "job" && details) {
-      const { type, location, salary, position } = details;
+      const { job_type, location, salary, position } = details;
       // console.log(position);
       await query(
         `INSERT INTO jobs_details (post_id, job_type, location, salary, position) VALUES (?, ?, ?, ?, ?)`,
-        [postId, type ?? null, location ?? null, salary ?? null, position ?? null]
+        [postId, job_type ?? null, location ?? null, salary ?? null, position ?? null]
       );
     }
 

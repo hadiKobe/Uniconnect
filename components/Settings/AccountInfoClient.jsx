@@ -112,13 +112,13 @@ const AccountInfo = () => {
 
    }, [userInfo])
 
-   useEffect(() => {
-      console.log("changed fields :", changedFields)
-   }, [changedFields])
+   // useEffect(() => {
+   //    console.log("changed fields :", changedFields)
+   // }, [changedFields])
 
-   useEffect(() => {
-      console.log("form data :", formData)
-   }, [formData])
+   // useEffect(() => {
+   //    console.log("form data :", formData)
+   // }, [formData])
 
    // useEffect(() => {
    //    console.log("original data :", originalData)
