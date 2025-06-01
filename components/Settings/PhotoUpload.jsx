@@ -21,6 +21,7 @@ export function PhotoUploadDialog({ open, onOpenChange, onImageUploaded, initial
    const [isUploading, setIsUploading] = useState(false)
    const [isResizing, setIsResizing] = useState(false)
    const [hasChanges, setHasChanges] = useState(false)
+   const [isNewUpload, setIsNewUpload] = useState(false) // Track if this is a new upload
    const fileInputRef = useRef(null)
 
    // Crop/resize state
@@ -28,14 +29,21 @@ export function PhotoUploadDialog({ open, onOpenChange, onImageUploaded, initial
    const [zoom, setZoom] = useState(1)
    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
 
-   // Load initial image if provided
+   // Load initial image from Supabase
    useEffect(() => {
-      if (initialImageUrl) {
-         setPreview(initialImageUrl)
-      } else {
-         setPreview(null)
+      if (open) {
+         if (initialImageUrl) {
+            setPreview(initialImageUrl)
+            setIsNewUpload(false) // This is an existing image from Supabase
+         } else {
+            setPreview(null)
+            setIsNewUpload(false)
+         }
+         setSelectedFile(null)
+         setHasChanges(false)
+         setCrop({ x: 0, y: 0 })
+         setZoom(1)
       }
-      setHasChanges(false)
    }, [initialImageUrl, open])
 
    const handleFileChange = (e) => {
@@ -43,106 +51,125 @@ export function PhotoUploadDialog({ open, onOpenChange, onImageUploaded, initial
          const file = e.target.files[0]
          setSelectedFile(file)
 
-         // Create preview
          const reader = new FileReader()
          reader.onload = () => {
             setPreview(reader.result)
             setHasChanges(true)
+            setIsNewUpload(true) // This is a new upload, allow resizing
          }
          reader.readAsDataURL(file)
       }
    }
 
-   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-      setCroppedAreaPixels(croppedAreaPixels)
+   const onCropComplete = useCallback((_, croppedPixels) => {
+      setCroppedAreaPixels(croppedPixels)
    }, [])
 
    const createImage = (url) =>
       new Promise((resolve, reject) => {
          const image = new Image()
-         image.addEventListener("load", () => resolve(image))
-         image.addEventListener("error", (error) => reject(error))
          image.crossOrigin = "anonymous"
+         image.onload = () => resolve(image)
+         image.onerror = (e) => {
+            console.error("Error loading image for cropping:", e)
+            reject(new Error("Failed to load image for cropping"))
+         }
          image.src = url
       })
 
    const getCroppedImg = async (imageSrc, pixelCrop) => {
-      const image = await createImage(imageSrc)
-      const canvas = document.createElement("canvas")
-      const ctx = canvas.getContext("2d")
+      try {
+         const image = await createImage(imageSrc)
+         const canvas = document.createElement("canvas")
+         const ctx = canvas.getContext("2d")
 
-      if (!ctx) {
+         if (!ctx) {
+            throw new Error("Could not get canvas context")
+         }
+
+         canvas.width = pixelCrop.width
+         canvas.height = pixelCrop.height
+
+         ctx.drawImage(
+            image,
+            pixelCrop.x,
+            pixelCrop.y,
+            pixelCrop.width,
+            pixelCrop.height,
+            0,
+            0,
+            pixelCrop.width,
+            pixelCrop.height,
+         )
+
+         return new Promise((resolve) => {
+            canvas.toBlob(
+               (blob) => {
+                  if (!blob) {
+                     console.error("Canvas is empty")
+                     return
+                  }
+
+                  const fileName = "cropped-image.jpeg"
+                  const croppedFile = new File([blob], fileName, { type: "image/jpeg" })
+                  setSelectedFile(croppedFile)
+
+                  const reader = new FileReader()
+                  reader.onloadend = () => resolve(reader.result)
+                  reader.readAsDataURL(blob)
+               },
+               "image/jpeg",
+               0.95,
+            )
+         })
+      } catch (e) {
+         console.error("Error in cropping:", e)
          return imageSrc
       }
-
-      // Set canvas size to the cropped size
-      canvas.width = pixelCrop.width
-      canvas.height = pixelCrop.height
-
-      // Draw the cropped image
-      ctx.drawImage(
-         image,
-         pixelCrop.x,
-         pixelCrop.y,
-         pixelCrop.width,
-         pixelCrop.height,
-         0,
-         0,
-         pixelCrop.width,
-         pixelCrop.height,
-      )
-
-      // Convert canvas to base64 string
-      return canvas.toDataURL("image/jpeg")
    }
 
    const handleResize = async () => {
       if (!preview || !croppedAreaPixels) return
 
       try {
+         setIsUploading(true)
          const croppedImage = await getCroppedImg(preview, croppedAreaPixels)
          setPreview(croppedImage)
          setIsResizing(false)
          setHasChanges(true)
       } catch (e) {
-         console.error(e)
+         console.error("Cropping failed:", e)
+         alert("Failed to crop image. Please try again.")
+      } finally {
+         setIsUploading(false)
       }
    }
 
    const handleUpload = async () => {
       setIsUploading(true)
-
       try {
-         // If there's no preview, it means the user wants to remove their profile picture
          if (!preview) {
             onImageUploaded(null)
             onOpenChange(false)
             setHasChanges(false)
-            setIsUploading(false)
             return
          }
 
-         // If there's no selectedFile but there is a preview, it might be the initial image
-         // In this case, we should just return the preview URL
-         if (!selectedFile) {
+         // If it's a new upload, upload to Supabase
+         if (selectedFile && isNewUpload) {
+            const { publicUrl } = await uploadMedia(selectedFile, "profile")
+            if (!publicUrl) throw new Error("Upload failed")
+            onImageUploaded(publicUrl)
+         } else {
+            // If it's an existing image from Supabase, just return the URL
             onImageUploaded(preview)
-            onOpenChange(false)
-            setHasChanges(false)
-            setIsUploading(false)
-            return
          }
 
-         // Upload to Supabase in the 'profile' folder
-         const { publicUrl } = await uploadMedia(selectedFile, "profile")
-
-         if (!publicUrl) throw new Error("Failed to retrieve image URL.")
-
-         // Return the Supabase public URL instead of base64 preview
-         onImageUploaded(publicUrl)
          onOpenChange(false)
          setHasChanges(false)
       } catch (error) {
          console.error("Upload failed:", error)
+         alert("Failed to upload image. Please try again.")
       } finally {
          setIsUploading(false)
       }
@@ -152,6 +179,7 @@ export function PhotoUploadDialog({ open, onOpenChange, onImageUploaded, initial
       setSelectedFile(null)
       setPreview(null)
       setIsResizing(false)
+      setIsNewUpload(false)
       setCrop({ x: 0, y: 0 })
       setZoom(1)
       setHasChanges(true)
@@ -167,11 +195,8 @@ export function PhotoUploadDialog({ open, onOpenChange, onImageUploaded, initial
 
    const handleRemove = () => {
       resetForm()
-      // Don't close the dialog, just clear the preview
-      // The user can now either select a new image or save with no image
    }
 
-   // Check if the current state is different from the initial state
    const isChanged = () => {
       if (initialImageUrl === null && preview === null) return false
       if (initialImageUrl === null && preview !== null) return true
@@ -192,7 +217,7 @@ export function PhotoUploadDialog({ open, onOpenChange, onImageUploaded, initial
             <div className="space-y-4 py-4">
                {!preview ? (
                   <div
-                     className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 p-12"
+                     className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 p-12 cursor-pointer"
                      onClick={() => fileInputRef.current?.click()}
                   >
                      <ImageIcon className="mb-4 h-12 w-12 text-gray-400" />
@@ -229,26 +254,36 @@ export function PhotoUploadDialog({ open, onOpenChange, onImageUploaded, initial
                         <Button variant="outline" onClick={() => setIsResizing(false)} className="flex-1">
                            Cancel
                         </Button>
-                        <Button onClick={handleResize} className="flex-1">
-                           Apply
+                        <Button onClick={handleResize} className="flex-1" disabled={isUploading}>
+                           {isUploading ? (
+                              <>
+                                 <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                 Processing...
+                              </>
+                           ) : (
+                              "Apply"
+                           )}
                         </Button>
                      </div>
                   </div>
                ) : (
                   <div className="relative">
-                     <div className=" rounded-full aspect-square mx-auto w-48 h-48">
+                     <div className="rounded-full aspect-square mx-auto w-48 h-48 overflow-hidden">
                         <img src={preview || null} alt="Preview" className="h-full w-full object-cover" />
                      </div>
                      <div className="absolute right-1/4 top-2 flex space-x-2">
-                        <Button
-                           variant="secondary"
-                           size="icon"
-                           className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm"
-                           onClick={() => setIsResizing(true)}
-                        >
-                           <Maximize2 className="h-4 w-4" />
-                           <span className="sr-only">Resize image</span>
-                        </Button>
+                        {/* Only show resize button for new uploads */}
+                        {isNewUpload && (
+                           <Button
+                              variant="secondary"
+                              size="icon"
+                              className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm"
+                              onClick={() => setIsResizing(true)}
+                           >
+                              <Maximize2 className="h-4 w-4" />
+                              <span className="sr-only">Resize image</span>
+                           </Button>
+                        )}
                         <Button variant="destructive" size="icon" className="h-8 w-8 rounded-full" onClick={handleRemove}>
                            <X className="h-4 w-4" />
                            <span className="sr-only">Remove image</span>

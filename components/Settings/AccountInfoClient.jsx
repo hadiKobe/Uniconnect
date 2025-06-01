@@ -164,7 +164,7 @@ const AccountInfo = () => {
       if (!result.infoChanged) {
          if (result?.notAllowedChangeMajor !== undefined)
             toast.error("Major changed in the last 5 months");
-         else toast.error(result.msg || "Update failed");
+         else toast.error(result?.msg || "Update failed");
          return;
       }
 
@@ -206,15 +206,14 @@ const AccountInfo = () => {
 
    return (
 
-      <div>
+      <>
          {loading ?
             <LoadingPage />
             :
-            <div className="container mx-auto py-6 max-w-3xl">
-
+            <div className="w-full max-w-4xl px-4 pt-6 sm:px-6 md:px-8 mx-auto space-y-6">
                <form id="account-form" onSubmit={handleSubmit}>
                   <div className="flex items-center justify-between mb-6">
-                     <h1 className="text-3xl font-bold">Account Settings</h1>
+                     <h1 className="text-3xl font-bold flex-1 text-center">Account Info</h1>
 
                      <div className="hidden md:flex justify-end gap-4">
                         <Button type="button" variant="outline" onClick={handleCancel} disabled={!isModified || loadingChange}>
@@ -225,6 +224,7 @@ const AccountInfo = () => {
                         </Button>
                      </div>
                   </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                      {/* Profile Picture Section */}
                      <Card>
@@ -234,7 +234,7 @@ const AccountInfo = () => {
                         </CardHeader>
                         <CardContent className="flex flex-col items-center space-y-4 ">
                            <Avatar className="h-32 w-32 rounded-full overflow-hidden">
-                              <AvatarImage src={formData.profile_picture || null} alt="Profile" />
+                              <AvatarImage src={formData.profile_picture || null} alt="Profile" className="object-cover" />
                               <AvatarFallback className="text-4xl">
                                  <User size={64} />
                               </AvatarFallback>
@@ -412,7 +412,7 @@ const AccountInfo = () => {
                   </Button>
                </div>
             </div >}
-      </div>
+      </>
 
    )
 }
