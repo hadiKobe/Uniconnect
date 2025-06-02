@@ -57,7 +57,7 @@ export default function Navbar() {
       <div className="md:hidden">
         <MobileMenu />
       </div>
-<div className="hidden sm:flex items-center gap-2 font-semibold">
+<div className="hidden md:flex items-center gap-2 font-semibold">
   <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
   <span className="text-lg sm:text-xl font-bold text-gray-900">UniConnect</span>
 

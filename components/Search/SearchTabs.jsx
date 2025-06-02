@@ -11,7 +11,8 @@ const SearchTabs = ({ activeTab, setActiveTab, filteredResults, isLoading, searc
 
    return (
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
-         <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto">
+        <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto gap-1 sm:gap-2 text-xs sm:text-sm">
+
             <TabsTrigger value="all" className="flex items-center gap-2">
                <Search className="h-4 w-4" />
                <span>All</span>

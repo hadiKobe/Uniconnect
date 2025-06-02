@@ -68,8 +68,7 @@ const SearchClient = () => {
             <LeftBarShell />
          </div>
 
-        <div className="w-full max-w-2xl mx-auto flex flex-col gap-6 px-4 pt-6 pb-10 md:ml-64">
-
+        <div className="ml-0 md:ml-64 flex-1  p-4">
             {/* Search Tabs */}
             <SearchTabs
                activeTab={activeTab}
