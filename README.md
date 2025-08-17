@@ -21,6 +21,11 @@ UniConnect is a university community platform designed to connect students throu
 - **Backend**: Node.js, Next.js API Routes, Express.js
 - **Database**: MySQL, MongoDB  
 - **Real-time**: Socket.IO  
-- **State Management**: Zustand  
-- **Auth**: NextAuth  
+- **State Management**: Zustand
+- **Auth**: NextAuth
+
+## 🎥 Demo (Video)
+<a href="https://www.linkedin.com/posts/hadi-kobeissy-9698a2345_nextjs-fullstackdevelopment-uniconnect-activity-7338509615459917827-_dum?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFZzbOEBAjdx56uC1Aih9MOwRMDiNgfVWR8" target="_blank">🔗 Watch Demo on LinkedIn</a>
+
+  
 
