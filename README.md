@@ -18,7 +18,7 @@ UniConnect is a university community platform designed to connect students throu
 
 ## 🛠 Tech Stack
 - **Frontend**: Next.js, React, TailwindCSS, ShadCN UI  
-- **Backend**: Node.js, Next.js API Routes, Express.js
+- **Backend**: Express.js, Next.js API Routes
 - **Database**: MySQL, MongoDB  
 - **Real-time**: Socket.IO  
 - **State Management**: Zustand
